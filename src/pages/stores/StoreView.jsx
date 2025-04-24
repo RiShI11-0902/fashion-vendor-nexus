@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStore } from "../../contexts/StoreContext";
@@ -8,10 +7,11 @@ import { ShoppingBag, ArrowLeft, Package, Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import ProductCard from "../../components/products/ProductCard";
+import { toast } from "sonner";
 
 const StoreView = () => {
   const { storeSlug } = useParams();
-  const { getStoreBySlug, getStoreProducts } = useStore();
+  const { getStoreBySlug, getStoreProducts, stores } = useStore();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,19 +20,25 @@ const StoreView = () => {
   
   useEffect(() => {
     if (storeSlug) {
+      console.log("Looking for store with slug:", storeSlug);
+      console.log("Available stores:", stores);
+      
       const foundStore = getStoreBySlug(storeSlug);
       
       if (foundStore) {
+        console.log("Store found:", foundStore);
         setStore(foundStore);
         const storeProducts = getStoreProducts(foundStore.id);
         setProducts(storeProducts);
+        toast.success(`Welcome to ${foundStore.name}`);
       } else {
+        console.error(`Store with slug "${storeSlug}" not found`);
         setError("Store not found");
       }
       
       setLoading(false);
     }
-  }, [storeSlug, getStoreBySlug, getStoreProducts]);
+  }, [storeSlug, getStoreBySlug, getStoreProducts, stores]);
   
   if (loading) {
     return (
@@ -51,7 +57,7 @@ const StoreView = () => {
           <ShoppingBag className="h-12 w-12 mx-auto text-gray-400 mb-4" />
           <h2 className="text-2xl font-display font-semibold mb-2">Store Not Found</h2>
           <p className="text-gray-600 mb-6">
-            The store you're looking for doesn't exist or might have been removed.
+            The store you're looking for ({storeSlug}) doesn't exist or might have been removed.
           </p>
           <Button asChild>
             <Link to="/stores">Browse All Stores</Link>
