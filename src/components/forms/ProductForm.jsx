@@ -1,29 +1,16 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { useAuthStore } from "../../stores/useAuthStore";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "../../components/ui/textarea";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
-import { 
-  FormControl, 
-  FormDescription, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage, 
-  Form 
-} from "../../components/ui/form";
+import { Button } from "../ui/button";
+import { Form } from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import StoreSelector from "./product/StoreSelector";
+import BasicProductDetails from "./product/BasicProductDetails";
+import AdditionalDetails from "./product/AdditionalDetails";
 
 const productSchema = z.object({
   name: z.string().min(2, "Product name must be at least 2 characters"),
@@ -61,7 +48,7 @@ const ProductForm = ({ initialData = null }) => {
       price: initialData?.price?.toString() || "",
       imageUrl: initialData?.imageUrl || "",
       category: initialData?.category || "",
-      storeId: initialData?.storeId || (userStores[0]?.id || ""),
+      storeId: initialData?.storeId || "",
       inventory: initialData?.inventory?.toString() || "0",
     },
   });
@@ -102,139 +89,9 @@ const ProductForm = ({ initialData = null }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="storeId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Select Store</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
-                defaultValue={field.value}
-                value={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a store" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {userStores.map((store) => (
-                    <SelectItem key={store.id} value={store.id}>
-                      {store.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Stylish Shirt" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price ($)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    min="0" 
-                    step="0.01" 
-                    placeholder="29.99" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="inventory"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Inventory</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    min="0"
-                    step="1" 
-                    placeholder="100" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <FormControl>
-                <Input placeholder="T-shirts" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Description</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Describe your product..." 
-                  className="resize-none min-h-32"
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Image URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
-              </FormControl>
-              <FormDescription>
-                Enter a URL for your product image
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <StoreSelector form={form} stores={userStores} />
+        <BasicProductDetails form={form} />
+        <AdditionalDetails form={form} />
         
         <div className="flex justify-end space-x-4 pt-4">
           <Button 
