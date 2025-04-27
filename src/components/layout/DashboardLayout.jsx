@@ -1,12 +1,12 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthStore } from "../../stores/useAuthStore";
 import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
 import DashboardSidebar from "./DashboardSidebar";
 
 const DashboardLayout = ({ children }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, loading } = useAuthStore();
   const navigate = useNavigate();
   
   useEffect(() => {

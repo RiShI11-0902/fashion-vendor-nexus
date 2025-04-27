@@ -4,8 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import { StoreProvider } from "./contexts/StoreContext";
 
 // Main Pages
 import Index from "./pages/Index";
@@ -37,42 +35,38 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <StoreProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Main Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              
-              {/* Auth Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              
-              {/* Dashboard Routes */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/dashboard/stores" element={<StoresManagement />} />
-              <Route path="/dashboard/products" element={<ProductsManagement />} />
-              <Route path="/dashboard/create-store" element={<CreateStore />} />
-              <Route path="/dashboard/stores/edit/:storeId" element={<EditStore />} />
-              <Route path="/dashboard/stores/:storeId" element={<StoreDetail />} />
-              <Route path="/dashboard/products/create" element={<CreateProduct />} />
-              <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
-              <Route path="/dashboard/settings" element={<Settings />} />
-              
-              {/* Store Routes */}
-              <Route path="/stores" element={<AllStores />} />
-              <Route path="/store/:storeSlug" element={<StoreView />} />
-              <Route path="/store/:storeSlug/product/:productId" element={<ProductDetail />} />
-              
-              {/* Not Found */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </StoreProvider>
-      </AuthProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          {/* Main Routes */}
+          <Route path="/" element={<Index />} />
+          <Route path="/about" element={<About />} />
+          
+          {/* Auth Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          
+          {/* Dashboard Routes */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/stores" element={<StoresManagement />} />
+          <Route path="/dashboard/products" element={<ProductsManagement />} />
+          <Route path="/dashboard/create-store" element={<CreateStore />} />
+          <Route path="/dashboard/stores/edit/:storeId" element={<EditStore />} />
+          <Route path="/dashboard/stores/:storeId" element={<StoreDetail />} />
+          <Route path="/dashboard/products/create" element={<CreateProduct />} />
+          <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
+          <Route path="/dashboard/settings" element={<Settings />} />
+          
+          {/* Store Routes */}
+          <Route path="/stores" element={<AllStores />} />
+          <Route path="/store/:storeSlug" element={<StoreView />} />
+          <Route path="/store/:storeSlug/product/:productId" element={<ProductDetail />} />
+          
+          {/* Not Found */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
