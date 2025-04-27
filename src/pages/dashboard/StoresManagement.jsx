@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useStore } from "../../contexts/StoreContext";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useStoreManager } from "../../stores/useStoreManager";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import StoreCard from "../../components/stores/StoreCard";
 import { Button } from "../../components/ui/button";
@@ -10,8 +10,8 @@ import { Plus, Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
 
 const StoresManagement = () => {
-  const { currentUser } = useAuth();
-  const { getUserStores } = useStore();
+  const { currentUser } = useAuthStore();
+  const { getUserStores } = useStoreManager();
   const [userStores, setUserStores] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   
