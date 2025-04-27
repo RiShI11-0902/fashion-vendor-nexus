@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStore } from "../../contexts/StoreContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useStoreManager } from "../../stores/useStoreManager";
+import { useAuthStore } from "../../stores/useAuthStore";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
@@ -43,8 +42,8 @@ const productSchema = z.object({
 
 const ProductForm = ({ initialData = null }) => {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
-  const { stores, getUserStores, addProduct, updateProduct } = useStore();
+  const { currentUser } = useAuthStore();
+  const { getUserStores, addProduct, updateProduct } = useStoreManager();
   const [userStores, setUserStores] = useState([]);
   
   useEffect(() => {
@@ -67,7 +66,6 @@ const ProductForm = ({ initialData = null }) => {
     },
   });
   
-  // Update form values when userStores changes
   useEffect(() => {
     if (!initialData && userStores.length > 0 && !form.getValues("storeId")) {
       form.setValue("storeId", userStores[0].id);

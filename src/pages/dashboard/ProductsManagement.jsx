@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useStore } from "../../contexts/StoreContext";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useStoreManager } from "../../stores/useStoreManager";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import ProductCard from "../../components/products/ProductCard";
 import { Button } from "../../components/ui/button";
@@ -17,8 +17,8 @@ import {
 } from "../../components/ui/select";
 
 const ProductsManagement = () => {
-  const { currentUser } = useAuth();
-  const { getUserStores, getStoreProducts } = useStore();
+  const { currentUser } = useAuthStore();
+  const { getUserStores, getStoreProducts } = useStoreManager();
   const [userStores, setUserStores] = useState([]);
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
