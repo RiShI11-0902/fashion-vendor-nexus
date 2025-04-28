@@ -1,15 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useStore } from "../../contexts/StoreContext";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useStore } from "../../stores/useStoreManager";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { ShoppingBag, Package, Plus, ArrowRight, Store, Loader } from "lucide-react";
 
 const Dashboard = () => {
-  const { currentUser } = useAuth();
+  const { currentUser } = useAuthStore();
   const { getUserStores, getStoreProducts } = useStore();
   const [userStores, setUserStores] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
