@@ -1,16 +1,15 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useStore } from "../../contexts/StoreContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useStoreManager } from "../../stores/useStoreManager";
+import { useAuthStore } from "../../stores/useAuthStore";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import StoreForm from "../../components/forms/StoreForm";
 import { Loader } from "lucide-react";
 
 const EditStore = () => {
   const { storeId } = useParams();
-  const { stores, getUserStores } = useStore();
-  const { currentUser } = useAuth();
+  const { stores, getUserStores } = useStoreManager();
+  const { currentUser } = useAuthStore();
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useStore } from "../../contexts/StoreContext";
+import { useStoreManager } from "../../stores/useStoreManager";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
 import { ArrowLeft, ShoppingBag, Package } from "lucide-react";
@@ -9,7 +8,7 @@ import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { storeSlug, productId } = useParams();
-  const { getStoreBySlug, products } = useStore();
+  const { getStoreBySlug, products } = useStoreManager();
   const [product, setProduct] = useState(null);
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
