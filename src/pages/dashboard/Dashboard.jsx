@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useStore } from "../../stores/useStoreManager";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
@@ -10,7 +11,7 @@ import {useStoreManager} from '../../stores/useStoreManager'
 
 const Dashboard = () => {
   const { currentUser } = useAuthStore();
-  const {getUserStores, getStoreProducts} = useStoreManager()
+  const { getUserStores, getStoreProducts } = useStore();
   const [userStores, setUserStores] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(true);

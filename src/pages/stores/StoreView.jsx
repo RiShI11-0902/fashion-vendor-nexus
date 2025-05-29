@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore";
+import { useStoreManager } from "../../stores/useStoreManager";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
 import { ShoppingBag, ArrowLeft, Package, Search } from "lucide-react";
