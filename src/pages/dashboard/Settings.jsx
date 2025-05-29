@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import DashboardLayout from "../../components/layout/DashboardLayout";
-import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { 
@@ -13,9 +12,10 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { toast } from "sonner";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const Settings = () => {
-  const { currentUser } = useAuth();
+  const { currentUser } = useAuthStore();
   const [name, setName] = useState(currentUser?.name || "");
   const [email, setEmail] = useState(currentUser?.email || "");
   
@@ -127,7 +127,7 @@ const Settings = () => {
           <p className="text-sm text-gray-600 mb-4">
             Once you delete your account, there is no going back. Please be certain.
           </p>
-          <Button variant="destructive">Delete Account</Button>
+          <Button variant="destructive" className="cursor-pointer">Delete Account</Button>
         </CardContent>
       </Card>
     </DashboardLayout>

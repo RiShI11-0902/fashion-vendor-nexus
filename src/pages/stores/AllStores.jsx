@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useStore } from "../../contexts/StoreContext";
+import { useAuthStore } from "../../stores/useAuthStore";
 import MainLayout from "../../components/layout/MainLayout";
 import StoreCard from "../../components/stores/StoreCard";
 import { Input } from "../../components/ui/input";
@@ -9,13 +9,13 @@ import { Button } from "../../components/ui/button";
 import { Search, ShoppingBag } from "lucide-react";
 
 const AllStores = () => {
-  const { stores } = useStore();
+  const { stores } = useAuthStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredStores, setFilteredStores] = useState([]);
   
   useEffect(() => {
     // Filter stores based on search term
-    const filtered = stores.filter(store => 
+    const filtered = stores?.filter(store => 
       store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (store.description && store.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (store.categories && store.categories.some(category => 
@@ -49,7 +49,7 @@ const AllStores = () => {
           </div>
         </div>
         
-        {filteredStores.length === 0 ? (
+        {filteredStores?.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
             <ShoppingBag className="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <h2 className="text-xl font-display font-semibold mb-2">No stores found</h2>
@@ -65,7 +65,7 @@ const AllStores = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredStores.map(store => (
+              {filteredStores?.map(store => (
                 <StoreCard key={store.id} store={store} />
               ))}
             </div>

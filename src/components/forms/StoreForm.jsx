@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStore } from "../../contexts/StoreContext";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
@@ -18,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { X } from "lucide-react";
+import { useStoreManager } from "../../stores/useStoreManager";
 
 const storeSchema = z.object({
   name: z.string().min(2, "Store name must be at least 2 characters"),
@@ -31,7 +31,7 @@ const storeSchema = z.object({
 
 const StoreForm = ({ initialData = null }) => {
   const navigate = useNavigate();
-  const { createStore, updateStore } = useStore();
+  const { createStore, updateStore } = useStoreManager();
   const [categories, setCategories] = useState(initialData?.categories || []);
   const [newCategory, setNewCategory] = useState("");
   

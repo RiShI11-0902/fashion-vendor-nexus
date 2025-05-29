@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useStore } from "../../contexts/StoreContext";
+import { useAuthStore } from "../../stores/useAuthStore";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
 import { ShoppingBag, ArrowLeft, Package, Search } from "lucide-react";
@@ -8,10 +8,11 @@ import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import ProductCard from "../../components/products/ProductCard";
 import { toast } from "sonner";
+import { useStoreManager } from "../../stores/useStoreManager";
 
 const StoreView = () => {
   const { storeSlug } = useParams();
-  const { getStoreBySlug, getStoreProducts, stores } = useStore();
+  const { getStoreBySlug, getStoreProducts, stores } = useStoreManager();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);

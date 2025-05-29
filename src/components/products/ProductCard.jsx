@@ -15,10 +15,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
-import { useStore } from "../../contexts/StoreContext";
+import { useAuthStore } from "../../stores/useAuthStore";
+
 
 const ProductCard = ({ product, isAdmin = false, storeSlug }) => {
-  const { deleteProduct } = useStore();
+  const { deleteProduct } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = () => {

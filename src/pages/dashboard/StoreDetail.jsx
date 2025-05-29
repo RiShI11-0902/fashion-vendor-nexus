@@ -1,12 +1,10 @@
 
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useStore } from "../../contexts/StoreContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthStore } from "../../stores/useAuthStore";
 import DashboardLayout from "../../components/layout/DashboardLayout";
-import ProductCard from "../../components/products/ProductCard";
 import { Button } from "../../components/ui/button";
-import { 
+import {  //////////useAuthStore
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -27,11 +25,12 @@ import {
   Package,
   ShoppingBag
 } from "lucide-react";
+import { useStoreManager } from "../../stores/useStoreManager";
 
 const StoreDetail = () => {
   const { storeId } = useParams();
-  const { getUserStores, getStoreProducts, deleteStore } = useStore();
-  const { currentUser } = useAuth();
+  const { getUserStores, getStoreProducts, deleteStore } = useStoreManager();
+  const { currentUser } = useAuthStore();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);

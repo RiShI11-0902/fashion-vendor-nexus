@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+// import { useStore. } from "../../stores/useAuthStore";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { ShoppingBag } from "lucide-react";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -22,7 +23,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { signup } = useAuth();
+  const { signup } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

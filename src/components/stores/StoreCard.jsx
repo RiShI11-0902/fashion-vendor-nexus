@@ -39,8 +39,8 @@ const StoreCard = ({ store }) => {
         </div>
       </CardContent>
       
-      <CardFooter className="pt-2 pb-6 flex justify-between">
-        <Button asChild variant="outline" size="sm">
+      <CardFooter className="pt-2 pb-6 flex justify-between cursor-pointer">
+        <Button asChild variant="outline" size="sm" className="cursor-pointer">
           <Link to={`/store/${store.slug}`}>
             Visit Store
           </Link>
