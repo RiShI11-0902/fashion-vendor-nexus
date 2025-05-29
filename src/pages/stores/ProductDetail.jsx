@@ -1,19 +1,26 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useStoreManager } from "../../stores/useStoreManager";
+import { useCartStore } from "../../stores/useCartStore";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
-import { ArrowLeft, ShoppingBag, Package } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Package, Plus, Minus } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { storeSlug, productId } = useParams();
   const { getStoreBySlug, products } = useStoreManager();
+  const { addToCart, items, updateQuantity } = useCartStore();
   const [product, setProduct] = useState(null);
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
+  
+  // Get existing cart item for this product
+  const existingCartItem = items.find(item => item.productId === productId);
   
   useEffect(() => {
     if (storeSlug && productId) {
@@ -37,9 +44,37 @@ const ProductDetail = () => {
   }, [storeSlug, productId, getStoreBySlug, products]);
   
   const handleAddToCart = () => {
-    // In a real app, this would add the product to cart
-    toast.success(`${product.name} added to cart`);
+    if (!product.inventory || product.inventory <= 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+    
+    // Check if adding this quantity would exceed available inventory
+    const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+    if (currentCartQuantity + quantity > product.inventory) {
+      toast.error(`Only ${product.inventory} items available in stock`);
+      return;
+    }
+    
+    // Add the specified quantity to cart
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product, store);
+    }
+    
+    // Reset quantity to 1 after adding
+    setQuantity(1);
   };
+  
+  const handleQuantityChange = (newQuantity) => {
+    if (newQuantity >= 1 && newQuantity <= product.inventory) {
+      setQuantity(newQuantity);
+    }
+  };
+  
+  const isOutOfStock = !product?.inventory || product.inventory <= 0;
+  const maxAvailable = product?.inventory || 0;
+  const currentCartQuantity = existingCartItem ? existingCartItem.quantity : 0;
+  const remainingStock = maxAvailable - currentCartQuantity;
   
   if (loading) {
     return (
@@ -112,22 +147,55 @@ const ProductDetail = () => {
             <div className="mb-8">
               <h3 className="font-medium mb-2">Availability:</h3>
               <p className="text-gray-700">
-                {(product.inventory && product.inventory > 0)
-                  ? `In Stock (${product.inventory} available)`
-                  : "Out of Stock"
+                {isOutOfStock
+                  ? "Out of Stock"
+                  : `In Stock (${remainingStock} available)`
                 }
               </p>
+              {existingCartItem && (
+                <p className="text-sm text-blue-600 mt-1">
+                  {existingCartItem.quantity} already in cart
+                </p>
+              )}
             </div>
+            
+            {!isOutOfStock && remainingStock > 0 && (
+              <div className="mb-6">
+                <h3 className="font-medium mb-3">Quantity:</h3>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleQuantityChange(quantity - 1)}
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="text-lg font-medium w-8 text-center">{quantity}</span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleQuantityChange(quantity + 1)}
+                    disabled={quantity >= remainingStock}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm text-gray-500 ml-4">
+                    Max: {remainingStock}
+                  </span>
+                </div>
+              </div>
+            )}
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
                 className="flex-1"
                 onClick={handleAddToCart}
-                disabled={!product.inventory || product.inventory <= 0}
+                disabled={isOutOfStock || remainingStock <= 0}
               >
                 <ShoppingBag className="mr-2 h-5 w-5" />
-                Add to Cart
+                {isOutOfStock ? "Out of Stock" : `Add ${quantity} to Cart`}
               </Button>
               <Button 
                 variant="outline" 
