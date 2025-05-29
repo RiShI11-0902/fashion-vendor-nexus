@@ -13,13 +13,14 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { ShoppingBag } from "lucide-react";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

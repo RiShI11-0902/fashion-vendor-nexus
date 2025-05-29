@@ -7,12 +7,12 @@ import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
 import { ArrowLeft, ShoppingBag, Package, Plus, Minus } from "lucide-react";
 import { toast } from "sonner";
-import { useStoreManager } from "../../stores/useStoreManager";
+// import { useStoreManager } from "../../stores/useStoreManager";
 
 const ProductDetail = () => {
   const { storeSlug, productId } = useParams();
   const { getStoreBySlug, products } = useStoreManager();
-  const { addToCart, items, updateQuantity } = useCartStoreManager();
+  const { addToCart, items, updateQuantity } = useCartStore();
   const [product, setProduct] = useState(null);
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);

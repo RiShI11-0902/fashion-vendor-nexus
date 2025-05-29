@@ -8,7 +8,7 @@ import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import ProductCard from "../../components/products/ProductCard";
 import { toast } from "sonner";
-import { useStoreManager } from "../../stores/useStoreManager";
+// import { useStoreManager } from "../../stores/useStoreManager";
 
 const StoreView = () => {
   const { storeSlug } = useParams();
