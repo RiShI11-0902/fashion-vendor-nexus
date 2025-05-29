@@ -1,16 +1,17 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { useAuth } from "../../contexts/AuthContext";
-// import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "../ui/button";
-import { Menu, X, ShoppingBag, User } from "lucide-react";
+import { Menu, X, ShoppingBag, User, ShoppingCart } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useCartStore } from "../../stores/useCartStore";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { currentUser, logout } = useAuthStore();
+  const { getTotalItems } = useCartStore();
   const navigate = useNavigate();
+  const totalItems = getTotalItems();
 
   const handleLogout = () => {
     logout();
@@ -36,6 +37,16 @@ const Navbar = () => {
           <Link to="/about" className="text-sm font-medium hover:text-gold transition-colors">
             About
           </Link>
+          
+          {/* Cart Icon - Only show if there are items */}
+          {totalItems > 0 && (
+            <Link to="/cart" className="relative">
+              <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-gold transition-colors" />
+              <span className="absolute -top-2 -right-2 bg-gold text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            </Link>
+          )}
           
           {currentUser ? (
             <>
@@ -99,6 +110,18 @@ const Navbar = () => {
             >
               About
             </Link>
+            
+            {/* Mobile Cart Link - Only show if there are items */}
+            {totalItems > 0 && (
+              <Link 
+                to="/cart"
+                className="flex items-center text-sm font-medium hover:text-gold transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Cart ({totalItems})
+              </Link>
+            )}
             
             {currentUser ? (
               <>
