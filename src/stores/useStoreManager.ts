@@ -29,6 +29,8 @@ interface StoreState {
   stores: Store[];
   products: Product[];
   loading: boolean;
+  initialized: boolean;
+  initializeData: () => void;
   createStore: (storeData: Partial<Store>) => Store | null;
   updateStore: (storeId: string, storeData: Partial<Store>) => void;
   deleteStore: (storeId: string) => void;
@@ -44,6 +46,24 @@ export const useStoreManager = create<StoreState>((set, get) => ({
   stores: [],
   products: [],
   loading: true,
+  initialized: false,
+
+  initializeData: () => {
+    if (get().initialized) return;
+    
+    const storedStores = localStorage.getItem("stores");
+    const storedProducts = localStorage.getItem("products");
+    
+    console.log("Initializing store data from localStorage");
+    console.log("Stored stores:", storedStores);
+    
+    set({
+      stores: storedStores ? JSON.parse(storedStores) : [],
+      products: storedProducts ? JSON.parse(storedProducts) : [],
+      loading: false,
+      initialized: true
+    });
+  },
 
   createStore: (storeData) => {
     const currentUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -65,36 +85,45 @@ export const useStoreManager = create<StoreState>((set, get) => ({
       createdAt: new Date().toISOString(),
     } as Store;
 
+    const updatedStores = [...get().stores, newStore];
     set(state => ({
-      stores: [...state.stores, newStore]
+      stores: updatedStores
     }));
-    localStorage.setItem("stores", JSON.stringify([...get().stores]));
+    localStorage.setItem("stores", JSON.stringify(updatedStores));
+    console.log("Store created and saved to localStorage:", newStore);
     toast.success("Store created successfully");
     return newStore;
   },
 
   updateStore: (storeId, storeData) => {
-    set(state => ({
-      stores: state.stores.map(store =>
-        store.id === storeId ? { ...store, ...storeData } : store
-      )
-    }));
-    localStorage.setItem("stores", JSON.stringify(get().stores));
+    const updatedStores = get().stores.map(store =>
+      store.id === storeId ? { ...store, ...storeData } : store
+    );
+    set({ stores: updatedStores });
+    localStorage.setItem("stores", JSON.stringify(updatedStores));
     toast.success("Store updated successfully");
   },
 
   deleteStore: (storeId) => {
-    set(state => ({
-      stores: state.stores.filter(store => store.id !== storeId),
-      products: state.products.filter(product => product.storeId !== storeId)
-    }));
-    localStorage.setItem("stores", JSON.stringify(get().stores));
-    localStorage.setItem("products", JSON.stringify(get().products));
+    const updatedStores = get().stores.filter(store => store.id !== storeId);
+    const updatedProducts = get().products.filter(product => product.storeId !== storeId);
+    
+    set({
+      stores: updatedStores,
+      products: updatedProducts
+    });
+    localStorage.setItem("stores", JSON.stringify(updatedStores));
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
     toast.success("Store deleted successfully");
   },
 
   getStoreBySlug: (slug) => {
-    return get().stores.find(store => store.slug === slug);
+    if (!get().initialized) {
+      get().initializeData();
+    }
+    const store = get().stores.find(store => store.slug === slug);
+    console.log(`Looking for store with slug "${slug}":`, store);
+    return store;
   },
 
   getUserStores: (userId) => {
@@ -108,29 +137,26 @@ export const useStoreManager = create<StoreState>((set, get) => ({
       createdAt: new Date().toISOString(),
     } as Product;
 
-    set(state => ({
-      products: [...state.products, newProduct]
-    }));
-    localStorage.setItem("products", JSON.stringify([...get().products]));
+    const updatedProducts = [...get().products, newProduct];
+    set({ products: updatedProducts });
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
     toast.success("Product added successfully");
     return newProduct;
   },
 
   updateProduct: (productId, productData) => {
-    set(state => ({
-      products: state.products.map(product =>
-        product.id === productId ? { ...product, ...productData } : product
-      )
-    }));
-    localStorage.setItem("products", JSON.stringify(get().products));
+    const updatedProducts = get().products.map(product =>
+      product.id === productId ? { ...product, ...productData } : product
+    );
+    set({ products: updatedProducts });
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
     toast.success("Product updated successfully");
   },
 
   deleteProduct: (productId) => {
-    set(state => ({
-      products: state.products.filter(product => product.id !== productId)
-    }));
-    localStorage.setItem("products", JSON.stringify(get().products));
+    const updatedProducts = get().products.filter(product => product.id !== productId);
+    set({ products: updatedProducts });
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
     toast.success("Product deleted successfully");
   },
 
@@ -139,16 +165,7 @@ export const useStoreManager = create<StoreState>((set, get) => ({
   },
 }));
 
-// Initialize store data from localStorage
-const initializeStores = () => {
-  const storedStores = localStorage.getItem("stores");
-  const storedProducts = localStorage.getItem("products");
-  
-  useStoreManager.setState({
-    stores: storedStores ? JSON.parse(storedStores) : [],
-    products: storedProducts ? JSON.parse(storedProducts) : [],
-    loading: false
-  });
-};
-
-initializeStores();
+// Initialize store data when the module loads
+if (typeof window !== 'undefined') {
+  useStoreManager.getState().initializeData();
+}

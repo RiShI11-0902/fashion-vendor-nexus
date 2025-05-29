@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import Cart from "./pages/Cart";
 
 // Auth Pages
 import Login from "./pages/auth/Login";
@@ -42,6 +43,7 @@ const App = () => (
           {/* Main Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
+          <Route path="/cart" element={<Cart />} />
           
           {/* Auth Routes */}
           <Route path="/login" element={<Login />} />

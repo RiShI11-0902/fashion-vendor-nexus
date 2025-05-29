@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAuthStore } from "../../stores/useAuthStore";
+import { useStoreManager } from "../../stores/useStoreManager";
 import MainLayout from "../../components/layout/MainLayout";
 import StoreCard from "../../components/stores/StoreCard";
 import { Input } from "../../components/ui/input";
@@ -9,7 +9,7 @@ import { Button } from "../../components/ui/button";
 import { Search, ShoppingBag } from "lucide-react";
 
 const AllStores = () => {
-  const { stores } = useAuthStore();
+  const { stores } = useStoreManager();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredStores, setFilteredStores] = useState([]);
   
