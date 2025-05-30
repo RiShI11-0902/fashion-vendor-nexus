@@ -17,7 +17,7 @@ import {
   Package,
   Settings,
   ListPlus,
-  Image
+  ClipboardList
 } from "lucide-react";
 
 const DashboardSidebar = () => {
@@ -42,7 +42,7 @@ const DashboardSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard") && !isActive("/products") && !isActive("/settings") ? "bg-accent" : ""}>
+                <SidebarMenuButton asChild className={isActive("/dashboard") && !isActive("/products") && !isActive("/settings") && !isActive("/stores") && !isActive("/orders") ? "bg-accent" : ""}>
                   <Link to="/dashboard">
                     <Grid2x2 className="h-4 w-4 mr-2" />
                     <span>Overview</span>
@@ -64,6 +64,15 @@ const DashboardSidebar = () => {
                   <Link to="/dashboard/products">
                     <Package className="h-4 w-4 mr-2" />
                     <span>Products</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className={isActive("/dashboard/orders") ? "bg-accent" : ""}>
+                  <Link to="/dashboard/orders">
+                    <ClipboardList className="h-4 w-4 mr-2" />
+                    <span>Orders</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

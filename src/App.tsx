@@ -19,6 +19,7 @@ import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/dashboard/Dashboard";
 import StoresManagement from "./pages/dashboard/StoresManagement";
 import ProductsManagement from "./pages/dashboard/ProductsManagement";
+import OrdersManagement from "./pages/dashboard/OrdersManagement";
 import CreateStore from "./pages/dashboard/CreateStore";
 import EditStore from "./pages/dashboard/EditStore";
 import CreateProduct from "./pages/dashboard/CreateProduct";
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/stores" element={<StoresManagement />} />
           <Route path="/dashboard/products" element={<ProductsManagement />} />
+          <Route path="/dashboard/orders" element={<OrdersManagement />} />
           <Route path="/dashboard/create-store" element={<CreateStore />} />
           <Route path="/dashboard/stores/edit/:storeId" element={<EditStore />} />
           <Route path="/dashboard/stores/:storeId" element={<StoreDetail />} />
