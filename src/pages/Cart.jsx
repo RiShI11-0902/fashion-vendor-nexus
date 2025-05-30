@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "../stores/useCartStore";
@@ -61,7 +60,7 @@ const Cart = () => {
       customerEmail: customerInfo.email,
       items: orderItems,
       totalAmount: getTotalPrice(),
-      status: "pending" as const,
+      status: "pending",
     };
 
     createOrder(orderData);
