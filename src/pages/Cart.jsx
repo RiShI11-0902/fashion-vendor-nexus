@@ -12,6 +12,9 @@ const Cart = () => {
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCartStore();
   const { getStoreBySlug } = useStoreManager();
 
+  console.log(items);
+  
+
   if (items.length === 0) {
     return (
       <MainLayout>
@@ -37,16 +40,16 @@ const Cart = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => {
-              const store = getStoreBySlug(item.storeSlug);
+              const store = getStoreBySlug(item?.storeName);
               return (
-                <Card key={`${item.productId}-${item.storeSlug}`}>
+                <Card key={`${item.productId}-${item?.storeSlug}`}>
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
-                        {item.product.imageUrl ? (
+                        {item?.imageUrl ? (
                           <img 
-                            src={item.product.imageUrl} 
-                            alt={item.product.name}
+                            src={item.imageUrl} 
+                            alt={item.name}
                             className="w-full h-full object-cover rounded-lg"
                           />
                         ) : (
@@ -55,9 +58,9 @@ const Cart = () => {
                       </div>
                       
                       <div className="flex-1">
-                        <h3 className="font-semibold">{item.product.name}</h3>
+                        <h3 className="font-semibold">{item?.name}</h3>
                         <p className="text-sm text-gray-600">{store?.name}</p>
-                        <p className="text-lg font-semibold text-primary">${item.product.price}</p>
+                        <p className="text-lg font-semibold text-primary">${item?.price}</p>
                       </div>
                       
                       <div className="flex items-center gap-2">
