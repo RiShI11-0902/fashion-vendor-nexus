@@ -1,4 +1,3 @@
-
 import { create } from "zustand";
 import { toast } from "sonner";
 
@@ -40,6 +39,8 @@ interface StoreState {
   updateProduct: (productId: string, productData: Partial<Product>) => void;
   deleteProduct: (productId: string) => void;
   getStoreProducts: (storeId: string) => Product[];
+  updateProductInventory: (productId: string, quantitySold: number) => void;
+  getLowStockProducts: (storeId: string, threshold?: number) => Product[];
 }
 
 export const useStoreManager = create<StoreState>((set, get) => ({
@@ -133,6 +134,7 @@ export const useStoreManager = create<StoreState>((set, get) => ({
   addProduct: (productData) => {
     const newProduct = {
       id: Date.now().toString(),
+      inventory: 0, // Default inventory
       ...productData,
       createdAt: new Date().toISOString(),
     } as Product;
@@ -162,6 +164,30 @@ export const useStoreManager = create<StoreState>((set, get) => ({
 
   getStoreProducts: (storeId) => {
     return get().products.filter(product => product.storeId === storeId);
+  },
+
+  updateProductInventory: (productId, quantitySold) => {
+    const updatedProducts = get().products.map(product => {
+      if (product.id === productId) {
+        const newInventory = Math.max(0, product.inventory - quantitySold);
+        if (newInventory <= 5 && newInventory > 0) {
+          toast.warning(`Low stock alert: ${product.name} has only ${newInventory} items left`);
+        } else if (newInventory === 0) {
+          toast.error(`${product.name} is now out of stock`);
+        }
+        return { ...product, inventory: newInventory };
+      }
+      return product;
+    });
+    
+    set({ products: updatedProducts });
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+  },
+
+  getLowStockProducts: (storeId, threshold = 5) => {
+    return get().products.filter(product => 
+      product.storeId === storeId && product.inventory <= threshold && product.inventory > 0
+    );
   },
 }));
 

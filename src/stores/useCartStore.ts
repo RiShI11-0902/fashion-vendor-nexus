@@ -10,14 +10,15 @@ interface CartItem {
   imageUrl?: string;
   storeId: string;
   storeName: string;
+  storeSlug: string;
   quantity: number;
 }
 
 interface CartState {
   items: CartItem[];
   addToCart: (product: any, store: any) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeFromCart: (productId: string, storeSlug: string) => void;
+  updateQuantity: (productId: string, storeSlug: string, quantity: number) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -27,12 +28,26 @@ export const useCartStore = create<CartState>((set, get) => ({
   items: [],
 
   addToCart: (product, store) => {
-    const existingItem = get().items.find(item => item.productId === product.id);
+    // Check inventory before adding
+    if (!product.inventory || product.inventory <= 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
+    const existingItem = get().items.find(item => 
+      item.productId === product.id && item.storeSlug === store.slug
+    );
     
     if (existingItem) {
+      // Check if adding one more would exceed inventory
+      if (existingItem.quantity >= product.inventory) {
+        toast.error(`Only ${product.inventory} items available in stock`);
+        return;
+      }
+      
       set(state => ({
         items: state.items.map(item =>
-          item.productId === product.id
+          item.productId === product.id && item.storeSlug === store.slug
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
@@ -47,6 +62,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         imageUrl: product.imageUrl,
         storeId: product.storeId,
         storeName: store.name,
+        storeSlug: store.slug,
         quantity: 1
       };
       
@@ -59,23 +75,25 @@ export const useCartStore = create<CartState>((set, get) => ({
     localStorage.setItem("cart", JSON.stringify(get().items));
   },
 
-  removeFromCart: (productId) => {
+  removeFromCart: (productId, storeSlug) => {
     set(state => ({
-      items: state.items.filter(item => item.productId !== productId)
+      items: state.items.filter(item => 
+        !(item.productId === productId && item.storeSlug === storeSlug)
+      )
     }));
     localStorage.setItem("cart", JSON.stringify(get().items));
     toast.success("Item removed from cart");
   },
 
-  updateQuantity: (productId, quantity) => {
+  updateQuantity: (productId, storeSlug, quantity) => {
     if (quantity <= 0) {
-      get().removeFromCart(productId);
+      get().removeFromCart(productId, storeSlug);
       return;
     }
     
     set(state => ({
       items: state.items.map(item =>
-        item.productId === productId
+        item.productId === productId && item.storeSlug === storeSlug
           ? { ...item, quantity }
           : item
       )

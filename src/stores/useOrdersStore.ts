@@ -1,6 +1,6 @@
-
 import { create } from "zustand";
 import { toast } from "sonner";
+import { useStoreManager } from "./useStoreManager";
 
 export interface OrderItem {
   id: string;
@@ -34,6 +34,11 @@ interface OrdersState {
   updateOrderStatus: (orderId: string, status: Order["status"]) => void;
   getStoreOrders: (storeId: string) => Order[];
   getOrderById: (orderId: string) => Order | undefined;
+  getOrderStats: (storeId?: string) => {
+    totalOrders: number;
+    totalRevenue: number;
+    pendingOrders: number;
+  };
 }
 
 export const useOrdersStore = create<OrdersState>((set, get) => ({
@@ -61,6 +66,11 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
+
+    // Update inventory for each product in the order
+    orderData.items.forEach(item => {
+      useStoreManager.getState().updateProductInventory(item.productId, item.quantity);
+    });
 
     const updatedOrders = [...get().orders, newOrder];
     set({ orders: updatedOrders });
@@ -91,6 +101,18 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
 
   getOrderById: (orderId) => {
     return get().orders.find(order => order.id === orderId);
+  },
+
+  getOrderStats: (storeId) => {
+    const orders = storeId 
+      ? get().orders.filter(order => order.items.some(item => item.storeId === storeId))
+      : get().orders;
+    
+    return {
+      totalOrders: orders.length,
+      totalRevenue: orders.reduce((sum, order) => sum + order.totalAmount, 0),
+      pendingOrders: orders.filter(order => order.status === "pending").length,
+    };
   },
 }));
 
