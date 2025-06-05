@@ -27,6 +27,7 @@ import CreateProduct from "./pages/dashboard/CreateProduct";
 import EditProduct from "./pages/dashboard/EditProduct";
 import StoreDetail from "./pages/dashboard/StoreDetail";
 import Settings from "./pages/dashboard/Settings";
+import StorefrontCustomization from "./pages/dashboard/StorefrontCustomization";
 
 // Store Pages
 import AllStores from "./pages/stores/AllStores";
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/dashboard/create-store" element={<CreateStore />} />
           <Route path="/dashboard/stores/edit/:storeId" element={<EditStore />} />
           <Route path="/dashboard/stores/:storeId" element={<StoreDetail />} />
+          <Route path="/dashboard/stores/:storeId/customize" element={<StorefrontCustomization />} />
           <Route path="/dashboard/products/create" element={<CreateProduct />} />
           <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
           <Route path="/dashboard/settings" element={<Settings />} />
