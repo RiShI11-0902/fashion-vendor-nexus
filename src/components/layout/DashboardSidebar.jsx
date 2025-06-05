@@ -17,7 +17,8 @@ import {
   Package,
   Settings,
   ListPlus,
-  ClipboardList
+  ClipboardList,
+  BarChart3
 } from "lucide-react";
 
 const DashboardSidebar = () => {
@@ -42,10 +43,19 @@ const DashboardSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard") && !isActive("/products") && !isActive("/settings") && !isActive("/stores") && !isActive("/orders") ? "bg-accent" : ""}>
+                <SidebarMenuButton asChild className={isActive("/dashboard") && !isActive("/products") && !isActive("/settings") && !isActive("/stores") && !isActive("/orders") && !isActive("/analytics") ? "bg-accent" : ""}>
                   <Link to="/dashboard">
                     <Grid2x2 className="h-4 w-4 mr-2" />
                     <span>Overview</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild className={isActive("/dashboard/analytics") ? "bg-accent" : ""}>
+                  <Link to="/dashboard/analytics">
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    <span>Analytics</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -4,6 +4,21 @@ import { useOrdersStore } from "../../stores/useOrdersStore";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "../ui/chart";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import { TrendingUp, Package, AlertTriangle, DollarSign } from "lucide-react";
 
 const StoreAnalytics = ({ storeId }) => {
@@ -12,6 +27,18 @@ const StoreAnalytics = ({ storeId }) => {
   const [stats, setStats] = useState(null);
   const [topProducts, setTopProducts] = useState([]);
   const [lowStockProducts, setLowStockProducts] = useState([]);
+  const [chartData, setChartData] = useState({ topProducts: [], orderStatus: [] });
+
+  const chartConfig = {
+    sales: {
+      label: "Sales",
+      color: "#8b5cf6",
+    },
+    orders: {
+      label: "Orders",
+      color: "#06b6d4",
+    },
+  };
 
   useEffect(() => {
     if (storeId) {
@@ -37,12 +64,24 @@ const StoreAnalytics = ({ storeId }) => {
         .slice(0, 5)
         .map(([productId, quantity]) => {
           const product = products.find(p => p.id === productId);
-          return { product, quantity };
+          return { product, quantity, name: product?.name || 'Unknown', sales: quantity };
         })
         .filter(item => item.product);
 
+      // Order status for pie chart
+      const statusData = [
+        { name: 'Pending', value: storeOrders.filter(o => o.status === 'pending').length, color: '#f59e0b' },
+        { name: 'Confirmed', value: storeOrders.filter(o => o.status === 'confirmed').length, color: '#10b981' },
+        { name: 'Shipped', value: storeOrders.filter(o => o.status === 'shipped').length, color: '#06b6d4' },
+        { name: 'Delivered', value: storeOrders.filter(o => o.status === 'delivered').length, color: '#8b5cf6' },
+      ].filter(item => item.value > 0);
+
       setTopProducts(topSellingProducts);
       setLowStockProducts(lowStock);
+      setChartData({
+        topProducts: topSellingProducts,
+        orderStatus: statusData
+      });
     }
   }, [storeId, getOrderStats, getStoreOrders, getStoreProducts, getLowStockProducts]);
 
@@ -68,7 +107,7 @@ const StoreAnalytics = ({ storeId }) => {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{stats.totalRevenue.toFixed(2)}</div>
           </CardContent>
         </Card>
         
@@ -83,9 +122,9 @@ const StoreAnalytics = ({ storeId }) => {
         </Card>
       </div>
 
-      {/* Top Products and Alerts */}
+      {/* Charts and Data */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Selling Products */}
+        {/* Top Products Chart */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -94,20 +133,33 @@ const StoreAnalytics = ({ storeId }) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {topProducts.length > 0 ? (
-              <div className="space-y-3">
-                {topProducts.map(({ product, quantity }, index) => (
-                  <div key={product.id} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Badge variant="outline">{index + 1}</Badge>
-                      <div>
-                        <p className="font-medium">{product.name}</p>
-                        <p className="text-sm text-gray-500">${product.price}</p>
+            {chartData.topProducts.length > 0 ? (
+              <div className="space-y-4">
+                <ChartContainer config={chartConfig} className="h-[200px]">
+                  <BarChart data={chartData.topProducts}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="sales" fill="var(--color-sales)" />
+                  </BarChart>
+                </ChartContainer>
+                
+                {/* Product List */}
+                <div className="space-y-2">
+                  {topProducts.slice(0, 3).map(({ product, quantity }, index) => (
+                    <div key={product.id} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <Badge variant="outline">{index + 1}</Badge>
+                        <div>
+                          <p className="font-medium text-sm">{product.name}</p>
+                          <p className="text-xs text-gray-500">₹{product.price}</p>
+                        </div>
                       </div>
+                      <Badge>{quantity} sold</Badge>
                     </div>
-                    <Badge>{quantity} sold</Badge>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             ) : (
               <p className="text-gray-500">No sales data available</p>
@@ -115,8 +167,41 @@ const StoreAnalytics = ({ storeId }) => {
           </CardContent>
         </Card>
 
-        {/* Low Stock Alerts */}
+        {/* Order Status Chart */}
         <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Package className="mr-2 h-5 w-5" />
+              Order Status Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {chartData.orderStatus.length > 0 ? (
+              <ChartContainer config={chartConfig} className="h-[200px]">
+                <PieChart>
+                  <Pie
+                    data={chartData.orderStatus}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={60}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}`}
+                  >
+                    {chartData.orderStatus.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip />
+                </PieChart>
+              </ChartContainer>
+            ) : (
+              <p className="text-gray-500">No order data available</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Low Stock Alerts */}
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center">
               <AlertTriangle className="mr-2 h-5 w-5 text-yellow-500" />
@@ -125,12 +210,12 @@ const StoreAnalytics = ({ storeId }) => {
           </CardHeader>
           <CardContent>
             {lowStockProducts.length > 0 ? (
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {lowStockProducts.map(product => (
-                  <div key={product.id} className="flex items-center justify-between">
+                  <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
                       <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-gray-500">${product.price}</p>
+                      <p className="text-sm text-gray-500">₹{product.price}</p>
                     </div>
                     <Badge variant="destructive">{product.inventory} left</Badge>
                   </div>
