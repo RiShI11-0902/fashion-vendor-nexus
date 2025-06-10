@@ -1,3 +1,4 @@
+
 import { create } from "zustand";
 import { toast } from "sonner";
 
@@ -24,9 +25,21 @@ interface Product {
   createdAt: string;
 }
 
+interface Discount {
+  id: string;
+  productId: string;
+  type: 'percentage' | 'fixed';
+  value: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 interface StoreState {
   stores: Store[];
   products: Product[];
+  discounts: Discount[];
   loading: boolean;
   initialized: boolean;
   initializeData: () => void;
@@ -41,11 +54,18 @@ interface StoreState {
   getStoreProducts: (storeId: string) => Product[];
   updateProductInventory: (productId: string, quantitySold: number) => void;
   getLowStockProducts: (storeId: string, threshold?: number) => Product[];
+  createDiscount: (discountData: Partial<Discount>) => Discount;
+  updateDiscount: (discountId: string, discountData: Partial<Discount>) => void;
+  deleteDiscount: (discountId: string) => void;
+  getProductDiscount: (productId: string) => Discount | undefined;
+  getActiveDiscounts: (storeId: string) => Discount[];
+  getDiscountedPrice: (productId: string, originalPrice: number) => { price: number; discount?: Discount };
 }
 
 export const useStoreManager = create<StoreState>((set, get) => ({
   stores: [],
   products: [],
+  discounts: [],
   loading: true,
   initialized: false,
 
@@ -54,6 +74,7 @@ export const useStoreManager = create<StoreState>((set, get) => ({
     
     const storedStores = localStorage.getItem("stores");
     const storedProducts = localStorage.getItem("products");
+    const storedDiscounts = localStorage.getItem("discounts");
     
     console.log("Initializing store data from localStorage");
     console.log("Stored stores:", storedStores);
@@ -61,6 +82,7 @@ export const useStoreManager = create<StoreState>((set, get) => ({
     set({
       stores: storedStores ? JSON.parse(storedStores) : [],
       products: storedProducts ? JSON.parse(storedProducts) : [],
+      discounts: storedDiscounts ? JSON.parse(storedDiscounts) : [],
       loading: false,
       initialized: true
     });
@@ -157,8 +179,14 @@ export const useStoreManager = create<StoreState>((set, get) => ({
 
   deleteProduct: (productId) => {
     const updatedProducts = get().products.filter(product => product.id !== productId);
-    set({ products: updatedProducts });
+    const updatedDiscounts = get().discounts.filter(discount => discount.productId !== productId);
+    
+    set({ 
+      products: updatedProducts,
+      discounts: updatedDiscounts 
+    });
     localStorage.setItem("products", JSON.stringify(updatedProducts));
+    localStorage.setItem("discounts", JSON.stringify(updatedDiscounts));
     toast.success("Product deleted successfully");
   },
 
@@ -188,6 +216,78 @@ export const useStoreManager = create<StoreState>((set, get) => ({
     return get().products.filter(product => 
       product.storeId === storeId && product.inventory <= threshold && product.inventory > 0
     );
+  },
+
+  createDiscount: (discountData) => {
+    const newDiscount = {
+      id: Date.now().toString(),
+      ...discountData,
+      createdAt: new Date().toISOString(),
+    } as Discount;
+
+    const updatedDiscounts = [...get().discounts, newDiscount];
+    set({ discounts: updatedDiscounts });
+    localStorage.setItem("discounts", JSON.stringify(updatedDiscounts));
+    toast.success("Discount created successfully");
+    return newDiscount;
+  },
+
+  updateDiscount: (discountId, discountData) => {
+    const updatedDiscounts = get().discounts.map(discount =>
+      discount.id === discountId ? { ...discount, ...discountData } : discount
+    );
+    set({ discounts: updatedDiscounts });
+    localStorage.setItem("discounts", JSON.stringify(updatedDiscounts));
+    toast.success("Discount updated successfully");
+  },
+
+  deleteDiscount: (discountId) => {
+    const updatedDiscounts = get().discounts.filter(discount => discount.id !== discountId);
+    set({ discounts: updatedDiscounts });
+    localStorage.setItem("discounts", JSON.stringify(updatedDiscounts));
+    toast.success("Discount deleted successfully");
+  },
+
+  getProductDiscount: (productId) => {
+    const now = new Date().toISOString();
+    return get().discounts.find(discount => 
+      discount.productId === productId && 
+      discount.isActive && 
+      discount.startDate <= now && 
+      discount.endDate >= now
+    );
+  },
+
+  getActiveDiscounts: (storeId) => {
+    const now = new Date().toISOString();
+    const storeProducts = get().products.filter(p => p.storeId === storeId).map(p => p.id);
+    
+    return get().discounts.filter(discount => 
+      storeProducts.includes(discount.productId) &&
+      discount.isActive && 
+      discount.startDate <= now && 
+      discount.endDate >= now
+    );
+  },
+
+  getDiscountedPrice: (productId, originalPrice) => {
+    const discount = get().getProductDiscount(productId);
+    
+    if (!discount) {
+      return { price: originalPrice };
+    }
+
+    let discountedPrice = originalPrice;
+    if (discount.type === 'percentage') {
+      discountedPrice = originalPrice * (1 - discount.value / 100);
+    } else {
+      discountedPrice = Math.max(0, originalPrice - discount.value);
+    }
+
+    return { 
+      price: Math.round(discountedPrice * 100) / 100,
+      discount 
+    };
   },
 }));
 
