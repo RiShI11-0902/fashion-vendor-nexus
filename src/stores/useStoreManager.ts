@@ -65,6 +65,7 @@ interface StoreActions {
   createProduct: (product: Omit<Product, 'id' | 'createdAt'>) => void;
   updateProduct: (productId: string, updates: Partial<Product>) => void;
   deleteProduct: (productId: string) => void;
+  updateProductInventory: (productId: string, quantityToSubtract: number) => void;
   createDiscount: (discount: Omit<Discount, 'id'>) => void;
   updateDiscount: (discountId: string, updates: Partial<Discount>) => void;
   deleteDiscount: (discountId: string) => void;
@@ -136,6 +137,16 @@ const useStoreManager = create<StoreState & StoreActions>()(
           }));
           toast.success('Product deleted successfully');
         },
+        updateProductInventory: (productId, quantityToSubtract) => {
+          set((state) => ({
+            products: state.products.map((product) =>
+              product.id === productId 
+                ? { ...product, inventory: Math.max(0, product.inventory - quantityToSubtract) }
+                : product
+            ),
+          }));
+          console.log(`Updated inventory for product ${productId}, subtracted ${quantityToSubtract}`);
+        },
         createDiscount: (discount) => {
           const newDiscount = {
             id: Date.now().toString(),
@@ -193,23 +204,23 @@ const useStoreManager = create<StoreState & StoreActions>()(
           return get().stores.filter((store) => store.ownerId === userId);
         },
         updateStoreSettings: (storeId, settings) => {
-          set(stores => 
-            stores.stores.map(store => 
+          set((state) => ({
+            stores: state.stores.map(store => 
               store.id === storeId 
                 ? { ...store, settings: { ...store.settings, ...settings } }
                 : store
             )
-          );
+          }));
           toast.success("Store settings updated successfully");
         },
         updateStorePolicies: (storeId, policies) => {
-          set(stores => 
-            stores.stores.map(store => 
+          set((state) => ({
+            stores: state.stores.map(store => 
               store.id === storeId 
                 ? { ...store, policies: { ...store.policies, ...policies } }
                 : store
             )
-          );
+          }));
           toast.success("Store policies updated successfully");
         },
       }),
