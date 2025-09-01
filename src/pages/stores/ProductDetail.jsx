@@ -114,7 +114,7 @@ const ProductDetail = () => {
         </Button>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="h-96 md:h-auto bg-gray-100 rounded-lg overflow-hidden">
+          <div className="h-96 md:h-[27rem] bg-gray-100 rounded-lg overflow-hidden">
             {product.imageUrl ? (
               <img 
                 src={product.imageUrl} 

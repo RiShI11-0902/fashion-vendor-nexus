@@ -28,11 +28,11 @@ const Cart = () => {
   });
 
   const handleCheckout = () => {
-    if (!currentUser) {
-      toast.error("Please login to checkout");
-      navigate("/login");
-      return;
-    }
+    // if (!currentUser) {
+    //   toast.error("Please login to checkout");
+    //   navigate("/login");
+    //   return;
+    // }
     setShowCheckout(true);
   };
 
@@ -58,6 +58,7 @@ const Cart = () => {
       customerId: currentUser.id,
       customerName: customerInfo.name,
       customerEmail: customerInfo.email,
+      customerAddress:customerInfo.address,
       items: orderItems,
       totalAmount: getTotalPrice(),
       status: "pending",
