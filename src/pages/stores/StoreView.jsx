@@ -1,19 +1,22 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStoreManager } from "../../stores/useStoreManager";
+import { useCartStore } from "../../stores/useCartStore";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
-import { ShoppingBag, ArrowLeft, Package, Search, Instagram, Heart, MessageCircle, ExternalLink, Eye, Plus, Filter } from "lucide-react";
-import { Input } from "../../components/ui/input";
-import { Badge } from "../../components/ui/badge";
-import { toast } from "sonner";
+import { Package } from "lucide-react";
+import ProductCard from "../../components/products/ProductCard";
+import CustomerFeedback from "../../components/feedback/CustomerFeedback";
+import StoreFAQ from "../../components/faq/StoreFAQ";
+import StoreStories from "../../components/stores/StoreStories";
 
 const StoreView = () => {
   const { storeSlug } = useParams();
-  const { getStoreBySlug, getStoreProducts, stores } = useStoreManager();
+  const { getStoreBySlug, getStoreProducts } = useStoreManager();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,16 +39,16 @@ const StoreView = () => {
 
       const foundStore = getStoreBySlug(storeSlug);
 
+
       if (foundStore) {
-        console.log("Store found:", foundStore);
         setStore(foundStore);
         const storeProducts = getStoreProducts(foundStore.id);
         setProducts(storeProducts);
-        toast.success(`Welcome to ${foundStore.name}`);
+        setFilteredProducts(storeProducts);
       } else {
-        console.error(`Store with slug "${storeSlug}" not found`);
         setError("Store not found");
       }
+
 
       setLoading(false);
     }
@@ -61,17 +64,18 @@ const StoreView = () => {
     );
   }
 
+
   if (error || !store) {
     return (
       <MainLayout>
         <div className="container mx-auto px-4 py-12 text-center">
-          <ShoppingBag className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+          <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
           <h2 className="text-2xl font-display font-semibold mb-2">Store Not Found</h2>
           <p className="text-gray-600 mb-6">
-            The store you're looking for ({storeSlug}) doesn't exist or might have been removed.
+            The store you're looking for doesn't exist or might have been removed.
           </p>
           <Button asChild>
-            <Link to="/stores">Browse All Stores</Link>
+            <Link to="/stores">Explore Other Stores</Link>
           </Button>
         </div>
       </MainLayout>
