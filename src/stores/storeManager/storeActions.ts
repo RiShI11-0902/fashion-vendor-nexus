@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { Store, StoreState } from '../types/storeTypes';
 
 export interface StoreActions {
-  createStore: (store: Omit<Store, 'id' | 'createdAt'>) => void;
+  createStore: (store: Omit<Store, 'id' | 'createdAt'>) => Store;
   updateStore: (storeId: string, updates: Partial<Store>) => void;
   deleteStore: (storeId: string) => void;
   getStoreBySlug: (slug: string) => Store | undefined;
@@ -21,6 +21,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
     };
     set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
     toast.success(`Store "${store.name}" created successfully`);
+    return newStore;
   },
 
   updateStore: (storeId, updates) => {
