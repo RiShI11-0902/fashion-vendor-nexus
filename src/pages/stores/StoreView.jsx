@@ -15,7 +15,7 @@ const StoreView = () => {
   const { getStoreBySlug, getStoreProducts } = useStoreManager();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  // const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
