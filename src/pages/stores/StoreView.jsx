@@ -4,11 +4,12 @@ import { useStoreManager } from "../../stores/useStoreManager";
 import { useCartStore } from "../../stores/useCartStore";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
-import { Package } from "lucide-react";
+import { ArrowLeft, Filter, Package, Search } from "lucide-react";
 import ProductCard from "../../components/products/ProductCard";
 import CustomerFeedback from "../../components/feedback/CustomerFeedback";
 import StoreFAQ from "../../components/faq/StoreFAQ";
 import StoreStories from "../../components/stores/StoreStories";
+import { Input } from "../../components/ui/input";
 
 const StoreView = () => {
   const { storeSlug } = useParams();
@@ -35,7 +36,6 @@ const StoreView = () => {
   useEffect(() => {
     if (storeSlug) {
       console.log("Looking for store with slug:", storeSlug);
-      console.log("Available stores:", stores);
 
       const foundStore = getStoreBySlug(storeSlug);
 
@@ -44,7 +44,7 @@ const StoreView = () => {
         setStore(foundStore);
         const storeProducts = getStoreProducts(foundStore.id);
         setProducts(storeProducts);
-        setFilteredProducts(storeProducts);
+        // setFilteredProducts(storeProducts);
       } else {
         setError("Store not found");
       }
@@ -52,7 +52,7 @@ const StoreView = () => {
 
       setLoading(false);
     }
-  }, [storeSlug, getStoreBySlug, getStoreProducts, stores]);
+  }, [storeSlug, getStoreBySlug, getStoreProducts]);
 
   if (loading) {
     return (

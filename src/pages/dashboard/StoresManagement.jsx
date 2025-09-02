@@ -14,6 +14,9 @@ const StoresManagement = () => {
   const { getUserStores } = useStoreManager();
   const [userStores, setUserStores] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  console.log(getUserStores);
+  
   
   useEffect(() => {
     if (currentUser) {

@@ -24,6 +24,9 @@ const AllStores = () => {
     );
     setFilteredStores(filtered);
   }, [stores, searchTerm]);
+
+  console.log(filteredStores, stores);
+  
   
   return (
     <MainLayout>
