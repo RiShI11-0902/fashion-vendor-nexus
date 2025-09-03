@@ -66,14 +66,23 @@ const Analytics = () => {
   };
 
   useEffect(() => {
-    if (currentUser) {
-      const stores = getUserStores(currentUser.id);
-      setUserStores(stores);
-      
-      if (stores.length > 0 && !selectedStore) {
-        setSelectedStore(stores[0].id);
+    const fetchUserStores = async () => {
+      if (currentUser) {
+        try {
+          const stores = await getUserStores(currentUser.id);
+          setUserStores(stores || []);
+          
+          if (stores && stores.length > 0 && !selectedStore) {
+            setSelectedStore(stores[0].id);
+          }
+        } catch (error) {
+          console.error('Failed to fetch user stores:', error);
+          setUserStores([]);
+        }
       }
-    }
+    };
+
+    fetchUserStores();
   }, [currentUser, getUserStores]);
 
   useEffect(() => {
