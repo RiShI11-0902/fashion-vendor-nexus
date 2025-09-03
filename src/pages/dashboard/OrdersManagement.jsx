@@ -45,12 +45,29 @@ const OrdersManagement = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [userStores, setUserStores] = useState([]);
+  const [allUserOrders, setAllUserOrders] = useState([]);
 
+  useEffect(() => {
+    const fetchUserStores = async () => {
+      if (currentUser) {
+        try {
+          const stores = await getUserStores(currentUser.id);
+          setUserStores(stores || []);
+          
+          // Get orders for user's stores
+          const orders = (stores || []).flatMap(store => getStoreOrders(store.id));
+          setAllUserOrders(orders);
+        } catch (error) {
+          console.error('Failed to fetch user stores:', error);
+          setUserStores([]);
+          setAllUserOrders([]);
+        }
+      }
+    };
 
-  const userStores = currentUser ? getUserStores(currentUser.id) : [];
-
-  // Get orders for user's stores
-  const allUserOrders = userStores.flatMap(store => getStoreOrders(store.id));
+    fetchUserStores();
+  }, [currentUser, getUserStores, getStoreOrders]);
 
   // Apply filters
   const filteredOrders = allUserOrders.filter(order => {
