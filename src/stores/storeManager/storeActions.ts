@@ -3,11 +3,11 @@ import { Store, StoreState } from "../types/storeTypes";
 import axios from "axios";
 
 export interface StoreActions {
-  createStore: (store: Omit<Store, "id" | "createdAt">) => Store;
+  createStore: (store: Omit<Store, "id" | "createdAt">) => Promise<Store>;
   updateStore: (storeId: string, updates: Partial<Store>) => void;
   deleteStore: (storeId: string) => void;
   getStoreBySlug: (slug: string) => Store | undefined;
-  getUserStores: (userId: string) => Store[];
+  getUserStores: (userId: string) => Promise<Store[]>;
   updateStoreSettings: (storeId: string, settings: any) => void;
   updateStorePolicies: (storeId: string, policies: any) => void;
 }
