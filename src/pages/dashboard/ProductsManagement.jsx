@@ -25,19 +25,31 @@ const ProductsManagement = () => {
   const [selectedStore, setSelectedStore] = useState("all");
   
   useEffect(() => {
-    if (currentUser) {
-      const stores = getUserStores(currentUser.id);
-      setUserStores(stores);
-      
-      // Get all products from all stores
-      let allProducts = [];
-      stores.forEach(store => {
-        const storeProducts = getStoreProducts(store.id);
-        allProducts = [...allProducts, ...storeProducts];
-      });
-      
-      setProducts(allProducts);
-    }
+    const fetchUserStores = async () => {
+      if (currentUser) {
+        try {
+          const stores = await getUserStores(currentUser.id);
+          setUserStores(stores || []);
+          
+          // Get all products from all stores
+          let allProducts = [];
+          if (stores && Array.isArray(stores)) {
+            stores.forEach(store => {
+              const storeProducts = getStoreProducts(store.id);
+              allProducts = [...allProducts, ...storeProducts];
+            });
+          }
+          
+          setProducts(allProducts);
+        } catch (error) {
+          console.error('Failed to fetch user stores:', error);
+          setUserStores([]);
+          setProducts([]);
+        }
+      }
+    };
+
+    fetchUserStores();
   }, [currentUser, getUserStores, getStoreProducts]);
   
   const filteredProducts = products.filter(product => {
