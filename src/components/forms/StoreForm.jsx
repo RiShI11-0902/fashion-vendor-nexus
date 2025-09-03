@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
-import { 
-  FormControl, 
-  FormDescription, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage, 
-  Form 
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Form
 } from "../../components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -28,6 +28,7 @@ const storeSchema = z.object({
     .transform(val => val.toLowerCase()),
   description: z.string().optional(),
   imageUrl: z.string().optional(),
+  logo: z.string().optional(),
 });
 
 const StoreForm = ({ initialData = null }) => {
@@ -36,7 +37,7 @@ const StoreForm = ({ initialData = null }) => {
   const { currentUser } = useAuthStore();
   const [categories, setCategories] = useState(initialData?.categories || []);
   const [newCategory, setNewCategory] = useState("");
-  
+
   const form = useForm({
     resolver: zodResolver(storeSchema),
     defaultValues: {
@@ -44,16 +45,28 @@ const StoreForm = ({ initialData = null }) => {
       slug: initialData?.slug || "",
       description: initialData?.description || "",
       imageUrl: initialData?.imageUrl || "",
+      logo: initialData?.imageUrl || "",
     },
   });
-  
-  const onSubmit = (data) => {
+
+ const onSubmit = (formData) => {
+  try {
+    // validate with Zod
+    const parsedData = storeSchema.parse(formData);
+
+    console.log(parsedData.slug);
+    
+
     const storeData = {
-      ...data,
+      ...parsedData,
       categories,
       ownerId: currentUser?.id,
+      url: `http://localhost:8080/store/${parsedData.slug}`,
     };
+
+    console.log(storeData);
     
+
     if (initialData) {
       updateStore(initialData.id, storeData);
       navigate("/dashboard/stores");
@@ -61,26 +74,29 @@ const StoreForm = ({ initialData = null }) => {
       createStore(storeData);
       navigate("/dashboard/stores");
     }
-  };
-  
+  } catch (err) {
+    console.error("Validation error:", err.errors);
+  }
+};
+
   const addCategory = () => {
     if (newCategory.trim() && !categories.includes(newCategory.trim())) {
       setCategories([...categories, newCategory.trim()]);
       setNewCategory("");
     }
   };
-  
+
   const removeCategory = (index) => {
     setCategories(categories.filter((_, i) => i !== index));
   };
-  
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       addCategory();
     }
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -97,7 +113,7 @@ const StoreForm = ({ initialData = null }) => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="slug"
@@ -114,7 +130,7 @@ const StoreForm = ({ initialData = null }) => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="description"
@@ -122,17 +138,17 @@ const StoreForm = ({ initialData = null }) => {
             <FormItem>
               <FormLabel>Store Description</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Tell customers about your store..." 
+                <Textarea
+                  placeholder="Tell customers about your store..."
                   className="resize-none min-h-32"
-                  {...field} 
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="imageUrl"
@@ -149,11 +165,28 @@ const StoreForm = ({ initialData = null }) => {
             </FormItem>
           )}
         />
-        
+
+        <FormField
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Store Logo URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://example.com/image.jpg" {...field} />
+              </FormControl>
+              <FormDescription>
+                Enter a URL for your store banner image
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="space-y-2">
           <FormLabel>Store Categories</FormLabel>
           <div className="flex">
-            <Input 
+            <Input
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -165,16 +198,16 @@ const StoreForm = ({ initialData = null }) => {
           <FormDescription>
             Press Enter to add multiple categories
           </FormDescription>
-          
+
           {categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
               {categories.map((category, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm flex items-center"
                 >
                   {category}
-                  <button 
+                  <button
                     type="button"
                     onClick={() => removeCategory(index)}
                     className="ml-2 text-gray-500 hover:text-destructive"
@@ -186,11 +219,11 @@ const StoreForm = ({ initialData = null }) => {
             </div>
           )}
         </div>
-        
+
         <div className="flex justify-end space-x-4 pt-4">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => navigate("/dashboard/stores")}
           >
             Cancel

@@ -1,12 +1,11 @@
-
 import { create } from "zustand";
 import { toast } from "sonner";
-
+import axios from "axios";
 interface User {
   id: string;
   email: string;
   name: string;
-  role: string;
+  role?: string;
 }
 
 interface AuthState {
@@ -23,7 +22,14 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signup: async (email: string, password: string, name: string) => {
     try {
-      const user = { id: Date.now().toString(), email, name, role: "vendor" };
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        { email, password, name },
+        {
+          withCredentials: true, // if using cookies for auth
+        }
+      );
+      const user = res.data.user;
       localStorage.setItem("user", JSON.stringify(user));
       set({ currentUser: user });
       return user;
@@ -35,12 +41,23 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   login: async (email: string, password: string) => {
     try {
-      const user = { 
-        id: Date.now().toString(), 
-        email, 
-        name: email.split("@")[0], 
-        role: "vendor" 
-      };
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true, // if using cookies for auth
+        }
+      );
+      const user = res.data.user;
+      // const user = {
+      //   id: Date.now().toString(),
+      //   email,
+      //   name: email.split("@")[0],
+      //   role: "vendor"
+      // };
       localStorage.setItem("user", JSON.stringify(user));
       set({ currentUser: user });
       toast.success("Logged in successfully");
@@ -62,9 +79,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 const initializeAuth = async () => {
   const storedUser = localStorage.getItem("user");
   if (storedUser) {
-    useAuthStore.setState({ 
+    useAuthStore.setState({
       currentUser: JSON.parse(storedUser),
-      loading: false 
+      loading: false,
     });
   } else {
     useAuthStore.setState({ loading: false });

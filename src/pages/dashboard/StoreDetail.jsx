@@ -16,12 +16,12 @@ import {  //////////useAuthStore
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog";
 import { Badge } from "../../components/ui/badge";
-import { 
-  Edit, 
-  Trash2, 
-  Plus, 
-  ExternalLink, 
-  Loader, 
+import {
+  Edit,
+  Trash2,
+  Plus,
+  ExternalLink,
+  Loader,
   Package,
   ShoppingBag
 } from "lucide-react";
@@ -37,32 +37,39 @@ const StoreDetail = () => {
   const [error, setError] = useState("");
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const navigate = useNavigate();
-  
+
+  const fetchUserStore = async () => {
+    const userStores = await getUserStores(currentUser.id);
+    const foundStore = userStores.find(store => store.id === storeId);
+
+    console.log("found Store is", foundStore);
+    
+
+    if (foundStore) {
+      setStore(foundStore);
+      const storeProducts = getStoreProducts(foundStore.id);
+      setProducts(storeProducts);
+    } else {
+      setError("Store not found or you don't have permission to view it");
+      setTimeout(() => {
+        navigate("/dashboard/stores");
+      }, 3000);
+    }
+  }
+
   useEffect(() => {
     if (currentUser && storeId) {
-      const userStores = getUserStores(currentUser.id);
-      const foundStore = userStores.find(store => store.id === storeId);
-      
-      if (foundStore) {
-        setStore(foundStore);
-        const storeProducts = getStoreProducts(foundStore.id);
-        setProducts(storeProducts);
-      } else {
-        setError("Store not found or you don't have permission to view it");
-        setTimeout(() => {
-          navigate("/dashboard/stores");
-        }, 3000);
-      }
-      
+      fetchUserStore()
+
       setLoading(false);
     }
   }, [currentUser, storeId, getUserStores, getStoreProducts, navigate]);
-  
+
   const handleDeleteStore = () => {
     deleteStore(storeId);
     navigate("/dashboard/stores");
   };
-  
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -72,7 +79,7 @@ const StoreDetail = () => {
       </DashboardLayout>
     );
   }
-  
+
   if (error) {
     return (
       <DashboardLayout>
@@ -83,41 +90,41 @@ const StoreDetail = () => {
       </DashboardLayout>
     );
   }
-  
+
   return (
     <DashboardLayout>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-display font-bold">{store.name}</h1>
+            <h1 className="text-3xl font-display font-bold">{store?.name}</h1>
             <Badge variant="outline" className="ml-2">
-              {products.length} products
+              {products?.length} products
             </Badge>
           </div>
           <p className="text-gray-600 mt-2">
-            {store.description || "No description provided"}
+            {store?.description || "No description provided"}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
-            {store.categories && store.categories.map((category, index) => (
+            {store?.categories && store?.categories.map((category, index) => (
               <Badge key={index} variant="secondary">
                 {category}
               </Badge>
             ))}
           </div>
         </div>
-        
+
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline" size="sm">
-            <a href={`/store/${store.slug}`} target="_blank" rel="noopener noreferrer">
+            <a href={`/store/${store?.slug}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-4 w-4 mr-2" /> View Store
             </a>
           </Button>
           <Button asChild size="sm">
-            <Link to={`/dashboard/stores/edit/${store.id}`}>
+            <Link to={`/dashboard/stores/edit/${store?.id}`}>
               <Edit className="h-4 w-4 mr-2" /> Edit Store
             </Link>
           </Button>
-          
+
           <AlertDialog open={isOpenDeleteDialog} onOpenChange={setIsOpenDeleteDialog}>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm">
@@ -129,7 +136,7 @@ const StoreDetail = () => {
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete the store
-                  "{store.name}" and all of its products.
+                  "{store?.name}" and all of its products.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -142,15 +149,15 @@ const StoreDetail = () => {
           </AlertDialog>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div>
           <div className="bg-white rounded-lg border overflow-hidden">
             <div className="h-64 bg-gray-100">
-              {store.imageUrl ? (
-                <img 
-                  src={store.imageUrl} 
-                  alt={store.name} 
+              {store?.imageUrl ? (
+                <img
+                  src={store?.imageUrl}
+                  alt={store?.name}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -166,13 +173,13 @@ const StoreDetail = () => {
                   <p className="text-sm text-gray-500">Store URL</p>
                   <div className="flex items-center">
                     <code className="bg-gray-100 px-2 py-1 rounded text-sm flex-grow">
-                      {window.location.origin}/store/{store.slug}
+                      {store?.url}
                     </code>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       size="sm"
                       onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/store/${store.slug}`);
+                        navigator.clipboard.writeText(`${window.location.origin}/store/${store?.slug}`);
                         toast.success("URL copied to clipboard");
                       }}
                     >
@@ -182,27 +189,27 @@ const StoreDetail = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Store ID</p>
-                  <p className="font-mono text-sm">{store.id}</p>
+                  <p className="font-mono text-sm">{store?.id}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Created On</p>
-                  <p className="text-sm">{new Date(store.createdAt).toLocaleDateString()}</p>
+                  <p className="text-sm">{new Date(store?.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
+
         <div>
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Products</h2>
             <Button asChild size="sm">
-              <Link to={`/dashboard/products/create?storeId=${store.id}`}>
+              <Link to={`/dashboard/products/create?storeId=${store?.id}`}>
                 <Plus className="h-4 w-4 mr-2" /> Add Product
               </Link>
             </Button>
           </div>
-          
+
           {products.length === 0 ? (
             <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed">
               <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
@@ -211,7 +218,7 @@ const StoreDetail = () => {
                 Start adding products to your store to showcase your fashion items.
               </p>
               <Button asChild size="sm">
-                <Link to={`/dashboard/products/create?storeId=${store.id}`}>
+                <Link to={`/dashboard/products/create?storeId=${store?.id}`}>
                   <Plus className="h-4 w-4 mr-2" /> Add First Product
                 </Link>
               </Button>
@@ -223,9 +230,9 @@ const StoreDetail = () => {
                   <div className="flex items-center">
                     <div className="h-16 w-16 bg-gray-100 rounded mr-4 overflow-hidden">
                       {product.imageUrl ? (
-                        <img 
-                          src={product.imageUrl} 
-                          alt={product.name} 
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
                           className="h-full w-full object-cover"
                         />
                       ) : (
