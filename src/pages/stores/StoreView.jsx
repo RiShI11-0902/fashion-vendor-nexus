@@ -43,6 +43,7 @@ const StoreView = () => {
   const feedbackEnabled = store.settings?.enableFeedback !== false;
 
   return (
+    <MainLayout>
       <div className="min-h-screen bg-gray-50">
         <StoreHeader store={store} />
 
@@ -59,60 +60,45 @@ const StoreView = () => {
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                {/* <Input
+                <Input
                   placeholder="Search products..."
                   className="pl-12 py-3 rounded-full border-2 border-gray-100 focus:border-pink-300 transition-colors"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                /> */}
-              </div>
-
-              {/* Products Section */}
-              <ProductsSection
-                filteredProducts={filteredProducts}
-                selectedCategory={selectedCategory}
-                storeSlug={storeSlug}
-              />
-
-              {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-4">
-                {mockInstagramPosts.slice(0, instagramFeed.postsCount || 6).map((post) => (
-                  <div key={post.id} className="aspect-square relative group cursor-pointer overflow-hidden rounded-lg">
-                    <img
-                      src={post.image}
-                      alt="Instagram post"
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    {instagramFeed.showMetrics !== false && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white text-sm">
-                        <div className="flex items-center space-x-4">
-                          <span className="flex items-center">
-                            <Heart className="h-4 w-4 mr-1" />
-                            {post.likes.toLocaleString()}
-                          </span>
-                          <span className="flex items-center">
-                            <MessageCircle className="h-4 w-4 mr-1" />
-                            {post.comments}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div> */}
-
-              <div className="text-center mt-8">
-                <Button variant="outline" className="inline-flex items-center rounded-full px-8 border-2 hover:bg-gray-50">
-                  <Instagram className="h-5 w-5 mr-2" />
-                  {/* @{instagramFeed.username} */}
-                  {/* <ExternalLink className="h-4 w-4 ml-2" /> */}
-                </Button>
+                />
               </div>
             </div>
           </div>
-          {/* <MainLayout>
-      </MainLayout> */}
+
+          {/* Products Section */}
+          <div className="mb-8">
+            <ProductsSection
+              filteredProducts={filteredProducts}
+              selectedCategory={selectedCategory}
+              storeSlug={storeSlug}
+            />
+          </div>
+
+          {/* Customer Feedback */}
+          {feedbackEnabled && (
+            <div className="mb-8">
+              <CustomerFeedback storeId={store.id} />
+            </div>
+          )}
+
+          {/* Store FAQ */}
+          <div className="mb-8">
+            <StoreFAQ storeId={store.id} />
+          </div>
+
+          {/* Social Media Section */}
+          <div className="text-center">
+            <Button variant="outline" className="inline-flex items-center rounded-full px-8 border-2 hover:bg-gray-50">
+              <Instagram className="h-5 w-5 mr-2" />
+              Follow us on Instagram
+            </Button>
+          </div>
         </div>
       </div>
+    </MainLayout>
 
   );
 };
