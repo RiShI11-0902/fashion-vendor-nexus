@@ -1,19 +1,27 @@
 const StoreHeader = ({ store }) => {
   return (
-    <div className="bg-white py-12 shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-display font-bold">{store.name}</h1>
-            <p className="text-gray-600">{store.description || "No description provided"}</p>
+    <div className="relative h-96 w-full overflow-hidden">
+      {/* Background image */}
+      {store.imageUrl && (
+        <img
+          src={store.imageUrl}
+          alt={store.name}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+      
+      {/* Gradient overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+      
+      {/* Content container */}
+      <div className="container mx-auto px-4 h-full">
+        <div className="relative z-10 flex items-center h-full">
+          <div className="max-w-md text-white">
+            <h1 className="text-4xl font-bold mb-2">{store.name}</h1>
+            <p className="text-lg opacity-90">
+              {store.description || "No description provided"}
+            </p>
           </div>
-          {store.imageUrl && (
-            <img
-              src={store.imageUrl}
-              alt={store.name}
-              className="h-24 w-24 rounded-full object-cover"
-            />
-          )}
         </div>
       </div>
     </div>

@@ -47,9 +47,9 @@ const StoreAnalytics = ({ storeId }) => {
 
       const storeOrders = getStoreOrders(storeId);
       const products = getStoreProducts(storeId);
-      const lowStock = getLowStockProducts(storeId);
+      const lowStock =  0 ;
       
-      // Calculate top selling products
+      // Calculate top selling products getLowStockProducts(storeId)
       const productSales = {};
       storeOrders.forEach(order => {
         order.items.forEach(item => {

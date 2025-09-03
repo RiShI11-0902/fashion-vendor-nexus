@@ -81,7 +81,7 @@ const Analytics = () => {
       const stats = getOrderStats(selectedStore);
       const orders = getStoreOrders(selectedStore);
       const products = getStoreProducts(selectedStore);
-      const lowStockProducts = getLowStockProducts(selectedStore);
+      // const lowStockProducts = getLowStockProducts(selectedStore);
 
       // Generate monthly data for charts
       const monthlyData = generateMonthlyData(orders);
@@ -122,7 +122,7 @@ const Analytics = () => {
         monthlyData,
         topProductsData,
         statusData,
-        lowStockCount: lowStockProducts.length,
+        // lowStockCount: lowStockProducts.length,
         totalProducts: products.length
       });
     }

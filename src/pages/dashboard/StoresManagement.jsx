@@ -13,29 +13,40 @@ const StoresManagement = () => {
   const [userStores, setUserStores] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  console.log(getUserStores);
-  
-  
+  // console.log(getUserStores());
+
+  console.log("Hi");
+
+  const fetchUserStore = async () => {
+    const stores = await getUserStores(currentUser.id);
+    console.log(stores);
+
+    setUserStores(stores);
+  }
+
+
   useEffect(() => {
+    console.log("hello");
+
     if (currentUser) {
-      const stores = getUserStores(currentUser.id);
-      setUserStores(stores);
+      fetchUserStore()
     }
+
   }, [currentUser, getUserStores]);
-  
-  const filteredStores = userStores.filter(store => 
+
+  const filteredStores = userStores?.filter(store =>
     store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (store.description && store.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
-  
+
   return (
     <DashboardLayout>
       <StoresHeader />
-      <StoreSearch 
+      <StoreSearch
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
       />
-      <StoresList 
+      <StoresList
         stores={filteredStores}
         searchTerm={searchTerm}
         onClearSearch={() => setSearchTerm("")}

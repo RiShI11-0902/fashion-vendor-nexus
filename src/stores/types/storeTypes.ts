@@ -6,6 +6,7 @@ export type Store = {
   slug: string;
   description: string;
   imageUrl: string;
+  logo?: string;
   categories: string[];
   createdAt: string;
   settings?: {

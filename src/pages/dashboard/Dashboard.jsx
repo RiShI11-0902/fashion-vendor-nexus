@@ -19,9 +19,13 @@ const Dashboard = () => {
   const [userStores, setUserStores] = useState([]);
   const [overallStats, setOverallStats] = useState(null);
 
-  useEffect(() => {
-    if (currentUser) {
-      const stores = getUserStores(currentUser.id);
+  console.log(currentUser);
+
+
+  const fetchStores = async ()=>{
+    console.log(currentUser.id);
+    
+    const stores = await getUserStores(currentUser.id);
       setUserStores(stores);
       
       if (stores.length > 0 && !selectedStore) {
@@ -30,12 +34,12 @@ const Dashboard = () => {
 
       // Calculate overall stats
       const stats = getOrderStats();
-      const totalProducts = stores.reduce((sum, store) => {
+      const totalProducts = stores?.reduce((sum, store) => {
         return sum + getStoreProducts(store.id).length;
       }, 0);
       
       const totalLowStock = stores.reduce((sum, store) => {
-        return sum + getLowStockProducts(store.id).length;
+        // return sum + getLowStockProducts(store.id).length;
       }, 0);
 
       setOverallStats({
@@ -44,6 +48,12 @@ const Dashboard = () => {
         totalProducts,
         totalLowStock
       });
+  }
+  
+
+  useEffect(() => {    
+    if (currentUser) {
+      fetchStores()
     }
   }, [currentUser, getUserStores, getOrderStats, getStoreProducts, getLowStockProducts, selectedStore]);
 
