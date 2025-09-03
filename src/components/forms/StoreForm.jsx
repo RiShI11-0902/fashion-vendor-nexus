@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { X } from "lucide-react";
 import { useStoreManager } from "../../stores/useStoreManager";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const storeSchema = z.object({
   name: z.string().min(2, "Store name must be at least 2 characters"),
@@ -32,6 +33,7 @@ const storeSchema = z.object({
 const StoreForm = ({ initialData = null }) => {
   const navigate = useNavigate();
   const { createStore, updateStore } = useStoreManager();
+  const { currentUser } = useAuthStore();
   const [categories, setCategories] = useState(initialData?.categories || []);
   const [newCategory, setNewCategory] = useState("");
   
@@ -49,16 +51,15 @@ const StoreForm = ({ initialData = null }) => {
     const storeData = {
       ...data,
       categories,
+      ownerId: currentUser?.id,
     };
     
     if (initialData) {
       updateStore(initialData.id, storeData);
       navigate("/dashboard/stores");
     } else {
-      const newStore = createStore(storeData);
-      if (newStore) {
-        navigate("/dashboard/stores");
-      }
+      createStore(storeData);
+      navigate("/dashboard/stores");
     }
   };
   

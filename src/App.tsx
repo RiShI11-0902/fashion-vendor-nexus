@@ -21,6 +21,7 @@ import Analytics from "./pages/dashboard/Analytics";
 import StoresManagement from "./pages/dashboard/StoresManagement";
 import ProductsManagement from "./pages/dashboard/ProductsManagement";
 import OrdersManagement from "./pages/dashboard/OrdersManagement";
+import DiscountsManagement from "./pages/dashboard/DiscountsManagement";
 import CreateStore from "./pages/dashboard/CreateStore";
 import EditStore from "./pages/dashboard/EditStore";
 import CreateProduct from "./pages/dashboard/CreateProduct";
@@ -58,6 +59,7 @@ const App = () => (
           <Route path="/dashboard/stores" element={<StoresManagement />} />
           <Route path="/dashboard/products" element={<ProductsManagement />} />
           <Route path="/dashboard/orders" element={<OrdersManagement />} />
+          <Route path="/dashboard/discounts" element={<DiscountsManagement />} />
           <Route path="/dashboard/create-store" element={<CreateStore />} />
           <Route path="/dashboard/stores/edit/:storeId" element={<EditStore />} />
           <Route path="/dashboard/stores/:storeId" element={<StoreDetail />} />
