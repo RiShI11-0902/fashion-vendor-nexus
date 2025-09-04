@@ -5,6 +5,8 @@ import { useStoreManager } from "../../stores/useStoreManager";
 import { useAuthStore } from "../../stores/useAuthStore";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import ThemeCustomizer from "../../components/storefront/ThemeCustomizer";
+import LayoutCustomizer from "../../components/storefront/LayoutCustomizer";
+import BrandingCustomizer from "../../components/storefront/BrandingCustomizer";
 import InstagramFeed from "../../components/storefront/InstagramFeed";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Button } from "../../components/ui/button";
@@ -83,8 +85,10 @@ const StorefrontCustomization = () => {
         </div>
 
         <Tabs defaultValue="theme" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="theme">Theme & Layout</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="theme">Theme & Colors</TabsTrigger>
+            <TabsTrigger value="layout">Layout & Typography</TabsTrigger>
+            <TabsTrigger value="branding">Branding & Style</TabsTrigger>
             <TabsTrigger value="instagram">Instagram Feed</TabsTrigger>
           </TabsList>
           
@@ -92,6 +96,20 @@ const StorefrontCustomization = () => {
             <ThemeCustomizer 
               storeId={store.id} 
               currentTheme={store.theme || {}} 
+            />
+          </TabsContent>
+          
+          <TabsContent value="layout" className="space-y-6">
+            <LayoutCustomizer 
+              storeId={store.id} 
+              currentSettings={store.layoutSettings || {}} 
+            />
+          </TabsContent>
+          
+          <TabsContent value="branding" className="space-y-6">
+            <BrandingCustomizer 
+              storeId={store.id} 
+              currentSettings={store.brandingSettings || {}} 
             />
           </TabsContent>
           

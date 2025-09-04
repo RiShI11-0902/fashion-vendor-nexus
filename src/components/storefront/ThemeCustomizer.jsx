@@ -13,10 +13,16 @@ const ThemeCustomizer = ({ storeId, currentTheme = {} }) => {
   const { updateStore } = useStoreManager();
   const [theme, setTheme] = useState({
     mode: currentTheme.mode || 'light',
-    layout: currentTheme.layout || 'grid',
     primaryColor: currentTheme.primaryColor || 'blue',
-    showBanner: currentTheme.showBanner !== false,
-    compactMode: currentTheme.compactMode || false,
+    secondaryColor: currentTheme.secondaryColor || 'gray',
+    accentColor: currentTheme.accentColor || 'pink',
+    backgroundColor: currentTheme.backgroundColor || 'white',
+    textColor: currentTheme.textColor || 'dark',
+    borderRadius: currentTheme.borderRadius || 'medium',
+    colorScheme: currentTheme.colorScheme || 'modern',
+    gradient: currentTheme.gradient || 'none',
+    shadowStyle: currentTheme.shadowStyle || 'soft',
+    animation: currentTheme.animation || 'subtle',
     ...currentTheme
   });
 
@@ -25,39 +31,97 @@ const ThemeCustomizer = ({ storeId, currentTheme = {} }) => {
     toast.success("Theme updated successfully!");
   };
 
-  const layoutOptions = [
-    { value: 'grid', label: 'Grid Layout', description: 'Products in a grid formation' },
-    { value: 'list', label: 'List Layout', description: 'Products in a vertical list' },
-    { value: 'masonry', label: 'Masonry Layout', description: 'Pinterest-style layout' }
+  const colorSchemes = [
+    { value: 'modern', label: 'Modern', description: 'Clean and contemporary' },
+    { value: 'vintage', label: 'Vintage', description: 'Classic and timeless' },
+    { value: 'minimalist', label: 'Minimalist', description: 'Simple and elegant' },
+    { value: 'vibrant', label: 'Vibrant', description: 'Bold and energetic' },
+    { value: 'pastel', label: 'Pastel', description: 'Soft and gentle' },
+    { value: 'monochrome', label: 'Monochrome', description: 'Black and white' }
   ];
 
-  const colorOptions = [
-    { value: 'blue', label: 'Blue', color: 'bg-blue-500' },
-    { value: 'purple', label: 'Purple', color: 'bg-purple-500' },
-    { value: 'green', label: 'Green', color: 'bg-green-500' },
-    { value: 'pink', label: 'Pink', color: 'bg-pink-500' },
-    { value: 'orange', label: 'Orange', color: 'bg-orange-500' }
+  const primaryColors = [
+    { value: 'blue', label: 'Ocean Blue', color: 'bg-blue-500' },
+    { value: 'purple', label: 'Royal Purple', color: 'bg-purple-500' },
+    { value: 'green', label: 'Forest Green', color: 'bg-green-500' },
+    { value: 'pink', label: 'Rose Pink', color: 'bg-pink-500' },
+    { value: 'orange', label: 'Sunset Orange', color: 'bg-orange-500' },
+    { value: 'red', label: 'Cherry Red', color: 'bg-red-500' },
+    { value: 'teal', label: 'Turquoise', color: 'bg-teal-500' },
+    { value: 'indigo', label: 'Deep Indigo', color: 'bg-indigo-500' },
+    { value: 'yellow', label: 'Golden Yellow', color: 'bg-yellow-500' },
+    { value: 'slate', label: 'Slate Gray', color: 'bg-slate-500' }
+  ];
+
+  const secondaryColors = [
+    { value: 'gray', label: 'Neutral Gray', color: 'bg-gray-400' },
+    { value: 'blue-gray', label: 'Blue Gray', color: 'bg-blue-gray-400' },
+    { value: 'warm-gray', label: 'Warm Gray', color: 'bg-stone-400' },
+    { value: 'cool-gray', label: 'Cool Gray', color: 'bg-slate-400' }
+  ];
+
+  const gradientOptions = [
+    { value: 'none', label: 'No Gradient' },
+    { value: 'sunset', label: 'Sunset' },
+    { value: 'ocean', label: 'Ocean' },
+    { value: 'forest', label: 'Forest' },
+    { value: 'rainbow', label: 'Rainbow' },
+    { value: 'cosmic', label: 'Cosmic' }
+  ];
+
+  const borderRadiusOptions = [
+    { value: 'none', label: 'Sharp', description: 'No rounded corners' },
+    { value: 'small', label: 'Subtle', description: 'Slightly rounded' },
+    { value: 'medium', label: 'Modern', description: 'Medium rounded' },
+    { value: 'large', label: 'Soft', description: 'Very rounded' },
+    { value: 'full', label: 'Pills', description: 'Fully rounded' }
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <Palette className="h-5 w-5 mr-2" />
-          Theme Customization
-        </CardTitle>
-        <CardDescription>
-          Customize the look and feel of your storefront
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Theme Mode */}
-        <div className="space-y-3">
-          <Label className="text-base font-medium">Theme Mode</Label>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Color Scheme */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-lg">
+            <Palette className="h-5 w-5 mr-2" />
+            Color Scheme
+          </CardTitle>
+          <CardDescription>Choose a pre-designed color palette</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <RadioGroup 
+            value={theme.colorScheme} 
+            onValueChange={(value) => setTheme({...theme, colorScheme: value})}
+          >
+            {colorSchemes.map((scheme) => (
+              <div key={scheme.value} className="flex items-center space-x-2">
+                <RadioGroupItem value={scheme.value} id={scheme.value} />
+                <div>
+                  <Label htmlFor={scheme.value} className="font-medium">
+                    {scheme.label}
+                  </Label>
+                  <p className="text-sm text-muted-foreground">{scheme.description}</p>
+                </div>
+              </div>
+            ))}
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      {/* Theme Mode */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-lg">
+            <Moon className="h-5 w-5 mr-2" />
+            Theme Mode
+          </CardTitle>
+          <CardDescription>Light or dark appearance</CardDescription>
+        </CardHeader>
+        <CardContent>
           <RadioGroup 
             value={theme.mode} 
             onValueChange={(value) => setTheme({...theme, mode: value})}
-            className="flex space-x-4"
+            className="flex space-x-6"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="light" id="light" />
@@ -73,20 +137,72 @@ const ThemeCustomizer = ({ storeId, currentTheme = {} }) => {
                 Dark
               </Label>
             </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="auto" id="auto" />
+              <Label htmlFor="auto">Auto</Label>
+            </div>
           </RadioGroup>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Layout Options */}
-        <div className="space-y-3">
-          <Label className="text-base font-medium flex items-center">
-            <Layout className="h-4 w-4 mr-1" />
-            Layout Style
-          </Label>
+      {/* Primary Color */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Primary Color</CardTitle>
+          <CardDescription>Main brand color for buttons and accents</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-5 gap-2">
+            {primaryColors.map((color) => (
+              <button
+                key={color.value}
+                onClick={() => setTheme({...theme, primaryColor: color.value})}
+                className={`aspect-square rounded-lg ${color.color} ${
+                  theme.primaryColor === color.value ? 'ring-2 ring-offset-2 ring-gray-400' : ''
+                } hover:scale-105 transition-transform`}
+                title={color.label}
+              />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Secondary Color */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Secondary Color</CardTitle>
+          <CardDescription>Supporting color for backgrounds and text</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-2">
+            {secondaryColors.map((color) => (
+              <button
+                key={color.value}
+                onClick={() => setTheme({...theme, secondaryColor: color.value})}
+                className={`h-12 rounded-lg ${color.color} ${
+                  theme.secondaryColor === color.value ? 'ring-2 ring-offset-2 ring-gray-400' : ''
+                } hover:scale-105 transition-transform flex items-center justify-center text-white font-medium`}
+                title={color.label}
+              >
+                {color.label}
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Border Radius */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Corner Style</CardTitle>
+          <CardDescription>Roundness of buttons and cards</CardDescription>
+        </CardHeader>
+        <CardContent>
           <RadioGroup 
-            value={theme.layout} 
-            onValueChange={(value) => setTheme({...theme, layout: value})}
+            value={theme.borderRadius} 
+            onValueChange={(value) => setTheme({...theme, borderRadius: value})}
           >
-            {layoutOptions.map((option) => (
+            {borderRadiusOptions.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <RadioGroupItem value={option.value} id={option.value} />
                 <div>
@@ -98,57 +214,39 @@ const ThemeCustomizer = ({ storeId, currentTheme = {} }) => {
               </div>
             ))}
           </RadioGroup>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Primary Color */}
-        <div className="space-y-3">
-          <Label className="text-base font-medium">Primary Color</Label>
-          <div className="flex space-x-3">
-            {colorOptions.map((color) => (
-              <button
-                key={color.value}
-                onClick={() => setTheme({...theme, primaryColor: color.value})}
-                className={`w-8 h-8 rounded-full ${color.color} ${
-                  theme.primaryColor === color.value ? 'ring-2 ring-offset-2 ring-gray-400' : ''
-                }`}
-                title={color.label}
-              />
+      {/* Gradient Background */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Background Gradient</CardTitle>
+          <CardDescription>Add a gradient background effect</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup 
+            value={theme.gradient} 
+            onValueChange={(value) => setTheme({...theme, gradient: value})}
+          >
+            {gradientOptions.map((option) => (
+              <div key={option.value} className="flex items-center space-x-2">
+                <RadioGroupItem value={option.value} id={option.value} />
+                <Label htmlFor={option.value} className="font-medium">
+                  {option.label}
+                </Label>
+              </div>
             ))}
-          </div>
-        </div>
+          </RadioGroup>
+        </CardContent>
+      </Card>
 
-        {/* Additional Options */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="showBanner" className="font-medium">Show Store Banner</Label>
-              <p className="text-sm text-muted-foreground">Display banner image at the top</p>
-            </div>
-            <Switch
-              id="showBanner"
-              checked={theme.showBanner}
-              onCheckedChange={(checked) => setTheme({...theme, showBanner: checked})}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="compactMode" className="font-medium">Compact Mode</Label>
-              <p className="text-sm text-muted-foreground">Reduce spacing for more content</p>
-            </div>
-            <Switch
-              id="compactMode"
-              checked={theme.compactMode}
-              onCheckedChange={(checked) => setTheme({...theme, compactMode: checked})}
-            />
-          </div>
-        </div>
-
-        <Button onClick={handleSave} className="w-full">
+      {/* Save Button */}
+      <div className="lg:col-span-2">
+        <Button onClick={handleSave} className="w-full" size="lg">
           Save Theme Settings
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
