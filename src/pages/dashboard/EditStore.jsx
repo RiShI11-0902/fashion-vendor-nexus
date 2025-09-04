@@ -15,25 +15,31 @@ const EditStore = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  
+
+  const fetchStores = async () => {
+    const userStores = await getUserStores(currentUser.id);
+    console.log(userStores);
+
+    const foundStore = userStores?.find(store => store?.id === storeId);
+
+    if (foundStore) {
+      setStore(foundStore);
+    } else {
+      setError("Store not found or you don't have permission to edit it");
+      setTimeout(() => {
+        navigate("/dashboard/stores");
+      }, 3000);
+    }
+
+    setLoading(false);
+  }
+
   useEffect(() => {
     if (currentUser && storeId) {
-      const userStores = getUserStores(currentUser.id);
-      const foundStore = userStores.find(store => store.id === storeId);
-      
-      if (foundStore) {
-        setStore(foundStore);
-      } else {
-        setError("Store not found or you don't have permission to edit it");
-        setTimeout(() => {
-          navigate("/dashboard/stores");
-        }, 3000);
-      }
-      
-      setLoading(false);
+      fetchStores()
     }
   }, [currentUser, storeId, stores, getUserStores, navigate]);
-  
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -43,7 +49,7 @@ const EditStore = () => {
       </DashboardLayout>
     );
   }
-  
+
   if (error) {
     return (
       <DashboardLayout>
@@ -54,14 +60,14 @@ const EditStore = () => {
       </DashboardLayout>
     );
   }
-  
+
   return (
     <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-display font-bold mb-2">Edit Store</h1>
         <p className="text-gray-600">Update your store details</p>
       </div>
-      
+
       <div className="bg-white p-6 rounded-lg border">
         <StoreForm initialData={store} />
       </div>

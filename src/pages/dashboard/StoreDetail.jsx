@@ -47,7 +47,7 @@ const StoreDetail = () => {
 
     if (foundStore) {
       setStore(foundStore);
-      const storeProducts = getStoreProducts(foundStore.id);
+      const storeProducts = await getStoreProducts(foundStore.id);
       setProducts(storeProducts);
     } else {
       setError("Store not found or you don't have permission to view it");
@@ -115,7 +115,7 @@ const StoreDetail = () => {
 
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline" size="sm">
-            <a href={`/store/${store?.slug}`} target="_blank" rel="noopener noreferrer">
+            <a href={`${store?.url}`} target="_blank" rel="noopener noreferrer">
               <ExternalLink className="h-4 w-4 mr-2" /> View Store
             </a>
           </Button>
@@ -154,9 +154,9 @@ const StoreDetail = () => {
         <div>
           <div className="bg-white rounded-lg border overflow-hidden">
             <div className="h-64 bg-gray-100">
-              {store?.imageUrl ? (
+              {store?.banner ? (
                 <img
-                  src={store?.imageUrl}
+                  src={store?.banner}
                   alt={store?.name}
                   className="w-full h-full object-cover"
                 />
@@ -179,7 +179,7 @@ const StoreDetail = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/store/${store?.slug}`);
+                        navigator.clipboard.writeText(`${store.url}`);
                         toast.success("URL copied to clipboard");
                       }}
                     >
@@ -225,13 +225,13 @@ const StoreDetail = () => {
             </div>
           ) : (
             <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-              {products.map(product => (
+              {products?.map(product => (
                 <div key={product.id} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
                   <div className="flex items-center">
                     <div className="h-16 w-16 bg-gray-100 rounded mr-4 overflow-hidden">
-                      {product.imageUrl ? (
+                      {product.image ? (
                         <img
-                          src={product.imageUrl}
+                          src={product.image}
                           alt={product.name}
                           className="h-full w-full object-cover"
                         />

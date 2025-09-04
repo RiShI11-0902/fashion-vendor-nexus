@@ -4,13 +4,13 @@ import { ShoppingBag } from "lucide-react";
 import { Card, CardContent, CardFooter } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 
-const StoreCard = ({ store }) => {
+const StoreCard = ({ store }) => {  
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="h-48 bg-gray-100 relative">
-        {store.imageUrl ? (
+        {store.banner ? (
           <img 
-            src={store.imageUrl} 
+            src={store.banner} 
             alt={store.name} 
             className="w-full h-full object-cover"
           />

@@ -22,10 +22,11 @@ const StorefrontCustomization = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (currentUser && storeId) {
-      const userStores = getUserStores(currentUser.id);
-      const foundStore = userStores.find(store => store.id === storeId);
+  const fetchUserStores = async ()=>{
+    const userStores = await getUserStores(currentUser.id, true); // force reload;
+      console.log(userStores);
+      
+      const foundStore = userStores?.find(store => store.id === storeId);
       
       if (foundStore) {
         setStore(foundStore);
@@ -34,6 +35,11 @@ const StorefrontCustomization = () => {
       }
       
       setLoading(false);
+  }
+
+  useEffect(() => {
+    if (currentUser && storeId) {
+      fetchUserStores()
     }
   }, [currentUser, storeId, stores, getUserStores]);
 

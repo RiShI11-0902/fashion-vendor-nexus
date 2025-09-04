@@ -20,7 +20,6 @@ const StoresManagement = () => {
   const fetchUserStore = async () => {
     const stores = await getUserStores(currentUser.id);
     console.log(stores);
-
     setUserStores(stores);
   }
 

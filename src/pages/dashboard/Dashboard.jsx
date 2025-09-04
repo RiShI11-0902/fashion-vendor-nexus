@@ -19,14 +19,15 @@ const Dashboard = () => {
   const [userStores, setUserStores] = useState([]);
   const [overallStats, setOverallStats] = useState(null);
 
-  console.log(currentUser);
-
 
   const fetchStores = async ()=>{
     console.log(currentUser.id);
     
     const stores = await getUserStores(currentUser.id);
       setUserStores(stores);
+
+      console.log(stores);
+      
       
       if (stores.length > 0 && !selectedStore) {
         setSelectedStore(stores[0].id);

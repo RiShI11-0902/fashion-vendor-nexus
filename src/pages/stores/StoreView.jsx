@@ -10,6 +10,7 @@ import { useStoreData } from "../../hooks/useStoreData";
 import { Button } from "../../components/ui/button";
 import { ArrowLeft, Instagram, Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const StoreView = () => {
   const { storeSlug } = useParams();
@@ -23,6 +24,8 @@ const StoreView = () => {
     error,
     handleCategorySelect
   } = useStoreData(storeSlug);
+
+  const {currentUser} = useAuthStore()
 
   if (loading) {
     return (
@@ -43,18 +46,19 @@ const StoreView = () => {
   const feedbackEnabled = store.settings?.enableFeedback !== false;
 
   return (
-    <MainLayout>
       <div className="min-h-screen bg-gray-50">
         <StoreHeader store={store} />
 
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Navigation */}
           <div className="mb-8">
-            <Button asChild variant="ghost" className="mb-6 text-gray-600 hover:text-gray-900">
+            {
+              currentUser && <Button asChild variant="ghost" className="mb-6 text-gray-600 hover:text-gray-900">
               <Link to="/stores" className="flex items-center">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back to Stores
               </Link>
             </Button>
+            }
 
             {/* Search and Filter Bar */}
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -98,7 +102,8 @@ const StoreView = () => {
           </div>
         </div>
       </div>
-    </MainLayout>
+    // <MainLayout>
+    // </MainLayout>
 
   );
 };

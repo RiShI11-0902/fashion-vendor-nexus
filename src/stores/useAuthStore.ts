@@ -58,19 +58,19 @@ export const useAuthStore = create<AuthState>((set) => ({
       return user;
     } catch (error) {
       // Fallback for development when backend is not running
-      if (error.code === "ERR_NETWORK") {
-        console.warn("Backend not running, using mock authentication");
-        const user = {
-          id: Date.now().toString(),
-          email,
-          name: email.split("@")[0],
-          role: "vendor"
-        };
-        localStorage.setItem("user", JSON.stringify(user));
-        set({ currentUser: user });
-        toast.success("Logged in successfully (mock mode)");
-        return user;
-      }
+      // if (error.code === "ERR_NETWORK") {
+      //   console.warn("Backend not running, using mock authentication");
+      //   const user = {
+      //     id: Date.now().toString(),
+      //     email,
+      //     name: email.split("@")[0],
+      //     role: "vendor"
+      //   };
+      //   localStorage.setItem("user", JSON.stringify(user));
+      //   set({ currentUser: user });
+      //   toast.success("Logged in successfully (mock mode)");
+      //   return user;
+      // }
       toast.error("Failed to log in");
       throw error;
     }

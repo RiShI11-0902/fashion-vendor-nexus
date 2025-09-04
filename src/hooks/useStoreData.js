@@ -10,20 +10,28 @@ export const useStoreData = (storeSlug) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  console.log(storeSlug);
+  
+
+  const foundStore = async () => {
+    const foundStore = await getStoreBySlug(storeSlug);
+    console.log(foundStore);
+
+    if (foundStore) {
+      setStore(foundStore);
+      const storeProducts = await getStoreProducts(foundStore.id);
+      setProducts(storeProducts);
+      setFilteredProducts(storeProducts);
+    } else {
+      setError("Store not found");
+    }
+
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (storeSlug) {
-      const foundStore = getStoreBySlug(storeSlug);
-
-      if (foundStore) {
-        setStore(foundStore);
-        const storeProducts = getStoreProducts(foundStore.id);
-        setProducts(storeProducts);
-        setFilteredProducts(storeProducts);
-      } else {
-        setError("Store not found");
-      }
-
-      setLoading(false);
+      foundStore()
     }
   }, [storeSlug, getStoreBySlug, getStoreProducts]);
 
@@ -32,7 +40,9 @@ export const useStoreData = (storeSlug) => {
     if (selectedCategory === "All") {
       setFilteredProducts(products);
     } else {
-      setFilteredProducts(products.filter(product => product.category === selectedCategory));
+      setFilteredProducts(
+        products?.filter((product) => product.category === selectedCategory)
+      );
     }
   }, [selectedCategory, products]);
 
@@ -41,7 +51,9 @@ export const useStoreData = (storeSlug) => {
   };
 
   // Get unique categories from products
-  const categories = [...new Set(products.map(product => product.category).filter(Boolean))];
+  const categories = [
+    ...new Set(products?.map((product) => product?.category).filter(Boolean)),
+  ];
 
   return {
     store,
@@ -51,6 +63,6 @@ export const useStoreData = (storeSlug) => {
     categories,
     loading,
     error,
-    handleCategorySelect
+    handleCategorySelect,
   };
 };

@@ -30,15 +30,18 @@ const ProductsManagement = () => {
         try {
           const stores = await getUserStores(currentUser.id);
           setUserStores(stores || []);
+
+          console.log(stores);
+          
           
           // Get all products from all stores
           let allProducts = [];
-          if (stores && Array.isArray(stores)) {
-            stores.forEach(store => {
-              const storeProducts = getStoreProducts(store.id);
-              allProducts = [...allProducts, ...storeProducts];
-            });
-          }
+          const storeProducts = await getStoreProducts(stores[0].id);
+          allProducts = [...allProducts, ...storeProducts];
+          // if (stores && Array.isArray(stores)) {
+          //   stores.forEach(store => {
+          //   });
+          // }
           
           setProducts(allProducts);
         } catch (error) {

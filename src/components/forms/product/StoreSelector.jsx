@@ -27,7 +27,7 @@ const StoreSelector = ({ form, stores }) => {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {stores.map((store) => (
+              {stores?.map((store) => (
                 <SelectItem key={store.id} value={store.id}>
                   {store.name}
                 </SelectItem>

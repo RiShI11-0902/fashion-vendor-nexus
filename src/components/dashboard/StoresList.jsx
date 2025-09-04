@@ -4,6 +4,8 @@ import StoreCard from "../stores/StoreCard";
 import { Button } from "../ui/button";
 
 const StoresList = ({ stores, searchTerm, onClearSearch }) => {
+  console.log(stores);
+  
   if (stores.length === 0) {
     return (
       <div className="text-center py-12 bg-gray-50 rounded-lg">
@@ -36,19 +38,19 @@ const StoresList = ({ stores, searchTerm, onClearSearch }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {stores.map(store => (
+      {stores?.map(store => (
         <div key={store.id} className="relative group">
           <StoreCard store={store} />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
             <div className="bg-white/90 rounded-md shadow-md p-2">
               <div className="flex space-x-2">
                 <Button asChild size="sm" variant="outline">
-                  <Link to={`/dashboard/stores/${store.id}`}>
+                  <Link to={`/dashboard/stores/${store?.id}`}>
                     Manage
                   </Link>
                 </Button>
                 <Button asChild size="sm">
-                  <Link to={`/dashboard/stores/edit/${store.id}`}>
+                  <Link to={`/dashboard/stores/edit/${store?.id}`}>
                     Edit
                   </Link>
                 </Button>

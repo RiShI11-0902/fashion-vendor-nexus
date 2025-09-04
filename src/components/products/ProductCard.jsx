@@ -38,7 +38,7 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="relative">
           <img 
-            src={product.imageUrl || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop"}
+            src={product.image}
             alt={product.name}
             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
           />

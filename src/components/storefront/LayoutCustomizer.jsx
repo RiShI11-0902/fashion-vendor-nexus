@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { Slider } from "../ui/slider";
-import { Layout, Grid, List, Grid3x3, Type, Spacing } from "lucide-react";
+import { Layout, Grid, List, Grid3x3, Type } from "lucide-react";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { toast } from "sonner";
 
@@ -123,7 +123,7 @@ const LayoutCustomizer = ({ storeId, currentSettings = {} }) => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center text-lg">
-            <Spacing className="h-5 w-5 mr-2" />
+            {/* <Spacing className="h-5 w-5 mr-2" /> */}
             Card Spacing
           </CardTitle>
           <CardDescription>Space between product cards</CardDescription>

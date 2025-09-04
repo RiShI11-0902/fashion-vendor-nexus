@@ -62,6 +62,7 @@ const StoreForm = ({ initialData = null }) => {
       categories,
       ownerId: currentUser?.id,
       url: `http://localhost:8080/store/${parsedData.slug}`,
+      mobileNumber: "+91 7498140646"
     };
 
     console.log(storeData);

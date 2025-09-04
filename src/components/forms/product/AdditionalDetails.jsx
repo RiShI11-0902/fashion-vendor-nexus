@@ -40,7 +40,7 @@ const AdditionalDetails = ({ form }) => {
       
       <FormField
         control={form.control}
-        name="imageUrl"
+        name="image"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Product Image URL</FormLabel>

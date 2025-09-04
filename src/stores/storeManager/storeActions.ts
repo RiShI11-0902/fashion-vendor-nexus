@@ -6,7 +6,7 @@ export interface StoreActions {
   createStore: (store: Omit<Store, "id" | "createdAt">) => Promise<Store>;
   updateStore: (storeId: string, updates: Partial<Store>) => void;
   deleteStore: (storeId: string) => void;
-  getStoreBySlug: (slug: string) => Store | undefined;
+  getStoreBySlug: (slug: string) => Promise<Store[]> | undefined;
   getUserStores: (userId: string) => Promise<Store[]>;
   updateStoreSettings: (storeId: string, settings: any) => void;
   updateStorePolicies: (storeId: string, policies: any) => void;
@@ -49,25 +49,47 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
     toast.success("Store deleted successfully");
   },
 
-  getStoreBySlug: (slug) => {
-    return get().stores.find((store: Store) => store?.slug === slug);
+  getStoreBySlug: async (slug) => {
+    try {
+      console.log(slug, "SLug from store");
+      
+      // const state = get();
+
+      // // 1. If already loaded in state, return that
+      // if (state.stores.length > 0) {
+      //       return get().stores.find((store: Store) => store?.slug === slug);
+      // }
+      const res = await axios.get(`http://localhost:5000/api/store/${slug}`, {
+        withCredentials: true, // if using cookies for auth
+      });
+      console.log(res);
+      const stores = res.data.store;
+      
+
+      return stores;
+    } catch (err) {
+      console.error("Failed to fetch user stores", err);
+      return [];
+    }
   },
 
-  getUserStores: async (userId) => {
+  getUserStores: async (userId,forceRefresh = false) => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/store/${userId}`,
-        {
-          withCredentials: true, // if using cookies for auth
-        }
-      );
+      const state = get();
 
-      console.log(res);
+      console.log(state.stores);
+      
+
+      // 1. If already loaded in state, return that
+      if (!forceRefresh && state.stores.length > 0) {
+        return state.stores.filter((store) => store?.ownerId === userId);
+      
+      } 
+      const res = await axios.get(`http://localhost:5000/api/store/user/${userId}`, {
+        withCredentials: true, // if using cookies for auth
+      });
       
       const stores = res.data.stores;
-
-      console.log(stores);
-      
 
       // update Zustand state
       set((state: StoreState) => ({ ...state, stores }));
