@@ -37,6 +37,9 @@ const Navbar = () => {
           <Link to="/about" className="text-sm font-medium hover:text-gold transition-colors">
             About
           </Link>
+          <Link to="/pricing" className="text-sm font-medium hover:text-gold transition-colors">
+            Pricing
+          </Link>
           
           {/* Cart Icon - Only show if there are items */}
           {totalItems > 0 && (
@@ -109,6 +112,13 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               About
+            </Link>
+            <Link 
+              to="/pricing"
+              className="text-sm font-medium hover:text-gold transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Pricing
             </Link>
             
             {/* Mobile Cart Link - Only show if there are items */}
