@@ -47,8 +47,8 @@ const StoreView = () => {
   const feedbackEnabled = store.settings?.enableFeedback !== false;
 
   return (
-      <div className="min-h-screen bg-gray-50">
-        <StoreNavbar slug={store.slug} />
+      <div className="min-h-screen bg-background">
+        <StoreNavbar store={store} />
         <StoreHeader store={store} />
 
         <div className="max-w-6xl mx-auto px-4 py-8">
