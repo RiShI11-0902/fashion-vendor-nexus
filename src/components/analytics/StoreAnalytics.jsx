@@ -40,48 +40,52 @@ const StoreAnalytics = ({ storeId }) => {
     },
   };
 
+  const fetchUserStore = async () => {
+    const orderStats = getOrderStats(storeId);
+    setStats(orderStats);
+
+    const storeOrders = await getStoreOrders(storeId);
+    const products = await getStoreProducts(storeId);
+    const lowStock = 0;
+
+    // Calculate top selling products getLowStockProducts(storeId)
+    const productSales = {};
+    storeOrders.forEach(order => {
+      order.items.forEach(item => {
+        if (item.storeId === storeId) {
+          productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
+        }
+      });
+    });
+
+    const topSellingProducts = Object.entries(productSales)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([productId, quantity]) => {
+        const product = products?.find(p => p.id === productId);
+        return { product, quantity, name: product?.name || 'Unknown', sales: quantity };
+      })
+      .filter(item => item.product);
+
+    // Order status for pie chart
+    const statusData = [
+      { name: 'Pending', value: storeOrders.filter(o => o.status === 'pending').length, color: '#f59e0b' },
+      { name: 'Confirmed', value: storeOrders.filter(o => o.status === 'confirmed').length, color: '#10b981' },
+      { name: 'Shipped', value: storeOrders.filter(o => o.status === 'shipped').length, color: '#06b6d4' },
+      { name: 'Delivered', value: storeOrders.filter(o => o.status === 'delivered').length, color: '#8b5cf6' },
+    ].filter(item => item.value > 0);
+
+    setTopProducts(topSellingProducts);
+    setLowStockProducts(lowStock);
+    setChartData({
+      topProducts: topSellingProducts,
+      orderStatus: statusData
+    });
+  }
+
   useEffect(() => {
     if (storeId) {
-      const orderStats = getOrderStats(storeId);
-      setStats(orderStats);
-
-      const storeOrders = getStoreOrders(storeId);
-      const products = getStoreProducts(storeId);
-      const lowStock =  0 ;
-      
-      // Calculate top selling products getLowStockProducts(storeId)
-      const productSales = {};
-      storeOrders.forEach(order => {
-        order.items.forEach(item => {
-          if (item.storeId === storeId) {
-            productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
-          }
-        });
-      });
-
-      const topSellingProducts = Object.entries(productSales)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 5)
-        .map(([productId, quantity]) => {
-          const product = products.find(p => p.id === productId);
-          return { product, quantity, name: product?.name || 'Unknown', sales: quantity };
-        })
-        .filter(item => item.product);
-
-      // Order status for pie chart
-      const statusData = [
-        { name: 'Pending', value: storeOrders.filter(o => o.status === 'pending').length, color: '#f59e0b' },
-        { name: 'Confirmed', value: storeOrders.filter(o => o.status === 'confirmed').length, color: '#10b981' },
-        { name: 'Shipped', value: storeOrders.filter(o => o.status === 'shipped').length, color: '#06b6d4' },
-        { name: 'Delivered', value: storeOrders.filter(o => o.status === 'delivered').length, color: '#8b5cf6' },
-      ].filter(item => item.value > 0);
-
-      setTopProducts(topSellingProducts);
-      setLowStockProducts(lowStock);
-      setChartData({
-        topProducts: topSellingProducts,
-        orderStatus: statusData
-      });
+      fetchUserStore()
     }
   }, [storeId, getOrderStats, getStoreOrders, getStoreProducts, getLowStockProducts]);
 
@@ -100,7 +104,7 @@ const StoreAnalytics = ({ storeId }) => {
             <div className="text-2xl font-bold">{stats.totalOrders}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -110,7 +114,7 @@ const StoreAnalytics = ({ storeId }) => {
             <div className="text-2xl font-bold">₹{stats.totalRevenue.toFixed(2)}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
@@ -144,7 +148,7 @@ const StoreAnalytics = ({ storeId }) => {
                     <Bar dataKey="sales" fill="var(--color-sales)" />
                   </BarChart>
                 </ChartContainer>
-                
+
                 {/* Product List */}
                 <div className="space-y-2">
                   {topProducts.slice(0, 3).map(({ product, quantity }, index) => (

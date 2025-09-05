@@ -20,39 +20,41 @@ const Dashboard = () => {
   const [overallStats, setOverallStats] = useState(null);
 
 
-  const fetchStores = async ()=>{
+  const fetchStores = async () => {
     console.log(currentUser.id);
-    
+
     const stores = await getUserStores(currentUser.id);
-      setUserStores(stores);
+    setUserStores(stores);
 
-      console.log(stores);
-      
-      
-      if (stores.length > 0 && !selectedStore) {
-        setSelectedStore(stores[0].id);
-      }
+    console.log(stores);
 
-      // Calculate overall stats
-      const stats = getOrderStats();
-      const totalProducts = stores?.reduce((sum, store) => {
-        return sum + getStoreProducts(store.id).length;
-      }, 0);
-      
-      const totalLowStock = stores.reduce((sum, store) => {
-        // return sum + getLowStockProducts(store.id).length;
-      }, 0);
 
-      setOverallStats({
-        ...stats,
-        totalStores: stores.length,
-        totalProducts,
-        totalLowStock
-      });
+    if (stores.length > 0 && !selectedStore) {
+      setSelectedStore(stores[0].id);
+    }
+
+    // Calculate overall stats
+    const stats = getOrderStats();
+    // const totalProducts = stores?.reduce((sum, store) => {
+    //   return sum + getStoreProducts(store.id).length;
+    // }, 0);
+
+    const totalProducts = await getStoreProducts(stores[0].id)
+
+    const totalLowStock = stores.reduce((sum, store) => {
+      // return sum + getLowStockProducts(store.id).length;
+    }, 0);
+
+    setOverallStats({
+      ...stats,
+      totalStores: stores.length,
+      totalProducts: totalProducts.length,
+      totalLowStock
+    });
   }
-  
 
-  useEffect(() => {    
+
+  useEffect(() => {
     if (currentUser) {
       fetchStores()
     }
@@ -85,7 +87,7 @@ const Dashboard = () => {
         ) : (
           <>
             <DashboardStats stats={overallStats} />
-            <StoreAnalyticsSection 
+            <StoreAnalyticsSection
               userStores={userStores}
               selectedStore={selectedStore}
               setSelectedStore={setSelectedStore}

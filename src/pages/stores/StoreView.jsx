@@ -11,6 +11,7 @@ import { Button } from "../../components/ui/button";
 import { ArrowLeft, Instagram, Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { useAuthStore } from "../../stores/useAuthStore";
+import StoreNavbar from "../../components/layout/StoreNavbar";
 
 const StoreView = () => {
   const { storeSlug } = useParams();
@@ -47,6 +48,7 @@ const StoreView = () => {
 
   return (
       <div className="min-h-screen bg-gray-50">
+        <StoreNavbar slug={store.slug} />
         <StoreHeader store={store} />
 
         <div className="max-w-6xl mx-auto px-4 py-8">

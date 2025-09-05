@@ -18,6 +18,9 @@ const Cart = () => {
   const { createOrder } = useOrdersStore();
   const { currentUser } = useAuthStore();
   const navigate = useNavigate();
+
+  console.log(items);
+  
   
   const [showCheckout, setShowCheckout] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
@@ -67,7 +70,7 @@ const Cart = () => {
     createOrder(orderData);
     clearCart();
     setShowCheckout(false);
-    navigate("/");
+    // navigate("/");
   };
 
   if (items.length === 0) {
@@ -191,9 +194,9 @@ const Cart = () => {
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
-                        {item?.imageUrl ? (
+                        {item?.image ? (
                           <img 
-                            src={item.imageUrl} 
+                            src={item.image} 
                             alt={item.name}
                             className="w-full h-full object-cover rounded-lg"
                           />
@@ -204,7 +207,7 @@ const Cart = () => {
                       
                       <div className="flex-1">
                         <h3 className="font-semibold">{item?.name}</h3>
-                        <p className="text-sm text-gray-600">{store?.name}</p>
+                        <p className="text-sm text-gray-600">{item?.storeName}</p>
                         <p className="text-lg font-semibold text-primary">${item?.price}</p>
                       </div>
                       

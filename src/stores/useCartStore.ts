@@ -7,7 +7,7 @@ interface CartItem {
   productId: string;
   name: string;
   price: number;
-  imageUrl?: string;
+  image?: string;
   storeId: string;
   storeName: string;
   storeSlug: string;
@@ -59,7 +59,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         productId: product.id,
         name: product.name,
         price: product.price,
-        imageUrl: product.imageUrl,
+        image: product.image,
         storeId: product.storeId,
         storeName: store.name,
         storeSlug: store.slug,

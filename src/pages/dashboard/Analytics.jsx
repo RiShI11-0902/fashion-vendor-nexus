@@ -33,10 +33,10 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { 
-  TrendingUp, 
-  Package, 
-  ShoppingCart, 
+import {
+  TrendingUp,
+  Package,
+  ShoppingCart,
   DollarSign,
   AlertTriangle,
   Calendar
@@ -49,6 +49,7 @@ const Analytics = () => {
   const [selectedStore, setSelectedStore] = useState("");
   const [userStores, setUserStores] = useState([]);
   const [analyticsData, setAnalyticsData] = useState(null);
+  const [products, setProducts] = useState(null)
 
   const chartConfig = {
     orders: {
@@ -71,7 +72,11 @@ const Analytics = () => {
         try {
           const stores = await getUserStores(currentUser.id);
           setUserStores(stores || []);
+          const products = await getStoreProducts(selectedStore);
+          setProducts(products)
+          console.log(products, "products");
           
+
           if (stores && stores.length > 0 && !selectedStore) {
             setSelectedStore(stores[0].id);
           }
@@ -89,12 +94,11 @@ const Analytics = () => {
     if (selectedStore) {
       const stats = getOrderStats(selectedStore);
       const orders = getStoreOrders(selectedStore);
-      const products = getStoreProducts(selectedStore);
       // const lowStockProducts = getLowStockProducts(selectedStore);
 
       // Generate monthly data for charts
       const monthlyData = generateMonthlyData(orders);
-      
+
       // Top products data
       const productSales = {};
       orders.forEach(order => {
@@ -106,12 +110,12 @@ const Analytics = () => {
       });
 
       const topProductsData = Object.entries(productSales)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .map(([productId, quantity]) => {
-          const product = products.find(p => p.id === productId);
-          return { 
-            name: product?.name || 'Unknown Product', 
+          const product = products?.find(p => p.id === productId);
+          return {
+            name: product?.name || 'Unknown Product',
             sales: quantity,
             revenue: quantity * (product?.price || 0)
           };
@@ -125,6 +129,9 @@ const Analytics = () => {
         { name: 'Delivered', value: orders.filter(o => o.status === 'delivered').length, color: '#8b5cf6' },
         { name: 'Cancelled', value: orders.filter(o => o.status === 'cancelled').length, color: '#ef4444' },
       ].filter(item => item.value > 0);
+
+      console.log("lenght is",products.length);
+      
 
       setAnalyticsData({
         stats,
@@ -144,7 +151,7 @@ const Analytics = () => {
         const orderMonth = new Date(order.createdAt).toLocaleDateString('en', { month: 'short' });
         return orderMonth === month;
       });
-      
+
       return {
         month,
         orders: monthOrders.length,
@@ -185,7 +192,7 @@ const Analytics = () => {
             <h1 className="text-3xl font-display font-bold">Analytics Dashboard</h1>
             <p className="text-gray-600">Detailed insights into your store performance</p>
           </div>
-          
+
           <Select value={selectedStore} onValueChange={setSelectedStore}>
             <SelectTrigger className="w-64">
               <SelectValue placeholder="Select a store" />
@@ -216,7 +223,7 @@ const Analytics = () => {
                   </p>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -229,7 +236,7 @@ const Analytics = () => {
                   </p>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Products</CardTitle>
@@ -242,7 +249,7 @@ const Analytics = () => {
                   </p>
                 </CardContent>
               </Card>
-              
+
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Avg Order Value</CardTitle>
