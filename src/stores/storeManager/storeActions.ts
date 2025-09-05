@@ -14,15 +14,18 @@ export interface StoreActions {
 
 export const createStoreActions = (set: any, get: any): StoreActions => ({
   createStore: async (store) => {
-    // const newStore = {
-    //   id: Date.now().toString(),
-    //   createdAt: new Date().toISOString(),
-    //   ...store,
-    // };
-    const res = await axios.post("http://localhost:5000/api/store", store);
-    console.log(res);
+    // Check if user already has a store
+    const state = get();
+    const existingStores = state.stores.filter((s: Store) => s.ownerId === store.ownerId);
+    
+    if (existingStores.length > 0) {
+      toast.error("You can only create one store");
+      throw new Error("User already has a store");
+    }
 
+    const res = await axios.post("http://localhost:5000/api/store", store);
     const newStore = res.data.newStore;
+    
     set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
     toast.success(`Store "${store.name}" created successfully`);
     return newStore;
@@ -73,23 +76,21 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
     }
   },
 
-  getUserStores: async (userId,forceRefresh = false) => {
+  getUserStores: async (userId, forceRefresh = false) => {
     try {
       const state = get();
 
-      console.log(state.stores);
-      
-
-      // 1. If already loaded in state, return that
+      // 1. If already loaded in state, return that (single store only)
       if (!forceRefresh && state.stores.length > 0) {
-        return state.stores.filter((store) => store?.ownerId === userId);
-      
+        const userStores = state.stores.filter((store) => store?.ownerId === userId);
+        return userStores.slice(0, 1); // Return only the first store
       } 
+      
       const res = await axios.get(`http://localhost:5000/api/store/user/${userId}`, {
-        withCredentials: true, // if using cookies for auth
+        withCredentials: true,
       });
       
-      const stores = res.data.stores;
+      const stores = res.data.stores.slice(0, 1); // Limit to one store
 
       // update Zustand state
       set((state: StoreState) => ({ ...state, stores }));

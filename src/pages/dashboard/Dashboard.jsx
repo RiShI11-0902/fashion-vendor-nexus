@@ -15,50 +15,36 @@ const Dashboard = () => {
   const { currentUser } = useAuthStore();
   const { getUserStores, getStoreProducts, getLowStockProducts } = useStoreManager();
   const { getOrderStats } = useOrdersStore();
-  const [selectedStore, setSelectedStore] = useState("");
-  const [userStores, setUserStores] = useState([]);
+  const [userStore, setUserStore] = useState(null);
   const [overallStats, setOverallStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-
-  const fetchStores = async () => {
-    console.log(currentUser.id);
-
+  const fetchStoreData = async () => {
+    setLoading(true);
     const stores = await getUserStores(currentUser.id);
-    setUserStores(stores);
+    const store = stores.length > 0 ? stores[0] : null;
+    setUserStore(store);
 
-    console.log(stores);
+    if (store) {
+      // Calculate stats for the single store
+      const stats = getOrderStats();
+      const totalProducts = await getStoreProducts(store.id);
 
-
-    if (stores.length > 0 && !selectedStore) {
-      setSelectedStore(stores[0].id);
+      setOverallStats({
+        ...stats,
+        totalProducts: totalProducts.length,
+        totalLowStock: 0 // Will be implemented when needed
+      });
     }
-
-    // Calculate overall stats
-    const stats = getOrderStats();
-    // const totalProducts = stores?.reduce((sum, store) => {
-    //   return sum + getStoreProducts(store.id).length;
-    // }, 0);
-
-    const totalProducts = await getStoreProducts(stores[0].id)
-
-    const totalLowStock = stores.reduce((sum, store) => {
-      // return sum + getLowStockProducts(store.id).length;
-    }, 0);
-
-    setOverallStats({
-      ...stats,
-      totalStores: stores.length,
-      totalProducts: totalProducts.length,
-      totalLowStock
-    });
-  }
+    setLoading(false);
+  };
 
 
   useEffect(() => {
     if (currentUser) {
-      fetchStores()
+      fetchStoreData();
     }
-  }, [currentUser, getUserStores, getOrderStats, getStoreProducts, getLowStockProducts, selectedStore]);
+  }, [currentUser, getUserStores, getOrderStats, getStoreProducts, getLowStockProducts]);
 
   if (!currentUser) {
     return (
@@ -77,20 +63,30 @@ const Dashboard = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <DashboardHeader userName={currentUser.name} />
 
-        {userStores.length === 0 ? (
+        {!userStore ? (
           <NoStoresState />
         ) : (
           <>
             <DashboardStats stats={overallStats} />
             <StoreAnalyticsSection
-              userStores={userStores}
-              selectedStore={selectedStore}
-              setSelectedStore={setSelectedStore}
+              userStores={[userStore]}
+              selectedStore={userStore.id}
+              setSelectedStore={() => {}} // No-op since there's only one store
             />
           </>
         )}

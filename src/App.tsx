@@ -19,7 +19,7 @@ import Signup from "./pages/auth/Signup";
 // Dashboard Pages
 import Dashboard from "./pages/dashboard/Dashboard";
 import Analytics from "./pages/dashboard/Analytics";
-import StoresManagement from "./pages/dashboard/StoresManagement";
+import StoreManagement from "./pages/dashboard/StoreManagement";
 import ProductsManagement from "./pages/dashboard/ProductsManagement";
 import OrdersManagement from "./pages/dashboard/OrdersManagement";
 import DiscountsManagement from "./pages/dashboard/DiscountsManagement";
@@ -58,7 +58,7 @@ const App = () => (
           {/* Dashboard Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/analytics" element={<Analytics />} />
-          <Route path="/dashboard/stores" element={<StoresManagement />} />
+          <Route path="/dashboard/store" element={<StoreManagement />} />
           <Route path="/dashboard/products" element={<ProductsManagement />} />
           <Route path="/dashboard/orders" element={<OrdersManagement />} />
           <Route path="/dashboard/discounts" element={<DiscountsManagement />} />
