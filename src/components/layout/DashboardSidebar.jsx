@@ -9,6 +9,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
+  useSidebar,
 } from "../../components/ui/sidebar";
 
 import {
@@ -18,92 +20,100 @@ import {
   Settings,
   ListPlus,
   ClipboardList,
-  BarChart3
+  BarChart3,
+  Store
 } from "lucide-react";
 
 const DashboardSidebar = () => {
   const location = useLocation();
+  const { state } = useSidebar();
   
   const isActive = (path) => {
+    if (path === "/dashboard") {
+      return location.pathname === "/dashboard";
+    }
     return location.pathname.includes(path);
   };
 
+  const menuItems = [
+    {
+      title: "Overview",
+      icon: Grid2x2,
+      path: "/dashboard",
+      active: isActive("/dashboard")
+    },
+    {
+      title: "Analytics", 
+      icon: BarChart3,
+      path: "/dashboard/analytics",
+      active: isActive("/dashboard/analytics")
+    },
+    {
+      title: "My Store",
+      icon: Store,
+      path: "/dashboard/store",
+      active: isActive("/dashboard/store")
+    },
+    {
+      title: "Products",
+      icon: Package,
+      path: "/dashboard/products", 
+      active: isActive("/dashboard/products")
+    },
+    {
+      title: "Orders",
+      icon: ClipboardList,
+      path: "/dashboard/orders",
+      active: isActive("/dashboard/orders")
+    },
+    {
+      title: "Settings",
+      icon: Settings,
+      path: "/dashboard/settings",
+      active: isActive("/dashboard/settings")
+    }
+  ];
+
   return (
-    <Sidebar>
-      <SidebarContent>
-        <div className="px-4 py-6">
-          <Link to="/" className="flex items-center">
-            <ShoppingBag className="h-6 w-6 text-gold mr-2" />
-            <span className="font-display text-xl font-semibold">FashionVendor</span>
-          </Link>
+    <Sidebar 
+      variant="sidebar" 
+      className="border-r bg-background"
+      collapsible="icon"
+    >
+      <SidebarHeader className="border-b border-border/50">
+        <div className="flex items-center px-3 py-2">
+          <ShoppingBag className="h-6 w-6 text-primary mr-2 flex-shrink-0" />
+          {state !== "collapsed" && (
+            <span className="font-semibold text-foreground truncate">
+              FashionVendor
+            </span>
+          )}
         </div>
-        
+      </SidebarHeader>
+      
+      <SidebarContent className="bg-background">
         <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-muted-foreground">
+            {state !== "collapsed" ? "Dashboard" : ""}
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard") && !isActive("/products") && !isActive("/settings") && !isActive("/stores") && !isActive("/orders") && !isActive("/analytics") ? "bg-accent" : ""}>
-                  <Link to="/dashboard">
-                    <Grid2x2 className="h-4 w-4 mr-2" />
-                    <span>Overview</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard/analytics") ? "bg-accent" : ""}>
-                  <Link to="/dashboard/analytics">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    <span>Analytics</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard/stores") ? "bg-accent" : ""}>
-                  <Link to="/dashboard/stores">
-                    <ShoppingBag className="h-4 w-4 mr-2" />
-                    <span>My Stores</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard/products") ? "bg-accent" : ""}>
-                  <Link to="/dashboard/products">
-                    <Package className="h-4 w-4 mr-2" />
-                    <span>Products</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard/orders") ? "bg-accent" : ""}>
-                  <Link to="/dashboard/orders">
-                    <ClipboardList className="h-4 w-4 mr-2" />
-                    <span>Orders</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard/create-store") ? "bg-accent" : ""}>
-                  <Link to="/dashboard/create-store">
-                    <ListPlus className="h-4 w-4 mr-2" />
-                    <span>Create Store</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActive("/dashboard/settings") ? "bg-accent" : ""}>
-                  <Link to="/dashboard/settings">
-                    <Settings className="h-4 w-4 mr-2" />
-                    <span>Settings</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.path}>
+                  <SidebarMenuButton 
+                    asChild 
+                    isActive={item.active}
+                    className="w-full justify-start text-foreground hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+                  >
+                    <Link to={item.path} className="flex items-center gap-2">
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {state !== "collapsed" && (
+                        <span className="truncate">{item.title}</span>
+                      )}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
