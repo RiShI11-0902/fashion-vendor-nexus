@@ -48,16 +48,20 @@ const OrdersManagement = () => {
   const [userStores, setUserStores] = useState([]);
   const [allUserOrders, setAllUserOrders] = useState([]);
 
+  console.log(orders);
+
+
   useEffect(() => {
     const fetchUserStores = async () => {
       if (currentUser) {
         try {
-          const stores = await getUserStores(currentUser.id);
-          setUserStores(stores || []);
-          
+          const store = await getUserStores(currentUser.id);
+          setUserStores(store || []);
+
           // Get orders for user's stores
-          const orders = (stores || []).flatMap(store => getStoreOrders(store.id));
+          const orders = await getStoreOrders(store.id);
           setAllUserOrders(orders);
+
         } catch (error) {
           console.error('Failed to fetch user stores:', error);
           setUserStores([]);
@@ -70,7 +74,7 @@ const OrdersManagement = () => {
   }, [currentUser, getUserStores, getStoreOrders]);
 
   // Apply filters
-  const filteredOrders = allUserOrders.filter(order => {
+  const filteredOrders = orders?.filter(order => {
     const storeMatch = selectedStore === "all" ||
       order.items.some(item => item.storeId === selectedStore);
     const statusMatch = statusFilter === "all" || order.status === statusFilter;
@@ -99,8 +103,13 @@ const OrdersManagement = () => {
     }
   };
 
-  const handleStatusUpdate = (orderId, newStatus) => {
-    updateOrderStatus(orderId, newStatus);
+  const handleStatusUpdate = async (orderId, newStatus) => {
+   await updateOrderStatus(orderId, newStatus);
+    setSelectedOrder((prev) =>
+      prev ? { ...prev, newStatus } : prev
+    );
+    console.log(selectedOrder);
+    
   };
 
   return (
@@ -141,7 +150,7 @@ const OrdersManagement = () => {
           </Select>
         </div>
 
-        {filteredOrders.length === 0 ? (
+        {filteredOrders?.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <ShoppingBag className="h-12 w-12 text-gray-400 mb-4" />
@@ -157,7 +166,7 @@ const OrdersManagement = () => {
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>Orders ({filteredOrders.length})</CardTitle>
+              <CardTitle>Orders ({filteredOrders?.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -174,7 +183,7 @@ const OrdersManagement = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredOrders.map((order) => (
+                  {filteredOrders?.map((order) => (
                     <TableRow key={order.id}>
                       <TableCell className="font-medium">#{order.id}</TableCell>
                       <TableCell>
@@ -185,7 +194,7 @@ const OrdersManagement = () => {
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          {order.items.map((item, index) => (
+                          {order?.items?.map((item, index) => (
                             <div key={index} className="text-sm">
                               {item.name} x{item.quantity}
                             </div>
@@ -252,13 +261,21 @@ const OrdersManagement = () => {
                     <p className="text-sm text-gray-500">Email</p>
                     <p className="font-medium">{selectedOrder.customerEmail}</p>
                   </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Mobile Number</p>
+                    <p className="font-medium">{selectedOrder.customerMobileNumber}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Address</p>
+                    <p className="font-medium">{selectedOrder.customerAddress}</p>
+                  </div>
                 </div>
 
                 {/* Items */}
                 <div className="border-b pb-4">
                   <p className="text-sm text-gray-500 mb-2">Items</p>
                   <ul className="space-y-1 text-sm">
-                    {selectedOrder.items.map((item, idx) => (
+                    {selectedOrder?.items?.map((item, idx) => (
                       <li
                         key={idx}
                         className="flex justify-between rounded-md bg-gray-50 px-3 py-2"
@@ -275,7 +292,7 @@ const OrdersManagement = () => {
                 {/* Order Status & Total */}
                 <div className="grid grid-cols-2 gap-6 border-b pb-4">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Update Status</p>
+                    <p className="text-sm text-black mb-1">Update Status</p>
                     <Select
                       value={selectedOrder.status}
                       onValueChange={(value) =>
@@ -286,11 +303,11 @@ const OrdersManagement = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="confirmed">Confirmed</SelectItem>
-                        <SelectItem value="shipped">Shipped</SelectItem>
-                        <SelectItem value="delivered">Delivered</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                        <SelectItem value="PENDING">Pending</SelectItem>
+                        <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+                        <SelectItem value="SHIPPED">Shipped</SelectItem>
+                        <SelectItem value="DELIVERED">Delivered</SelectItem>
+                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

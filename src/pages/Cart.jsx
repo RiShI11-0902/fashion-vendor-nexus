@@ -20,14 +20,15 @@ const Cart = () => {
   const navigate = useNavigate();
 
   console.log(items);
-  
-  
+
+
   const [showCheckout, setShowCheckout] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
-    name: currentUser?.name || "",
-    email: currentUser?.email || "",
-    phone: "",
-    address: "",
+    customerName: "",
+    customerEmail: "",
+    customerMobileNumber: "",
+    alternateMobileNUmber: "",
+    customerAddress: ""
   });
 
   const handleCheckout = () => {
@@ -40,10 +41,12 @@ const Cart = () => {
   };
 
   const handlePlaceOrder = () => {
-    if (!customerInfo.name || !customerInfo.email || !customerInfo.phone || !customerInfo.address) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
+    // if (!customerInfo.name || !customerInfo.email || !customerInfo.phone || !customerInfo.address) {
+    //   toast.error("Please fill in all required fields");
+    //   return;
+    // }
+
+    const storeId = items[0].storeId
 
     // Create order with cart items
     const orderItems = items.map(item => ({
@@ -52,20 +55,25 @@ const Cart = () => {
       name: item.name,
       price: item.price,
       quantity: item.quantity,
-      imageUrl: item.imageUrl,
+      imageUrl: item.image,
       storeId: item.storeId,
       storeName: item.storeName,
     }));
 
     const orderData = {
-      customerId: currentUser.id,
-      customerName: customerInfo.name,
-      customerEmail: customerInfo.email,
-      customerAddress:customerInfo.address,
+      customerName: customerInfo.customerName,
+      customerEmail: customerInfo.customerEmail,
+      customerAddress: customerInfo.customerAddress,
+      customerMobileNumber: customerInfo.customerMobileNumber,
+      alternateMobileNUmber: customerInfo.alternateMobileNUmber,
       items: orderItems,
       totalAmount: getTotalPrice(),
       status: "pending",
+      storeId:storeId,
     };
+
+    console.log(orderData, "orderdata");
+    
 
     createOrder(orderData);
     clearCart();
@@ -95,7 +103,7 @@ const Cart = () => {
       <MainLayout>
         <div className="container mx-auto px-4 py-12">
           <h1 className="text-3xl font-display font-bold mb-8">Checkout</h1>
-          
+
           <div className="grid lg:grid-cols-2 gap-8">
             <div>
               <Card>
@@ -106,8 +114,8 @@ const Cart = () => {
                       <Label htmlFor="name">Full Name *</Label>
                       <Input
                         id="name"
-                        value={customerInfo.name}
-                        onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                        value={customerInfo.customerName}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, customerName: e.target.value })}
                         placeholder="Enter your full name"
                       />
                     </div>
@@ -116,8 +124,8 @@ const Cart = () => {
                       <Input
                         id="email"
                         type="email"
-                        value={customerInfo.email}
-                        onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
+                        value={customerInfo.customerEmail}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, customerEmail: e.target.value })}
                         placeholder="Enter your email"
                       />
                     </div>
@@ -125,17 +133,26 @@ const Cart = () => {
                       <Label htmlFor="phone">Phone Number *</Label>
                       <Input
                         id="phone"
-                        value={customerInfo.phone}
-                        onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                        value={customerInfo.customerMobileNumber}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, customerMobileNumber: e.target.value })}
                         placeholder="Enter your phone number"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone"> Alternate Phone Number</Label>
+                      <Input
+                        id="phone"
+                        value={customerInfo.alternateMobileNUmber}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, alternateMobileNUmber: e.target.value })}
+                        placeholder="Enter your alternate phone number"
                       />
                     </div>
                     <div>
                       <Label htmlFor="address">Shipping Address *</Label>
                       <Input
                         id="address"
-                        value={customerInfo.address}
-                        onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
+                        value={customerInfo.customerAddress}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, customerAddress: e.target.value })}
                         placeholder="Enter your complete address"
                       />
                     </div>
@@ -143,7 +160,7 @@ const Cart = () => {
                 </CardContent>
               </Card>
             </div>
-            
+
             <div>
               <Card>
                 <CardContent className="p-6">
@@ -162,7 +179,7 @@ const Cart = () => {
                       <span>${getTotalPrice().toFixed(2)}</span>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3 mt-6">
                     <Button className="w-full" size="lg" onClick={handlePlaceOrder}>
                       Place Order
@@ -184,7 +201,7 @@ const Cart = () => {
     <MainLayout>
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-display font-bold mb-8">Shopping Cart</h1>
-        
+
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => {
@@ -195,8 +212,8 @@ const Cart = () => {
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
                         {item?.image ? (
-                          <img 
-                            src={item.image} 
+                          <img
+                            src={item.image}
                             alt={item.name}
                             className="w-full h-full object-cover rounded-lg"
                           />
@@ -204,13 +221,13 @@ const Cart = () => {
                           <ShoppingBag className="h-8 w-8 text-gray-400" />
                         )}
                       </div>
-                      
+
                       <div className="flex-1">
                         <h3 className="font-semibold">{item?.name}</h3>
                         <p className="text-sm text-gray-600">{item?.storeName}</p>
                         <p className="text-lg font-semibold text-primary">${item?.price}</p>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
@@ -228,7 +245,7 @@ const Cart = () => {
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+
                       <Button
                         variant="ghost"
                         size="sm"
@@ -242,7 +259,7 @@ const Cart = () => {
               );
             })}
           </div>
-          
+
           <div className="lg:col-span-1">
             <Card>
               <CardContent className="p-6">
@@ -263,7 +280,7 @@ const Cart = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
                   <Button className="w-full" size="lg" onClick={handleCheckout}>
                     Proceed to Checkout

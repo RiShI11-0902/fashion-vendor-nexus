@@ -23,6 +23,9 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       throw new Error("User already has a store");
     }
 
+    console.log(store);
+    
+
     const res = await axios.post("http://localhost:5000/api/store", store);
     const newStore = res.data.newStore;
     

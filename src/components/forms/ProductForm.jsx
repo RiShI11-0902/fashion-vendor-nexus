@@ -25,9 +25,12 @@ const productSchema = z.object({
     .refine(val => !isNaN(Number(val)) && Number(val) >= 0, {
       message: "Inventory must be a valid number",
     }),
-  // discount: z.string().refine(val => !isNaN(Number(val)) && Number(val) >= 0, {
-  //   message: "Price must be a valid number",
-  // }).optional(),
+  discount: z.string()
+    .transform(val => (val === "" ? "0" : val)) // handle empty string
+    .refine(val => !isNaN(Number(val)) && Number(val) >= 0, {
+      message: "Discount must be a valid number",
+    }),
+  sizes: z.array(z.string()).optional(),  // 👈 array of sizes
 });
 
 const ProductForm = ({ initialData = null }) => {
@@ -57,7 +60,8 @@ const ProductForm = ({ initialData = null }) => {
       category: initialData?.category || "",
       storeId: initialData?.storeId || "",
       inventory: initialData?.inventory?.toString() || "0",
-      // discount: initialData?.discount?.toString() || "0",
+      discount: initialData?.discount?.toString() || "0",
+      sizes: initialData?.sizes || [],  // 👈 default empty array
     },
   });
 
@@ -68,27 +72,46 @@ const ProductForm = ({ initialData = null }) => {
   }, [userStores, form, initialData]);
 
   const onSubmit = (data) => {
-
-    console.log(data);
-    
-    const productData = {
-      ...data,
-      price: Number(data.price),
-      inventory: Number(data.inventory),
-      discount: 20
-    };
-
-    console.log(productData);
-    
-
-    if (initialData) {
-      updateProduct(initialData.id, productData);
-      navigate("/dashboard/products");
-    } else {
-      createProduct(productData);
-      navigate("/dashboard/products");
-    }
+  const productData = {
+    ...data,
+    price: Number(data.price),
+    inventory: Number(data.inventory),
+    discount: Number(data.discount),
+    sizes: data.sizes || [],   // ensure array exists
   };
+
+  if (initialData) {
+    updateProduct(initialData.id, productData);
+    navigate("/dashboard/products");
+  } else {
+    createProduct(productData);
+    navigate("/dashboard/products");
+  }
+};
+
+
+  // const onSubmit = (data) => {
+
+  //   console.log(data);
+
+  //   const productData = {
+  //     ...data,
+  //     price: Number(data.price),
+  //     inventory: Number(data.inventory),
+  //     discount: 20
+  //   };
+
+  //   console.log(productData);
+
+
+  //   if (initialData) {
+  //     updateProduct(initialData.id, productData);
+  //     navigate("/dashboard/products");
+  //   } else {
+  //     createProduct(productData);
+  //     navigate("/dashboard/products");
+  //   }
+  // };
 
   if (userStores.length === 0) {
     return (
@@ -101,7 +124,7 @@ const ProductForm = ({ initialData = null }) => {
     );
   }
 
-   const onError = (errors) => {
+  const onError = (errors) => {
     console.error("Form submission errors:", errors);
     // You can iterate through errors to display them in your UI
     // For example, errors.email?.message will give you the error message for the email field
@@ -109,7 +132,7 @@ const ProductForm = ({ initialData = null }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit,onError)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-6">
         <StoreSelector form={form} stores={userStores} />
         <BasicProductDetails form={form} />
         <AdditionalDetails form={form} />

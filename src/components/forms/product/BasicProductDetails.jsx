@@ -1,4 +1,5 @@
 
+import { SizesInput } from "../../../lib/SizesInput";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Input } from "../../ui/input";
 
@@ -19,7 +20,7 @@ const BasicProductDetails = ({ form }) => {
         )}
       />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <FormField
           control={form.control}
           name="price"
@@ -32,6 +33,26 @@ const BasicProductDetails = ({ form }) => {
                   min="0" 
                   step="0.01" 
                   placeholder="29.99" 
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+         <FormField
+          control={form.control}
+          name="discount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Discount ($)</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  min="0" 
+                  step="0.01" 
+                  placeholder="0" 
                   {...field} 
                 />
               </FormControl>
@@ -59,6 +80,8 @@ const BasicProductDetails = ({ form }) => {
             </FormItem>
           )}
         />
+
+        <SizesInput form={form} />
       </div>
     </>
   );

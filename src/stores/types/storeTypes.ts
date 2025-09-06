@@ -35,6 +35,8 @@ export type Product = {
   category: string;
   inventory: number;
   createdAt: string;
+  sizes: string[]
+  discount:number
 };
 
 export type Discount = {

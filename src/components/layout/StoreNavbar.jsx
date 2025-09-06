@@ -13,7 +13,7 @@ const StoreNavbar = ({ store }) => {
                 <div className="flex items-center justify-between h-16">
                     {/* Left: Back Button + Logo + Store Name */}
                     <div className="flex items-center gap-4">
-                        <Button 
+                        {/* <Button 
                             asChild 
                             variant="ghost" 
                             size="sm" 
@@ -23,7 +23,7 @@ const StoreNavbar = ({ store }) => {
                                 <ArrowLeft className="h-4 w-4" />
                                 <span className="hidden sm:inline">Back</span>
                             </Link>
-                        </Button>
+                        </Button> */}
                         
                         <div className="flex items-center gap-3">
                             {store?.logo && (
