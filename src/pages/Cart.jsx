@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCartStore } from "../stores/useCartStore";
 import { useStoreManager } from "../stores/useStoreManager";
 import { useOrdersStore } from "../stores/useOrdersStore";
 import { useAuthStore } from "../stores/useAuthStore";
 import MainLayout from "../components/layout/MainLayout";
+import StoreNavbar from "../components/layout/StoreNavbar";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { Input } from "../components/ui/input";
@@ -13,11 +14,15 @@ import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
 const Cart = () => {
+  const { slug } = useParams();
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCartStore();
   const { getStoreBySlug } = useStoreManager();
   const { createOrder } = useOrdersStore();
   const { currentUser } = useAuthStore();
   const navigate = useNavigate();
+
+  // Get store data for navbar
+  const store = getStoreBySlug(slug);
 
   console.log(items);
 
@@ -81,28 +86,41 @@ const Cart = () => {
     // navigate("/");
   };
 
+  // Render with appropriate layout based on whether it's a store-specific cart
+  const Layout = ({ children }) => {
+    if (slug && store) {
+      return (
+        <div className="min-h-screen bg-background">
+          <StoreNavbar store={store} />
+          {children}
+        </div>
+      );
+    }
+    return <MainLayout>{children}</MainLayout>;
+  };
+
   if (items.length === 0) {
     return (
-      <MainLayout>
+      <Layout>
         <div className="container mx-auto px-4 py-12">
           <div className="text-center py-12">
-            <ShoppingBag className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-            <h1 className="text-3xl font-display font-bold mb-4">Your Cart is Empty</h1>
-            <p className="text-gray-600 mb-8">Looks like you haven't added anything to your cart yet.</p>
+            <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+            <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
+            <p className="text-muted-foreground mb-8">Looks like you haven't added anything to your cart yet.</p>
             <Button asChild>
-              <Link to="/stores">Continue Shopping</Link>
+              <Link to={slug ? `/store/${slug}` : "/stores"}>Continue Shopping</Link>
             </Button>
           </div>
         </div>
-      </MainLayout>
+      </Layout>
     );
   }
 
   if (showCheckout) {
     return (
-      <MainLayout>
+      <Layout>
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-3xl font-display font-bold mb-8">Checkout</h1>
+          <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
           <div className="grid lg:grid-cols-2 gap-8">
             <div>
@@ -193,24 +211,24 @@ const Cart = () => {
             </div>
           </div>
         </div>
-      </MainLayout>
+      </Layout>
     );
   }
 
   return (
-    <MainLayout>
+    <Layout>
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-display font-bold mb-8">Shopping Cart</h1>
+        <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => {
-              const store = getStoreBySlug(item?.storeName);
+              const itemStore = getStoreBySlug(item?.storeName);
               return (
                 <Card key={`${item.productId}-${item?.storeSlug}`}>
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">
                         {item?.image ? (
                           <img
                             src={item.image}
@@ -218,13 +236,13 @@ const Cart = () => {
                             className="w-full h-full object-cover rounded-lg"
                           />
                         ) : (
-                          <ShoppingBag className="h-8 w-8 text-gray-400" />
+                          <ShoppingBag className="h-8 w-8 text-muted-foreground" />
                         )}
                       </div>
 
                       <div className="flex-1">
                         <h3 className="font-semibold">{item?.name}</h3>
-                        <p className="text-sm text-gray-600">{item?.storeName}</p>
+                        <p className="text-sm text-muted-foreground">{item?.storeName}</p>
                         <p className="text-lg font-semibold text-primary">${item?.price}</p>
                       </div>
 
@@ -286,7 +304,7 @@ const Cart = () => {
                     Proceed to Checkout
                   </Button>
                   <Button variant="outline" className="w-full" asChild>
-                    <Link to="/stores">Continue Shopping</Link>
+                    <Link to={slug ? `/store/${slug}` : "/stores"}>Continue Shopping</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -294,7 +312,7 @@ const Cart = () => {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </Layout>
   );
 };
 
