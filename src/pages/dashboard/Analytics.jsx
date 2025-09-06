@@ -39,7 +39,8 @@ import {
   ShoppingCart,
   DollarSign,
   AlertTriangle,
-  Calendar
+  Calendar,
+  IndianRupee
 } from "lucide-react";
 
 const Analytics = () => {
@@ -75,7 +76,7 @@ const Analytics = () => {
           const products = await getStoreProducts(selectedStore);
           setProducts(products)
           console.log(products, "products");
-          
+
 
           if (stores && stores.length > 0 && !selectedStore) {
             setSelectedStore(stores[0].id);
@@ -92,62 +93,68 @@ const Analytics = () => {
 
   useEffect(() => {
     if (selectedStore) {
-      const stats = getOrderStats(selectedStore);
-      const orders = getStoreOrders(selectedStore);
-      // const lowStockProducts = getLowStockProducts(selectedStore);
 
-      // Generate monthly data for charts
-      const monthlyData = generateMonthlyData(orders);
+      const fetchOrders = async () => {
+        const stats = getOrderStats(selectedStore);
+        const orders = await getStoreOrders(selectedStore);
+        // const lowStockProducts = getLowStockProducts(selectedStore);
 
-      // Top products data
-      const productSales = {};
-      orders.forEach(order => {
-        order.items.forEach(item => {
-          if (item.storeId === selectedStore) {
-            productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
-          }
-        });
-      });
+        // Generate monthly data for charts
+        const monthlyData = generateMonthlyData(orders);
 
-      const topProductsData = Object.entries(productSales)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
-        .map(([productId, quantity]) => {
-          const product = products?.find(p => p.id === productId);
-          return {
-            name: product?.name || 'Unknown Product',
-            sales: quantity,
-            revenue: quantity * (product?.price || 0)
-          };
+        // Top products data
+        const productSales = {};
+        orders?.forEach(order => {
+          order.items.forEach(item => {
+            if (item.storeId === selectedStore) {
+              productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
+            }
+          });
         });
 
-      // Order status distribution
-      const statusData = [
-        { name: 'Pending', value: orders.filter(o => o.status === 'pending').length, color: '#f59e0b' },
-        { name: 'Confirmed', value: orders.filter(o => o.status === 'confirmed').length, color: '#10b981' },
-        { name: 'Shipped', value: orders.filter(o => o.status === 'shipped').length, color: '#06b6d4' },
-        { name: 'Delivered', value: orders.filter(o => o.status === 'delivered').length, color: '#8b5cf6' },
-        { name: 'Cancelled', value: orders.filter(o => o.status === 'cancelled').length, color: '#ef4444' },
-      ].filter(item => item.value > 0);
+        const topProductsData = Object.entries(productSales)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([productId, quantity]) => {
+            const product = products?.find(p => p.id === productId);
+            return {
+              name: product?.name || 'Unknown Product',
+              sales: quantity,
+              revenue: quantity * (product?.price || 0)
+            };
+          });
 
-      console.log("lenght is",products.length);
-      
+        // Order status distribution
+        const statusData = [
+          { name: 'PENDING', value: orders.filter(o => o.status === 'PENDING').length, color: '#f59e0b' },
+          { name: 'CONFIRMED', value: orders.filter(o => o.status === 'CONFIRMED').length, color: '#10b981' },
+          { name: 'SHIPPED', value: orders.filter(o => o.status === 'SHIPPED').length, color: '#06b6d4' },
+          { name: 'DELIVERED', value: orders.filter(o => o.status === 'DELIVERED').length, color: '#8b5cf6' },
+          { name: 'CANCELLED', value: orders.filter(o => o.status === 'CANCELLED').length, color: '#ef4444' },
+        ].filter(item => item.value > 0);
 
-      setAnalyticsData({
-        stats,
-        monthlyData,
-        topProductsData,
-        statusData,
-        // lowStockCount: lowStockProducts.length,
-        totalProducts: products.length
-      });
+        setAnalyticsData({
+          stats,
+          monthlyData,
+          topProductsData,
+          statusData,
+          // lowStockCount: lowStockProducts?.length,
+          totalProducts: products.length
+        });
+      }
+
+      fetchOrders()
+
     }
   }, [selectedStore, getOrderStats, getStoreOrders, getStoreProducts, getLowStockProducts]);
 
+  console.log(analyticsData);
+  
+
   const generateMonthlyData = (orders) => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return months.map(month => {
-      const monthOrders = orders.filter(order => {
+      const monthOrders = orders?.filter(order => {
         const orderMonth = new Date(order.createdAt).toLocaleDateString('en', { month: 'short' });
         return orderMonth === month;
       });
@@ -227,7 +234,7 @@ const Analytics = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  <IndianRupee className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">₹{analyticsData.stats.totalRevenue.toFixed(2)}</div>
@@ -274,7 +281,7 @@ const Analytics = () => {
                   <CardTitle>Monthly Revenue & Orders Trend</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[300px]">
+                  <ChartContainer config={chartConfig} className="h-[300px] w-full">
                     <LineChart data={analyticsData.monthlyData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
