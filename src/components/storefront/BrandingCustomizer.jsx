@@ -7,12 +7,14 @@ import { Switch } from "../ui/switch";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { ImageUpload } from "../ui/image-upload";
 import { Palette, Type, Image, Star, Badge, Sparkles } from "lucide-react";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { toast } from "sonner";
 
 const BrandingCustomizer = ({ storeId, currentSettings = {} }) => {
   const { updateStore } = useStoreManager();
+  const [shareImageFile, setShareImageFile] = useState(null);
   const [settings, setSettings] = useState({
     logoPosition: currentSettings.logoPosition || 'left',
     fontFamily: currentSettings.fontFamily || 'inter',
@@ -261,12 +263,15 @@ const BrandingCustomizer = ({ storeId, currentSettings = {} }) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="socialShareImage">Social Share Image URL</Label>
-            <Input
-              id="socialShareImage"
-              placeholder="https://example.com/share-image.jpg"
+            <Label htmlFor="socialShareImage">Social Share Image</Label>
+            <ImageUpload
               value={settings.socialShareImage}
-              onChange={(e) => setSettings({...settings, socialShareImage: e.target.value})}
+              onChange={(file) => {
+                setShareImageFile(file);
+                if (!file) setSettings({...settings, socialShareImage: ''});
+              }}
+              onUrlChange={(url) => setSettings({...settings, socialShareImage: url})}
+              placeholder="Upload share image or enter URL"
             />
             <p className="text-sm text-muted-foreground">Image shown when sharing on social media</p>
           </div>

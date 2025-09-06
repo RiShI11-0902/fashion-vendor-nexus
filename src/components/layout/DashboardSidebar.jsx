@@ -40,7 +40,7 @@ const DashboardSidebar = () => {
       title: "Overview",
       icon: Grid2x2,
       path: "/dashboard",
-      active: isActive("/dashboard")
+      active: isActive("/dashboard") && location.pathname === "/dashboard"
     },
     {
       title: "Analytics", 

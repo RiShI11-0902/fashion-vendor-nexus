@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
+import { ImageUpload } from "../../components/ui/image-upload";
 import {
   FormControl,
   FormDescription,
@@ -37,6 +38,8 @@ const StoreForm = ({ initialData = null }) => {
   const { currentUser } = useAuthStore();
   const [categories, setCategories] = useState(initialData?.categories || []);
   const [newCategory, setNewCategory] = useState("");
+  const [bannerFile, setBannerFile] = useState(null);
+  const [logoFile, setLogoFile] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(storeSchema),
@@ -49,13 +52,28 @@ const StoreForm = ({ initialData = null }) => {
     },
   });
 
- const onSubmit = (formData) => {
+ const onSubmit = async (formData) => {
   try {
     // validate with Zod
     const parsedData = storeSchema.parse(formData);
 
     console.log(parsedData.slug);
     
+    // Handle file uploads if files were selected
+    let bannerUrl = parsedData.imageUrl;
+    let logoUrl = parsedData.logo;
+    
+    // In a real app, you'd upload files to a service like Cloudinary or AWS S3
+    // For now, we'll use the existing URL or a placeholder
+    if (bannerFile) {
+      // bannerUrl = await uploadFile(bannerFile);
+      bannerUrl = URL.createObjectURL(bannerFile);
+    }
+    
+    if (logoFile) {
+      // logoUrl = await uploadFile(logoFile);
+      logoUrl = URL.createObjectURL(logoFile);
+    }
 
     const storeData = {
       ...parsedData,
@@ -63,7 +81,9 @@ const StoreForm = ({ initialData = null }) => {
       ownerId: currentUser?.id,
       url: `http://localhost:8080/store/${parsedData.slug}`,
       mobileNumber: "+91 7498140646",
-      banner: parsedData.imageUrl
+      banner: bannerUrl,
+      logo: logoUrl,
+      imageUrl: bannerUrl
     };
 
     console.log(storeData);
@@ -71,10 +91,10 @@ const StoreForm = ({ initialData = null }) => {
 
     if (initialData) {
       updateStore(initialData.id, storeData);
-      navigate("/dashboard/stores");
+      navigate("/dashboard/store");
     } else {
       createStore(storeData);
-      navigate("/dashboard/stores");
+      navigate("/dashboard/store");
     }
   } catch (err) {
     console.error("Validation error:", err.errors);
@@ -156,12 +176,20 @@ const StoreForm = ({ initialData = null }) => {
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store Image URL</FormLabel>
+              <FormLabel>Store Banner</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
+                <ImageUpload
+                  value={field.value}
+                  onChange={(file) => {
+                    setBannerFile(file);
+                    if (!file) field.onChange('');
+                  }}
+                  onUrlChange={field.onChange}
+                  placeholder="Upload banner image or enter URL"
+                />
               </FormControl>
               <FormDescription>
-                Enter a URL for your store banner image
+                Upload or enter a URL for your store banner image
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -173,12 +201,20 @@ const StoreForm = ({ initialData = null }) => {
           name="logo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store Logo URL</FormLabel>
+              <FormLabel>Store Logo</FormLabel>
               <FormControl>
-                <Input placeholder="https://example.com/image.jpg" {...field} />
+                <ImageUpload
+                  value={field.value}
+                  onChange={(file) => {
+                    setLogoFile(file);
+                    if (!file) field.onChange('');
+                  }}
+                  onUrlChange={field.onChange}
+                  placeholder="Upload logo image or enter URL"
+                />
               </FormControl>
               <FormDescription>
-                Enter a URL for your store banner image
+                Upload or enter a URL for your store logo
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -226,7 +262,7 @@ const StoreForm = ({ initialData = null }) => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate("/dashboard/stores")}
+            onClick={() => navigate("/dashboard/store")}
           >
             Cancel
           </Button>

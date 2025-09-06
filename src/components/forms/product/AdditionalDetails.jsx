@@ -1,9 +1,13 @@
 
+import { useState } from 'react';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
+import { ImageUpload } from "../../ui/image-upload";
 
 const AdditionalDetails = ({ form }) => {
+  const [imageFile, setImageFile] = useState(null);
+
   return (
     <>
       <FormField
@@ -43,12 +47,20 @@ const AdditionalDetails = ({ form }) => {
         name="image"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Product Image URL</FormLabel>
+            <FormLabel>Product Image</FormLabel>
             <FormControl>
-              <Input placeholder="https://example.com/image.jpg" {...field} />
+              <ImageUpload
+                value={field.value}
+                onChange={(file) => {
+                  setImageFile(file);
+                  if (!file) field.onChange('');
+                }}
+                onUrlChange={field.onChange}
+                placeholder="Upload product image or enter URL"
+              />
             </FormControl>
             <FormDescription>
-              Enter a URL for your product image
+              Upload or enter a URL for your product image
             </FormDescription>
             <FormMessage />
           </FormItem>
