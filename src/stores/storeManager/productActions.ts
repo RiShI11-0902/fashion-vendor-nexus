@@ -9,6 +9,9 @@ export interface ProductActions {
   updateProductInventory: (productId: string, quantityToSubtract: number) => Promise<void>;
   getStoreProducts: (storeId: string) => Promise<void>;
   getProductById: (productId: string) => Promise<void>;
+  getlowStockProducts:(storeId: string)=> {
+    lowStockProducts: Product
+  };
 }
 
 const API_URL = "http://localhost:5000/api/products"; // adjust if different
@@ -107,6 +110,21 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
       toast.error(error.response?.data?.error || "Failed to fetch product");
     }
   },
+
+  getlowStockProducts: (storeId)=>{
+     const products = storeId
+      ? get().products.filter((product) => product.storeId === storeId)
+      : get().product;
+
+    return {
+      lowStockProducts: products.map((product)=>{
+        if(product.inventory < 3){
+          return product ;
+        }
+      }),
+    };
+  }
+
 });
 
 // import { toast } from 'sonner';

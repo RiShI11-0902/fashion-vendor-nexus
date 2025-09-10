@@ -14,11 +14,39 @@ interface AuthState {
   signup: (email: string, password: string, name: string) => Promise<User>;
   login: (email: string, password: string) => Promise<User>;
   logout: () => void;
+  setCurrentUser: (user: User | null) => void;
+  isAuthenticated: boolean;
+  checkAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   currentUser: null,
   loading: true,
+  isAuthenticated: false,
+
+  setCurrentUser: (user: User | null) => set({ currentUser: user }),
+
+  checkAuth: async () => {
+  console.log("called checkAuth");
+  try {
+    const res = await axios.get("http://localhost:5000/api/auth/check", {
+      withCredentials: true,
+    });
+    console.log("backend check:", res.data);
+
+    const user = res.data.user; // make sure backend sends this
+    if (user) {
+      set({ currentUser: user, isAuthenticated: true, loading: false });
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      set({ currentUser: null, isAuthenticated: false, loading: false });
+    }
+  } catch (err) {
+    console.error("checkAuth failed", err);
+    set({ currentUser: null, isAuthenticated: false, loading: false });
+  }
+},
+
 
   signup: async (email: string, password: string, name: string) => {
     try {

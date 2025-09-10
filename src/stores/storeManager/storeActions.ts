@@ -16,31 +16,37 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
   createStore: async (store) => {
     // Check if user already has a store
     const state = get();
-    const existingStores = state.stores.filter((s: Store) => s.ownerId === store.ownerId);
-    
+    const existingStores = state.stores.filter(
+      (s: Store) => s.ownerId === store.ownerId
+    );
+
     if (existingStores.length > 0) {
       toast.error("You can only create one store");
       throw new Error("User already has a store");
     }
-
-    console.log(store);
-    
-
     const res = await axios.post("http://localhost:5000/api/store", store);
     const newStore = res.data.newStore;
-    
+
     set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
     toast.success(`Store "${store.name}" created successfully`);
     return newStore;
   },
 
-  updateStore: (storeId, updates) => {
-    set((state: StoreState) => ({
-      stores: state.stores.map((store) =>
-        store.id === storeId ? { ...store, ...updates } : store
-      ),
-    }));
-    toast.success("Store updated successfully");
+  updateStore: async (storeId, updates) => {
+    try {
+      const res = await axios.put(`http://localhost:5000/api/store/${storeId}`, {
+        updates,
+      });
+      const store = res.data.updatedStore;
+
+      set((state: StoreState) => ({
+        stores: state.stores.map((store) =>
+          store.id === storeId ? { ...store, ...updates } : store
+        ),
+      }));
+      toast.success("Store updated successfully");
+      return store;
+    } catch (error) {}
   },
 
   deleteStore: (storeId) => {
@@ -58,7 +64,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
   getStoreBySlug: async (slug) => {
     try {
       console.log(slug, "SLug from store");
-      
+
       // const state = get();
 
       // // 1. If already loaded in state, return that
@@ -70,7 +76,6 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       });
       console.log(res);
       const stores = res.data.store;
-      
 
       return stores;
     } catch (err) {
@@ -85,14 +90,19 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
 
       // 1. If already loaded in state, return that (single store only)
       if (!forceRefresh && state.stores.length > 0) {
-        const userStores = state.stores.filter((store) => store?.ownerId === userId);
+        const userStores = state.stores.filter(
+          (store) => store?.ownerId === userId
+        );
         return userStores.slice(0, 1); // Return only the first store
-      } 
-      
-      const res = await axios.get(`http://localhost:5000/api/store/user/${userId}`, {
-        withCredentials: true,
-      });
-      
+      }
+
+      const res = await axios.get(
+        `http://localhost:5000/api/store/user/${userId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
       const stores = res.data.stores.slice(0, 1); // Limit to one store
 
       // update Zustand state
