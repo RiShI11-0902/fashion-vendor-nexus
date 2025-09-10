@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ArrowRight, Star, Zap, Globe, TrendingUp } from "lucide-react";
-import heroProduct1 from "../../assets/hero-product-1.jpg";
-import heroProduct2 from "../../assets/hero-product-2.jpg";
-import heroProduct3 from "../../assets/hero-product-3.jpg";
-import heroProduct4 from "../../assets/hero-product-4.jpg";
+import img5 from "../../assets/img5.png";
+import img2 from "../../assets/img2.png";
+import img3 from "../../assets/img3.png";
+import img4 from "../../assets/img4.png";
 
 const HeroSection = ({ currentUser }) => {
   return (
@@ -65,24 +65,24 @@ const HeroSection = ({ currentUser }) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-4">
               <img 
-                src={heroProduct1}
+                src={img2}
                 alt="E-commerce showcase"
                 className="w-full h-48 object-cover rounded-lg shadow-lg"
               />
               <img 
-                src={heroProduct2}
+                src={img5}
                 alt="Online store management"
                 className="w-full h-32 object-cover rounded-lg shadow-lg"
               />
             </div>
             <div className="space-y-4 mt-8">
               <img 
-                src={heroProduct3}
+                src={img4}
                 alt="Mobile shopping interface"
                 className="w-full h-32 object-cover rounded-lg shadow-lg"
               />
               <img 
-                src={heroProduct4}
+                src={img3}
                 alt="Product photography"
                 className="w-full h-48 object-cover rounded-lg shadow-lg"
               />

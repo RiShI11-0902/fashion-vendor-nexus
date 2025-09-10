@@ -69,6 +69,7 @@ const ProductForm = ({ initialData = null }) => {
     if (!initialData && userStores.length > 0 && !form.getValues("storeId")) {
       form.setValue("storeId", userStores[0].id);
     }
+    
   }, [userStores, form, initialData]);
 
   const onSubmit = (data) => {
@@ -135,7 +136,7 @@ const ProductForm = ({ initialData = null }) => {
       <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-6">
         <StoreSelector form={form} stores={userStores} />
         <BasicProductDetails form={form} />
-        <AdditionalDetails form={form} />
+        <AdditionalDetails form={form} catgories={userStores[0].categories} />
 
         <div className="flex justify-end space-x-4 pt-4">
           <Button

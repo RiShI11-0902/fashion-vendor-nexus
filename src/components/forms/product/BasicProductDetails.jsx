@@ -1,4 +1,5 @@
 
+import { IndianRupee } from "lucide-react";
 import { SizesInput } from "../../../lib/SizesInput";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Input } from "../../ui/input";
@@ -26,7 +27,7 @@ const BasicProductDetails = ({ form }) => {
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price ($)</FormLabel>
+              <FormLabel className="flex flex-row items-center space-x-2"><span>Price</span> <IndianRupee className="w-4" /></FormLabel>
               <FormControl>
                 <Input 
                   type="number" 

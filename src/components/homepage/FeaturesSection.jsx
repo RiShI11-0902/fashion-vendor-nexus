@@ -15,7 +15,7 @@ const FeaturesSection = () => {
     {
       icon: Palette,
       title: "Custom Branding",
-      description: "Match your website design with your brand aesthetic and style"
+      description: "Put your Store Logo and Banner"
     },
     {
       icon: BarChart3,

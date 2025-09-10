@@ -1,4 +1,8 @@
 import { Badge } from "../ui/badge";
+import model1 from "../../assets/model1.png";
+import model2 from "../../assets/model2.png";
+
+
 
 const ProductShowcaseSection = () => {
   const featuredProducts = [
@@ -6,28 +10,28 @@ const ProductShowcaseSection = () => {
       id: 1,
       name: "Elegant Dresses",
       image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=600&fit=crop",
-      price: "Starting from $94",
+      price: "Starting from ₹500",
       category: "Fashion"
     },
     {
       id: 2,
       name: "Designer Jeans",
-      image: "https://images.unsplash.com/photo-1542272454315-7ad9b1ba6f84?w=400&h=600&fit=crop",
-      price: "Starting from $55",
+      image: model1,
+      price: "Starting from ₹700",
       category: "Denim"
     },
     {
       id: 3,
       name: "Premium Outerwear",
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=600&fit=crop",
-      price: "Starting from $89",
+      image: model2,
+      price: "Starting from ₹900",
       category: "Outerwear"
     },
     {
       id: 4,
       name: "Summer Collection",
       image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=600&fit=crop",
-      price: "Starting from $65",
+      price: "Starting from ₹1000",
       category: "Summer"
     }
   ];
@@ -47,7 +51,7 @@ const ProductShowcaseSection = () => {
                 <img 
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-64 md:h-80 object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-64 md:h-80 object-contain transition-transform duration-500 group-hover:scale-105 "
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
                 <Badge className="absolute top-3 right-3 bg-white/90 text-gray-900">

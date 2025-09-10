@@ -1,5 +1,5 @@
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -21,13 +21,17 @@ import {
   ListPlus,
   ClipboardList,
   BarChart3,
-  Store
+  Store,
+  Sparkles,
+  LogOut
 } from "lucide-react";
+import { Button } from "../ui/button";
 
 const DashboardSidebar = () => {
   const location = useLocation();
   const { state } = useSidebar();
-  
+  const navigate = useNavigate()
+
   const isActive = (path) => {
     if (path === "/dashboard") {
       return location.pathname === "/dashboard";
@@ -43,7 +47,7 @@ const DashboardSidebar = () => {
       active: isActive("/dashboard") && location.pathname === "/dashboard"
     },
     {
-      title: "Analytics", 
+      title: "Analytics",
       icon: BarChart3,
       path: "/dashboard/analytics",
       active: isActive("/dashboard/analytics")
@@ -57,7 +61,7 @@ const DashboardSidebar = () => {
     {
       title: "Products",
       icon: Package,
-      path: "/dashboard/products", 
+      path: "/dashboard/products",
       active: isActive("/dashboard/products")
     },
     {
@@ -67,53 +71,52 @@ const DashboardSidebar = () => {
       active: isActive("/dashboard/orders")
     },
     {
+      title: "Generate AI Model",
+      icon: Sparkles,
+      path: "/dashboard/generate-model",
+      active: isActive("/dashboard/generate-model")
+    },
+    {
       title: "Settings",
       icon: Settings,
       path: "/dashboard/settings",
       active: isActive("/dashboard/settings")
-    }
+    },
   ];
 
   return (
-    <Sidebar 
-      variant="sidebar" 
+    <Sidebar
+      variant="sidebar"
       className="border-r bg-background"
       collapsible="icon"
     >
-      <SidebarHeader className="border-b border-border/50">
-        <div className="flex items-center px-3 py-2">
-          <ShoppingBag className="h-6 w-6 text-primary mr-2 flex-shrink-0" />
-          {state !== "collapsed" && (
-            <span className="font-semibold text-foreground truncate">
-              FashionVendor
-            </span>
-          )}
-        </div>
-      </SidebarHeader>
-      
       <SidebarContent className="bg-background">
         <SidebarGroup>
           <SidebarGroupLabel className="text-muted-foreground">
-            {state !== "collapsed" ? "Dashboard" : ""}
+            {state !== "collapsed" ? <img onClick={() => navigate("/")} src="/full_logo.png" className=" px-3 py-2 w-[9rem] cursor-pointer mr-2 flex-shrink-0" /> : <img src="/full_logo.png" className=" px-3 py-2 w-[9rem] cursor-pointer mr-2 flex-shrink-0" />}
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="mt-5">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton 
-                    asChild 
+                  <SidebarMenuButton
+                    asChild
                     isActive={item.active}
-                    className="w-full justify-start text-foreground hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+                    className="w-full justify-start "
                   >
-                    <Link to={item.path} className="flex items-center gap-2">
+                    <Link to={item.path} className="flex items-center  text-black mt-2 gap-2">
                       <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {state !== "collapsed" && (
-                        <span className="truncate">{item.title}</span>
-                      )}
+                      <span className="truncate text-black">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {
+                state == 'collapsed' ? <LogOut className="h-4 w-4 flex-shrink-0 ml-[0.6rem] mt-4" /> :
+                  <Button className="w-fit mt-5" size={"sm"}>
+                    <LogOut /> Sign Out
+                  </Button>
+              }
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -123,3 +126,5 @@ const DashboardSidebar = () => {
 };
 
 export default DashboardSidebar;
+
+/////text-foreground hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground 

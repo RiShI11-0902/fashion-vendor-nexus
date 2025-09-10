@@ -20,6 +20,7 @@ import { z } from "zod";
 import { X } from "lucide-react";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { useAuthStore } from "../../stores/useAuthStore";
+import axios from "axios";
 
 const storeSchema = z.object({
   name: z.string().min(2, "Store name must be at least 2 characters"),
@@ -28,8 +29,9 @@ const storeSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Store URL can only contain lowercase letters, numbers, and hyphens")
     .transform(val => val.toLowerCase()),
   description: z.string().optional(),
-  imageUrl: z.string().optional(),
+  banner: z.string().optional(),
   logo: z.string().optional(),
+  mobileNumber: z.string(),
 });
 
 const StoreForm = ({ initialData = null }) => {
@@ -38,8 +40,7 @@ const StoreForm = ({ initialData = null }) => {
   const { currentUser } = useAuthStore();
   const [categories, setCategories] = useState(initialData?.categories || []);
   const [newCategory, setNewCategory] = useState("");
-  const [bannerFile, setBannerFile] = useState(null);
-  const [logoFile, setLogoFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(storeSchema),
@@ -47,47 +48,46 @@ const StoreForm = ({ initialData = null }) => {
       name: initialData?.name || "",
       slug: initialData?.slug || "",
       description: initialData?.description || "",
-      imageUrl: initialData?.imageUrl || "",
-      logo: initialData?.imageUrl || "",
+      banner: initialData?.banner || "",
+      logo: initialData?.logo || "",
+      mobileNumber: initialData?.mobileNumber || "",
     },
   });
 
- const onSubmit = async (formData) => {
-  try {
-    // validate with Zod
-    const parsedData = storeSchema.parse(formData);
+  const handleImage = async (image, field) => {
 
-    console.log(parsedData.slug);
-    
-    // Handle file uploads if files were selected
-    let bannerUrl = parsedData.imageUrl;
-    let logoUrl = parsedData.logo;
-    
-    // In a real app, you'd upload files to a service like Cloudinary or AWS S3
-    // For now, we'll use the existing URL or a placeholder
-    if (bannerFile) {
-      // bannerUrl = await uploadFile(bannerFile);
-      bannerUrl = URL.createObjectURL(bannerFile);
-    }
-    
-    if (logoFile) {
-      // logoUrl = await uploadFile(logoFile);
-      logoUrl = URL.createObjectURL(logoFile);
-    }
+    if (!image) return;
+
+    setIsUploading(true)
+
+    const cld_img = new FormData();
+    cld_img.append("file", image);
+    cld_img.append("upload_preset", "roomhop");
+    cld_img.append("cloud_name", "dogievntz");
+
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dogievntz/image/upload",
+      cld_img
+    );
+
+    field.onChange(res.data.url)
+
+    setIsUploading(false)
+  };
+  const onSubmit = async (formData) => {
+    let mobileNumber = formData.mobileNumber
+      ? `+91${formData.mobileNumber}`
+      : null;
 
     const storeData = {
-      ...parsedData,
+      ...formData,
+      mobileNumber,
       categories,
       ownerId: currentUser?.id,
-      url: `http://localhost:8080/store/${parsedData.slug}`,
-      mobileNumber: "+91 7498140646",
-      banner: bannerUrl,
-      logo: logoUrl,
-      imageUrl: bannerUrl
+      url: `http://localhost:8080/store/${formData.slug}`,
     };
 
     console.log(storeData);
-    
 
     if (initialData) {
       updateStore(initialData.id, storeData);
@@ -96,10 +96,8 @@ const StoreForm = ({ initialData = null }) => {
       createStore(storeData);
       navigate("/dashboard/store");
     }
-  } catch (err) {
-    console.error("Validation error:", err.errors);
-  }
-};
+  };
+
 
   const addCategory = () => {
     if (newCategory.trim() && !categories.includes(newCategory.trim())) {
@@ -119,9 +117,15 @@ const StoreForm = ({ initialData = null }) => {
     }
   };
 
+  const onError = (errors) => {
+    console.error("Form submission errors:", errors);
+    // You can iterate through errors to display them in your UI
+    // For example, errors.email?.message will give you the error message for the email field
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -171,9 +175,29 @@ const StoreForm = ({ initialData = null }) => {
           )}
         />
 
+        <div className="flex gap-2">
+          <FormField
+            control={form.control}
+            name="mobileNumber"
+            render={({ field }) => (
+              <FormItem className="flex-1 flex-row items-center justify-center">
+                <FormLabel>Store Whatss App Number</FormLabel>
+                <div className="flex-row flex items-center space-x-2 justify-center">
+                <Input placeholder="+91" className="w-14" value="+91" disabled />
+                <FormControl>
+                  <Input placeholder="Enter WhatsApp Number" {...field} />
+                </FormControl>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+
         <FormField
           control={form.control}
-          name="imageUrl"
+          name="banner"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Store Banner</FormLabel>
@@ -181,15 +205,16 @@ const StoreForm = ({ initialData = null }) => {
                 <ImageUpload
                   value={field.value}
                   onChange={(file) => {
-                    setBannerFile(file);
+                    handleImage(file, field)
                     if (!file) field.onChange('');
                   }}
                   onUrlChange={field.onChange}
-                  placeholder="Upload banner image or enter URL"
+                  placeholder="Upload banner image"
+                  isUploading={isUploading}
                 />
               </FormControl>
               <FormDescription>
-                Upload or enter a URL for your store banner image
+                Upload your store banner image
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -206,15 +231,16 @@ const StoreForm = ({ initialData = null }) => {
                 <ImageUpload
                   value={field.value}
                   onChange={(file) => {
-                    setLogoFile(file);
+                    handleImage(file, field)
                     if (!file) field.onChange('');
                   }}
                   onUrlChange={field.onChange}
                   placeholder="Upload logo image or enter URL"
+                  isUploading={isUploading}
                 />
               </FormControl>
               <FormDescription>
-                Upload or enter a URL for your store logo
+                Upload your store logo
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -266,7 +292,7 @@ const StoreForm = ({ initialData = null }) => {
           >
             Cancel
           </Button>
-          <Button type="submit">
+          <Button type="submit" disabled={isUploading}>
             {initialData ? "Update Store" : "Create Store"}
           </Button>
         </div>

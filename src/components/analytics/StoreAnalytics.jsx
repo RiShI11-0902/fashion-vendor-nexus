@@ -23,7 +23,7 @@ import { TrendingUp, Package, AlertTriangle, DollarSign } from "lucide-react";
 
 const StoreAnalytics = ({ storeId }) => {
   const { getOrderStats, getStoreOrders } = useOrdersStore();
-  const { getStoreProducts, getLowStockProducts } = useStoreManager();
+  const { getStoreProducts, getlowStockProducts } = useStoreManager();
   const [stats, setStats] = useState(null);
   const [topProducts, setTopProducts] = useState([]);
   const [lowStockProducts, setLowStockProducts] = useState([]);
@@ -41,12 +41,12 @@ const StoreAnalytics = ({ storeId }) => {
   };
 
   const fetchUserStore = async () => {
-    const orderStats = getOrderStats(storeId);
-    setStats(orderStats);
-
     const storeOrders = await getStoreOrders(storeId);
     const products = await getStoreProducts(storeId);
-    const lowStock = 0;
+    const orderStats = getOrderStats(storeId);
+    
+    setStats(orderStats);
+    const { lowStockProducts } = getlowStockProducts(storeId);
 
     // Calculate top selling products getLowStockProducts(storeId)
     const productSales = {};
@@ -69,14 +69,15 @@ const StoreAnalytics = ({ storeId }) => {
 
     // Order status for pie chart
     const statusData = [
-      { name: 'Pending', value: storeOrders.filter(o => o.status === 'pending').length, color: '#f59e0b' },
-      { name: 'Confirmed', value: storeOrders.filter(o => o.status === 'confirmed').length, color: '#10b981' },
-      { name: 'Shipped', value: storeOrders.filter(o => o.status === 'shipped').length, color: '#06b6d4' },
-      { name: 'Delivered', value: storeOrders.filter(o => o.status === 'delivered').length, color: '#8b5cf6' },
+      { name: 'PENDING', value: storeOrders.filter(o => o.status === 'PENDING').length, color: '#f59e0b' },
+      { name: 'CONFIRMED', value: storeOrders.filter(o => o.status === 'CONFIRMED').length, color: '#10b981' },
+      { name: 'SHIPPED', value: storeOrders.filter(o => o.status === 'SHIPPED').length, color: '#06b6d4' },
+      { name: 'DELIVERED', value: storeOrders.filter(o => o.status === 'DELIVERED').length, color: '#8b5cf6' },
+      { name: 'CANCELLED', value: storeOrders.filter(o => o.status === 'CANCELLED').length, color: '#ef4444' },
     ].filter(item => item.value > 0);
 
     setTopProducts(topSellingProducts);
-    setLowStockProducts(lowStock);
+    setLowStockProducts(lowStockProducts);
     setChartData({
       topProducts: topSellingProducts,
       orderStatus: statusData
@@ -87,7 +88,7 @@ const StoreAnalytics = ({ storeId }) => {
     if (storeId) {
       fetchUserStore()
     }
-  }, [storeId, getOrderStats, getStoreOrders, getStoreProducts, getLowStockProducts]);
+  }, [storeId, getOrderStats, getStoreOrders, getStoreProducts, getlowStockProducts]);
 
   if (!stats) return null;
 
@@ -215,13 +216,13 @@ const StoreAnalytics = ({ storeId }) => {
           <CardContent>
             {lowStockProducts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {lowStockProducts.map(product => (
-                  <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg">
+                {lowStockProducts?.map(product => (
+                  <div key={product?.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-gray-500">₹{product.price}</p>
+                      <p className="font-medium">{product?.name}</p>
+                      <p className="text-sm text-gray-500">₹{product?.price}</p>
                     </div>
-                    <Badge variant="destructive">{product.inventory} left</Badge>
+                    <Badge variant="destructive">{product?.inventory} left</Badge>
                   </div>
                 ))}
               </div>

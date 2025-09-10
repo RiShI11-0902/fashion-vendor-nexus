@@ -1,25 +1,29 @@
 import React, { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from './button';
 import { Input } from './input';
 import { Label } from './label';
 import { cn } from '@/lib/utils';
 
-const ImageUpload = ({ 
-  value, 
-  onChange, 
+const ImageUpload = ({
+  value,
+  onChange,
   onUrlChange,
   placeholder = "Upload image or enter URL",
   className,
   accept = "image/*",
   maxSize = 5 * 1024 * 1024, // 5MB default
-  showUrlOption = true,
-  ...props 
+  showUrlOption = false,
+  isUploading,
+  ...props
 }) => {
   const [preview, setPreview] = useState(value || '');
   const [uploadMode, setUploadMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+
+  console.log(value);
+  
 
   const handleFileSelect = (file) => {
     if (file && file.size <= maxSize) {
@@ -93,7 +97,9 @@ const ImageUpload = ({
       )}
 
       {/* Preview */}
-      {preview && (
+      {isUploading ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : preview ? (
         <div className="relative inline-block">
           <img
             src={preview}
@@ -110,7 +116,8 @@ const ImageUpload = ({
             <X className="h-3 w-3" />
           </Button>
         </div>
-      )}
+      ) : null}
+
 
       {/* Upload Area */}
       {(uploadMode || !showUrlOption) && (
@@ -135,7 +142,7 @@ const ImageUpload = ({
               if (file) handleFileSelect(file);
             }}
           />
-          
+
           <div className="flex flex-col items-center gap-2">
             <Upload className="h-8 w-8 text-muted-foreground" />
             <div className="text-sm">
