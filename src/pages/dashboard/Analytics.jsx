@@ -201,8 +201,6 @@ useEffect(() => {
              <p className="font-bold font-display text-xl">{userStores[0].name}</p> 
              <img src={userStores[0].logo} className="w-10 rounded-full h-10" />
           </div>
-
-          
         </div>
 
         {analyticsData && (

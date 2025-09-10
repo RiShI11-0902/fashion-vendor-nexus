@@ -9,7 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
-import AiVideo from "./pages/AiVideo";
+import AiVideo from "./pages/AIVideo";
 import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
 
