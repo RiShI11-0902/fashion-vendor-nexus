@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
-import { Package, ShoppingBag, Clock, CheckCircle, Truck, XCircle, EllipsisVertical } from "lucide-react";
+import { Package, ShoppingBag, Clock, CheckCircle, Truck, XCircle, EllipsisVertical, IndianRupee } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,25 +47,21 @@ const OrdersManagement = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [userStores, setUserStores] = useState([]);
   const [allUserOrders, setAllUserOrders] = useState([]);
-
-  console.log(orders);
-
-
   useEffect(() => {
     const fetchUserStores = async () => {
       if (currentUser) {
+
         try {
           const store = await getUserStores(currentUser.id);
           setUserStores(store || []);
 
           // Get orders for user's stores
-          const orders = await getStoreOrders(store.id);
+          const orders = await getStoreOrders(store[0].id);
           setAllUserOrders(orders);
 
         } catch (error) {
           console.error('Failed to fetch user stores:', error);
-          setUserStores([]);
-          setAllUserOrders([]);
+
         }
       }
     };
@@ -104,13 +100,15 @@ const OrdersManagement = () => {
   };
 
   const handleStatusUpdate = async (orderId, newStatus) => {
-   await updateOrderStatus(orderId, newStatus);
+    await updateOrderStatus(orderId, newStatus);
     setSelectedOrder((prev) =>
       prev ? { ...prev, newStatus } : prev
     );
     console.log(selectedOrder);
-    
   };
+
+  console.log(filteredOrders, "filterrrrrrr");
+
 
   return (
     <DashboardLayout>
@@ -141,11 +139,11 @@ const OrdersManagement = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
-              <SelectItem value="delivered">Delivered</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+              <SelectItem value="SHIPPED">Shipped</SelectItem>
+              <SelectItem value="DELIVERED">Delivered</SelectItem>
+              <SelectItem value="CANCELLED">Cancelled</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -156,7 +154,7 @@ const OrdersManagement = () => {
               <ShoppingBag className="h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Orders Found</h3>
               <p className="text-gray-600 text-center">
-                {allUserOrders.length === 0
+                {allUserOrders?.length === 0
                   ? "You haven't received any orders yet."
                   : "No orders match your current filters."
                 }
@@ -172,7 +170,7 @@ const OrdersManagement = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Order ID</TableHead>
+                    <TableHead>Order Number</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Items</TableHead>
                     <TableHead>Total</TableHead>
@@ -185,7 +183,7 @@ const OrdersManagement = () => {
                 <TableBody>
                   {filteredOrders?.map((order) => (
                     <TableRow key={order.id}>
-                      <TableCell className="font-medium">#{order.id}</TableCell>
+                      <TableCell className="font-medium">#{order.orderNumber}</TableCell>
                       <TableCell>
                         <div>
                           <div className="font-medium">{order.customerName}</div>
@@ -201,7 +199,12 @@ const OrdersManagement = () => {
                           ))}
                         </div>
                       </TableCell>
-                      <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
+                      <TableCell >
+                        <div className="flex flex-row space-x-2 items-center">
+                        <IndianRupee className="w-4" />
+                        {order.totalAmount.toFixed(2)}
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <Badge className={getStatusColor(order.status)}>
                           <div className="flex items-center gap-1">
@@ -283,7 +286,10 @@ const OrdersManagement = () => {
                         <span>
                           {item.name} × {item.quantity}
                         </span>
-                        <span className="font-medium">${item.price}</span>
+                        <div className="flex flex-row space-x-2 items-center">
+                          <IndianRupee className="w-4" />
+                          {item.price}
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -314,8 +320,9 @@ const OrdersManagement = () => {
 
                   <div>
                     <p className="text-sm text-gray-500">Total</p>
-                    <p className="text-lg font-semibold">
-                      ${selectedOrder.totalAmount.toFixed(2)}
+                    <p className="flex flex-row space-x-2 items-center text-lg">
+                      <IndianRupee className="w-4" />
+                      {selectedOrder.totalAmount.toFixed(2)}
                     </p>
                   </div>
                 </div>

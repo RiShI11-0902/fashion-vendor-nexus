@@ -14,7 +14,7 @@ const Index = () => {
     <MainLayout>
       <HeroSection currentUser={currentUser} />
       <FeaturesSection />
-      <SuccessStoriesSection />
+      {/* <SuccessStoriesSection /> */}
       <ProductShowcaseSection />
       <CTASection currentUser={currentUser} />
     </MainLayout>

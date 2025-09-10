@@ -5,20 +5,58 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 
 const Pricing = () => {
-  const freePlan = {
-    name: "Free",
-    price: "Gs. 0",
-    period: "/month",
-    description: "Free forever.",
-    features: [
-      "Up to 10 products",
-      "Unlimited orders",
-      "Store customization",
-      "Promotional prices",
-      "Customer data collection"
-    ],
-    highlighted: true
-  };
+  const plans = [
+    {
+      name: "Free",
+      price: "₹0",
+      period: "/month",
+      description: "Get started with up to 10 products and basic analytics.",
+      features: [
+        "Up to 10 products",
+        "Unlimited orders",
+        "Basic analytics (orders & revenue)",
+        "No AI model generation"
+      ],
+      highlighted: false
+    },
+    {
+      name: "Premium",
+      price: "₹5,000",
+      period: "/month",
+      description: "Full features with custom domain and 150 AI model generations/month.",
+      features: [
+        "Unlimited products",
+        "Unlimited orders",
+        "Full analytics dashboard",
+        "Custom domain (domain price extra)",
+        "150 AI model generations/month",
+        "Priority support"
+      ],
+      highlighted: true
+    }
+  ];
+
+  // Optional AI Packs
+  const aiPacks = [
+    {
+      name: "50 AI Models Pack",
+      price: "₹300",
+      description: "50 AI model generations. Can be added to any plan or purchased standalone."
+    },
+    {
+      name: "100 AI Models Pack",
+      price: "₹550",
+      description: "100 AI model generations. Can be added to any plan or purchased standalone."
+    }
+  ];
+
+
+  const sendMsg = (plan) => {
+    const message = `
+Hi! I’m interested in the ${plan.name} plan and would like to know more details about it before subscribing.
+`; const url = `https://wa.me/917498140646?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  }
 
   return (
     <MainLayout>
@@ -30,59 +68,108 @@ const Pricing = () => {
               Simple, Transparent Pricing
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Start selling online with our free plan. No hidden fees, no surprises.
+              Start free, upgrade when you need more. No hidden fees, no surprises.
             </p>
           </div>
 
-          {/* Pricing Card */}
-          <div className="flex justify-center">
-            <Card className={`w-full max-w-md ${freePlan.highlighted ? 'border-primary shadow-lg' : ''}`}>
-              <CardHeader className="text-center">
-                {freePlan.highlighted && (
-                  <div className="inline-block bg-primary text-primary-foreground text-sm font-medium px-3 py-1 rounded-full mb-4">
-                    Most Popular
+          {/* Pricing Cards */}
+          <div className="grid md:grid-cols-3 gap-8 justify-center">
+
+            {/* Plan Cards (Free & Premium) */}
+            {plans.map((plan, index) => (
+              <Card
+                key={index}
+                className={`w-full max-w-md mx-auto ${plan.highlighted ? "border-primary shadow-xl" : ""}`}
+              >
+                <CardHeader className="text-center">
+                  {plan.highlighted && (
+                    <div className="inline-block bg-primary text-primary-foreground text-sm font-medium px-3 py-1 rounded-full mb-4">
+                      Most Popular
+                    </div>
+                  )}
+                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                  <CardDescription className="text-base">{plan.description}</CardDescription>
+                  <div className="mt-4">
+                    <span className="text-4xl font-bold">{plan.price}</span>
+                    <span className="text-muted-foreground text-lg">{plan.period}</span>
                   </div>
-                )}
-                <CardTitle className="text-2xl font-bold">{freePlan.name}</CardTitle>
-                <CardDescription className="text-base">{freePlan.description}</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">{freePlan.price}</span>
-                  <span className="text-muted-foreground text-lg">{freePlan.period}</span>
-                </div>
-              </CardHeader>
-              
-              <CardContent>
-                <ul className="space-y-3">
-                  {freePlan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              
-              <CardFooter>
-                <Link to="/signup" className="w-full">
-                  <Button 
-                    className="w-full" 
-                    variant={freePlan.highlighted ? "default" : "outline"}
+                </CardHeader>
+
+                <CardContent>
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-center">
+                        <Check className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+
+                <CardFooter>
+                  <Button
+                    className="w-full"
+                    variant={plan.highlighted ? "default" : "outline"}
                     size="lg"
+                    onClick={() => {
+                      if (plan.name !== "Free") sendMsg(plan);
+                    }}
                   >
-                    Get Started Free
+                    {plan.name === "Free" ? "Get Started Free" : "Contact Owner"}
                   </Button>
-                </Link>
-              </CardFooter>
+                </CardFooter>
+              </Card>
+            ))}
+
+            {/* AI Packs Card (Third Box) */}
+            <Card className="w-full max-w-md mx-auto border-dashed border-2 border-gray-300">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl font-bold">AI Packs</CardTitle>
+                <CardDescription className="text-base">
+                  Buy additional AI model generations for any plan or standalone
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <div className="space-y-5">
+                  {aiPacks.map((pack, i) => (
+                    <div className="">
+                      <li key={i} className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium flex flex-row items-center justify-between">
+                            {pack.name}
+                            <span className="font-bold">{pack.price}</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{pack.description}</p>
+                        </div>
+                      </li>
+                      <div class="flex justify-end">
+                        <Button onClick={()=> sendMsg(pack.name)} className="flex flex-row items-end"> Get Pack </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+
+
             </Card>
+
           </div>
+
 
           {/* Additional Info */}
           <div className="text-center mt-12">
             <p className="text-muted-foreground">
               Already have an account?{" "}
-              <Link to="/login" className="text-primary hover:underline font-medium">
+              <Link
+                to="/login"
+                className="text-primary hover:underline font-medium"
+              >
                 Sign in here
               </Link>
+            </p>
+            <p className="text-sm text-muted-foreground mt-4">
+              * Custom domains are billed separately based on domain price.
             </p>
           </div>
         </div>

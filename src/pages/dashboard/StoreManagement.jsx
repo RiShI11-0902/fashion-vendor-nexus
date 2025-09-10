@@ -90,9 +90,6 @@ const StoreManagement = () => {
                       <Badge variant="secondary">
                         {userStore.slug}
                       </Badge>
-                      <Badge variant={userStore.isActive ? "default" : "secondary"}>
-                        {userStore.isActive ? "Active" : "Inactive"}
-                      </Badge>
                     </div>
                   </div>
                 </div>

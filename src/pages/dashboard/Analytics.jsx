@@ -45,12 +45,12 @@ import {
 
 const Analytics = () => {
   const { currentUser } = useAuthStore();
-  const { getUserStores, getStoreProducts, getLowStockProducts } = useStoreManager();
+  const { getUserStores, getStoreProducts, getlowStockProducts } = useStoreManager();
   const { getOrderStats, getStoreOrders } = useOrdersStore();
   const [selectedStore, setSelectedStore] = useState("");
   const [userStores, setUserStores] = useState([]);
   const [analyticsData, setAnalyticsData] = useState(null);
-  const [products, setProducts] = useState(null)
+  const [products, setProducts] = useState([])
 
   const chartConfig = {
     orders: {
@@ -68,88 +68,85 @@ const Analytics = () => {
   };
 
   useEffect(() => {
-    const fetchUserStores = async () => {
-      if (currentUser) {
-        try {
-          const stores = await getUserStores(currentUser.id);
-          setUserStores(stores || []);
-          const products = await getStoreProducts(selectedStore);
-          setProducts(products)
-          console.log(products, "products");
-
-
-          if (stores && stores.length > 0 && !selectedStore) {
-            setSelectedStore(stores[0].id);
-          }
-        } catch (error) {
-          console.error('Failed to fetch user stores:', error);
-          setUserStores([]);
+  const fetchUserStores = async () => {
+    if (currentUser) {
+      try {
+        const stores = await getUserStores(currentUser.id);
+        setUserStores(stores || []);
+        if (stores && stores.length > 0 && !selectedStore) {
+          setSelectedStore(stores[0].id);
         }
+      } catch (error) {
+        console.error("Failed to fetch user stores:", error);
+        setUserStores([]);
       }
+    }
+  };
+
+  fetchUserStores();
+}, [currentUser, getUserStores]);
+
+useEffect(() => {
+  if (selectedStore) {
+    const fetchData = async () => {
+      // fetch products
+      const products = await getStoreProducts(selectedStore);
+      setProducts(products);
+
+      // fetch low stock
+      const { lowStockProducts } = await getlowStockProducts(selectedStore);
+
+      // fetch orders
+      const stats = getOrderStats(selectedStore);
+      const orders = await getStoreOrders(selectedStore);
+
+      // recompute analytics
+      const monthlyData = generateMonthlyData(orders);
+
+      const productSales = {};
+      orders?.forEach(order => {
+        order.items.forEach(item => {
+          if (item.storeId === selectedStore) {
+            productSales[item.productId] =
+              (productSales[item.productId] || 0) + item.quantity;
+          }
+        });
+      });
+
+      const topProductsData = Object.entries(productSales)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5)
+        .map(([productId, quantity]) => {
+          const product = products?.find(p => p.id === productId);
+          return {
+            name: product?.name || "Unknown Product",
+            sales: quantity,
+            revenue: quantity * (product?.price || 0),
+          };
+        });
+
+      const statusData = [
+        { name: "PENDING", value: orders.filter(o => o.status === "PENDING").length, color: "#f59e0b" },
+        { name: "CONFIRMED", value: orders.filter(o => o.status === "CONFIRMED").length, color: "#10b981" },
+        { name: "SHIPPED", value: orders.filter(o => o.status === "SHIPPED").length, color: "#06b6d4" },
+        { name: "DELIVERED", value: orders.filter(o => o.status === "DELIVERED").length, color: "#8b5cf6" },
+        { name: "CANCELLED", value: orders.filter(o => o.status === "CANCELLED").length, color: "#ef4444" },
+      ].filter(item => item.value > 0);
+
+      setAnalyticsData({
+        stats,
+        monthlyData,
+        topProductsData,
+        statusData,
+        lowStockCount: lowStockProducts?.length || 0,
+        totalProducts: products?.length || 0,
+      });
     };
 
-    fetchUserStores();
-  }, [currentUser, getUserStores]);
+    fetchData();
+  }
+}, [selectedStore, getOrderStats, getStoreOrders, getStoreProducts, getlowStockProducts]);
 
-  useEffect(() => {
-    if (selectedStore) {
-
-      const fetchOrders = async () => {
-        const stats = getOrderStats(selectedStore);
-        const orders = await getStoreOrders(selectedStore);
-        // const lowStockProducts = getLowStockProducts(selectedStore);
-
-        // Generate monthly data for charts
-        const monthlyData = generateMonthlyData(orders);
-
-        // Top products data
-        const productSales = {};
-        orders?.forEach(order => {
-          order.items.forEach(item => {
-            if (item.storeId === selectedStore) {
-              productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
-            }
-          });
-        });
-
-        const topProductsData = Object.entries(productSales)
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 5)
-          .map(([productId, quantity]) => {
-            const product = products?.find(p => p.id === productId);
-            return {
-              name: product?.name || 'Unknown Product',
-              sales: quantity,
-              revenue: quantity * (product?.price || 0)
-            };
-          });
-
-        // Order status distribution
-        const statusData = [
-          { name: 'PENDING', value: orders.filter(o => o.status === 'PENDING').length, color: '#f59e0b' },
-          { name: 'CONFIRMED', value: orders.filter(o => o.status === 'CONFIRMED').length, color: '#10b981' },
-          { name: 'SHIPPED', value: orders.filter(o => o.status === 'SHIPPED').length, color: '#06b6d4' },
-          { name: 'DELIVERED', value: orders.filter(o => o.status === 'DELIVERED').length, color: '#8b5cf6' },
-          { name: 'CANCELLED', value: orders.filter(o => o.status === 'CANCELLED').length, color: '#ef4444' },
-        ].filter(item => item.value > 0);
-
-        setAnalyticsData({
-          stats,
-          monthlyData,
-          topProductsData,
-          statusData,
-          // lowStockCount: lowStockProducts?.length,
-          totalProducts: products.length
-        });
-      }
-
-      fetchOrders()
-
-    }
-  }, [selectedStore, getOrderStats, getStoreOrders, getStoreProducts, getLowStockProducts]);
-
-  console.log(analyticsData);
-  
 
   const generateMonthlyData = (orders) => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -200,18 +197,12 @@ const Analytics = () => {
             <p className="text-gray-600">Detailed insights into your store performance</p>
           </div>
 
-          <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="w-64">
-              <SelectValue placeholder="Select a store" />
-            </SelectTrigger>
-            <SelectContent>
-              {userStores.map(store => (
-                <SelectItem key={store.id} value={store.id}>
-                  {store.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-row justify-center items-center space-x-5">
+             <p className="font-bold font-display text-xl">{userStores[0].name}</p> 
+             <img src={userStores[0].logo} className="w-10 rounded-full h-10" />
+          </div>
+
+          
         </div>
 
         {analyticsData && (
@@ -238,9 +229,6 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">₹{analyticsData.stats.totalRevenue.toFixed(2)}</div>
-                  <p className="text-xs text-muted-foreground">
-                    +12% from last month
-                  </p>
                 </CardContent>
               </Card>
 
@@ -251,7 +239,7 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{analyticsData.totalProducts}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-red-700 ">
                     {analyticsData.lowStockCount} low stock
                   </p>
                 </CardContent>

@@ -12,8 +12,8 @@ import StoreAnalyticsSection from "../../components/dashboard/StoreAnalyticsSect
 import { Button } from "../../components/ui/button";
 
 const Dashboard = () => {
-  const { currentUser } = useAuthStore();
-  const { getUserStores, getStoreProducts, getLowStockProducts } = useStoreManager();
+  const { currentUser, checkAuth } = useAuthStore();
+  const { getUserStores, getStoreProducts, getlowStockProducts } = useStoreManager();
   const { getOrderStats } = useOrdersStore();
   const [userStore, setUserStore] = useState(null);
   const [overallStats, setOverallStats] = useState(null);
@@ -21,6 +21,8 @@ const Dashboard = () => {
 
   const fetchStoreData = async () => {
     setLoading(true);
+    console.log(currentUser.id);
+
     const stores = await getUserStores(currentUser.id);
     const store = stores.length > 0 ? stores[0] : null;
     setUserStore(store);
@@ -30,21 +32,29 @@ const Dashboard = () => {
       const stats = getOrderStats();
       const totalProducts = await getStoreProducts(store.id);
 
+      const {lowStockProducts} = getlowStockProducts(store.id)      
+
       setOverallStats({
         ...stats,
         totalProducts: totalProducts.length,
-        totalLowStock: 0 // Will be implemented when needed
+        totalLowStock:  lowStockProducts.length // Will be implemented when needed
       });
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    (async () => {
+      await checkAuth();  // ensures Zustand updates
+    })();
+  }, []);
 
 
   useEffect(() => {
     if (currentUser) {
       fetchStoreData();
     }
-  }, [currentUser, getUserStores, getOrderStats, getStoreProducts, getLowStockProducts]);
+  }, [currentUser, getUserStores, getOrderStats, getStoreProducts, getlowStockProducts]);
 
   if (!currentUser) {
     return (
@@ -76,7 +86,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <DashboardHeader userName={currentUser.name} />
+        <DashboardHeader userStore={userStore} userName={currentUser.name} />
 
         {!userStore ? (
           <NoStoresState />
@@ -86,7 +96,7 @@ const Dashboard = () => {
             <StoreAnalyticsSection
               userStores={[userStore]}
               selectedStore={userStore.id}
-              setSelectedStore={() => {}} // No-op since there's only one store
+              setSelectedStore={() => { }} // No-op since there's only one store
             />
           </>
         )}

@@ -23,7 +23,8 @@ import {
   ExternalLink,
   Loader,
   Package,
-  ShoppingBag
+  ShoppingBag,
+  IndianRupee
 } from "lucide-react";
 import { useStoreManager } from "../../stores/useStoreManager";
 
@@ -243,7 +244,7 @@ const StoreDetail = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold">{product.name}</h4>
-                      <p className="text-sm text-gray-600">${product.price}</p>
+                      <p className="text-sm text-gray-600 flex flex-row space-x-2 items-center"><IndianRupee className="w-[0.9rem]" />{product.price}</p>
                     </div>
                   </div>
                   <div className="flex space-x-2">

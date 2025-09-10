@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { 
+import {
   Card,
   CardContent,
   CardDescription,
@@ -26,7 +26,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     try {
       setLoading(true);
       await login(email, password);
@@ -37,6 +37,10 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   return (
@@ -59,7 +63,10 @@ const Login = () => {
                 {error}
               </div>
             )}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <Button onClick={handleGoogleLogin} className="mx-auto w-full  flex items-center justify-center">
+              Login With Google
+            </Button>
+            <form onSubmit={handleSubmit} className="space-y-4 mt-3">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">
                   Email

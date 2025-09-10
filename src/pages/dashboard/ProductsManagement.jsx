@@ -36,7 +36,7 @@ const ProductsManagement = () => {
           
           // Get all products from all stores
           let allProducts = [];
-          const storeProducts = await getStoreProducts(stores[0].id);
+          const storeProducts = await getStoreProducts(stores[0]?.id);
           allProducts = [...allProducts, ...storeProducts];
           // if (stores && Array.isArray(stores)) {
           //   stores.forEach(store => {

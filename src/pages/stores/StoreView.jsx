@@ -28,6 +28,9 @@ const StoreView = () => {
 
   const {currentUser} = useAuthStore()
 
+  console.log(categories, handleCategorySelect);
+  
+
   if (loading) {
     return (
       <MainLayout>
@@ -80,28 +83,30 @@ const StoreView = () => {
               filteredProducts={filteredProducts}
               selectedCategory={selectedCategory}
               storeSlug={storeSlug}
+              categories={categories}
+              handleCategorySelect={handleCategorySelect}
             />
           </div>
 
           {/* Customer Feedback */}
-          {feedbackEnabled && (
+          {/* {feedbackEnabled && (
             <div className="mb-8">
               <CustomerFeedback storeId={store.id} />
             </div>
-          )}
+          )} */}
 
           {/* Store FAQ */}
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <StoreFAQ storeId={store.id} />
-          </div>
+          </div> */}
 
           {/* Social Media Section */}
-          <div className="text-center">
+          {/* <div className="text-center">
             <Button variant="outline" className="inline-flex items-center rounded-full px-8 border-2 hover:bg-gray-50">
               <Instagram className="h-5 w-5 mr-2" />
               Follow us on Instagram
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
     // <MainLayout>
