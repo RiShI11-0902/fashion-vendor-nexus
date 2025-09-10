@@ -9,12 +9,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
+import AiVideo from "./pages/AiVideo";
 import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
 
 // Auth Pages
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import GoogleCallback from "./pages/auth/GoogleCallback"
 
 // Dashboard Pages
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -30,57 +32,84 @@ import EditProduct from "./pages/dashboard/EditProduct";
 import StoreDetail from "./pages/dashboard/StoreDetail";
 import Settings from "./pages/dashboard/Settings";
 import StorefrontCustomization from "./pages/dashboard/StorefrontCustomization";
+import GenerateModel from "./pages/dashboard/GenerateModel";
+
 
 // Store Pages
 import AllStores from "./pages/stores/AllStores";
 import StoreView from "./pages/stores/StoreView";
 import ProductDetail from "./pages/stores/ProductDetail";
+import Checkout from "./components/store/Checkout"
+import { useEffect } from "react";
+import { useAuthStore } from "../src/stores/useAuthStore";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Main Routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/:slug/cart" element={<Cart />} />
-          
-          {/* Auth Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/analytics" element={<Analytics />} />
-          <Route path="/dashboard/store" element={<StoreManagement />} />
-          <Route path="/dashboard/products" element={<ProductsManagement />} />
-          <Route path="/dashboard/orders" element={<OrdersManagement />} />
-          <Route path="/dashboard/discounts" element={<DiscountsManagement />} />
-          <Route path="/dashboard/create-store" element={<CreateStore />} />
-          <Route path="/dashboard/stores/edit/:storeId" element={<EditStore />} />
-          <Route path="/dashboard/stores/:storeId" element={<StoreDetail />} />
-          <Route path="/dashboard/stores/:storeId/customize" element={<StorefrontCustomization />} />
-          <Route path="/dashboard/products/create" element={<CreateProduct />} />
-          <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
-          <Route path="/dashboard/settings" element={<Settings />} />
-          
-          {/* Store Routes */}
-          <Route path="/stores" element={<AllStores />} />
-          <Route path="/store/:storeSlug" element={<StoreView />} />
-          <Route path="/store/:storeSlug/product/:productId" element={<ProductDetail />} />
-          
-          {/* Not Found */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const { checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth(); // ✅ makes sure backend cookie is used
+  }, [checkAuth]);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Main Routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/pricing" element={<Pricing />} /> 
+            <Route path="/ai-video" element={<AiVideo />} />
+            <Route path="/:slug/cart" element={<Cart />} />
+
+            {/* Auth Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/auth/callback" element={<GoogleCallback />} />
+
+            {/* Dashboard Routes */}
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/analytics" element={<Analytics />} />
+            <Route path="/dashboard/store" element={<StoreManagement />} />
+            <Route path="/dashboard/products" element={<ProductsManagement />} />
+            <Route path="/dashboard/orders" element={<OrdersManagement />} />
+            <Route path="/dashboard/discounts" element={<DiscountsManagement />} />
+            <Route path="/dashboard/create-store" element={<CreateStore />} />
+            <Route path="/dashboard/stores/edit/:storeId" element={<EditStore />} />
+            <Route path="/dashboard/stores/:storeId" element={<StoreDetail />} />
+            <Route
+              path="/dashboard/stores/:storeId/customize"
+              element={<StorefrontCustomization />}
+            />
+            <Route path="/dashboard/generate-model" element={<GenerateModel />} />
+            <Route path="/dashboard/products/create" element={<CreateProduct />} />
+            <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
+            <Route path="/dashboard/settings" element={<Settings />} />
+
+            {/* Store Routes */}
+            <Route path="/stores" element={<AllStores />} />
+            <Route path="/store/:storeSlug" element={<StoreView />} />
+            <Route
+              path="/store/:storeSlug/product/:productId"
+              element={<ProductDetail />}
+            />
+             <Route
+              path="/checkout"
+              element={<Checkout />}
+            />
+
+            {/* Not Found */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
+
 
 export default App;

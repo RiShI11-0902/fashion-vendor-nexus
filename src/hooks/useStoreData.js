@@ -15,7 +15,6 @@ export const useStoreData = (storeSlug) => {
 
   const foundStore = async () => {
     const foundStore = await getStoreBySlug(storeSlug);
-    console.log(foundStore);
 
     if (foundStore) {
       setStore(foundStore);
