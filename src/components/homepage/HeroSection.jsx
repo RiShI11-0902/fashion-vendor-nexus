@@ -18,12 +18,12 @@ const HeroSection = ({ currentUser }) => {
                 <span className="text-sm font-medium text-gray-600">For All Entrepreneurs</span>
               </div>
               
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+              <h1 className="text-2xl md:text-3xl font-bold mb-6 leading-tight">
                 Build Your <span className="text-pink-600">Professional</span> Online Store in 
                 <span className="text-purple-600"> Minutes</span>
               </h1>
               
-              <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-lg md:text-lg text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0">
                 Create a stunning, professional website that showcases your products and builds trust with your customers. 
                 No coding required.
               </p>

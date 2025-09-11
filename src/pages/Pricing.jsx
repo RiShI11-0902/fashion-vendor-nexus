@@ -21,15 +21,14 @@ const Pricing = () => {
     },
     {
       name: "Premium",
-      price: "₹5,000",
+      price: "₹2,000",
       period: "/month",
       description: "Full features with custom domain and 150 AI model generations/month.",
       features: [
         "Unlimited products",
         "Unlimited orders",
         "Full analytics dashboard",
-        "Custom domain (domain price extra)",
-        "150 AI model generations/month",
+        "100 AI model generations/month",
         "Priority support"
       ],
       highlighted: true
