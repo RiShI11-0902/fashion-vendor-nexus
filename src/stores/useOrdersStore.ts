@@ -47,7 +47,8 @@ interface OrdersState {
   };
 }
 
-const API_URL = "http://localhost:5000/api/order"; // adjust if different
+const API_URL = import.meta.env.VITE_DEV_BACKEND_URL  // adjust if different
+// "http://localhost:5000/api/order";
 
 
 export const useOrdersStore = create<OrdersState>((set, get) => ({
@@ -60,7 +61,7 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
     try {
       set({ loading: true });
 
-      const { data } = await axios.post(`${API_URL}/get`, storeId ? { storeId } : {});
+      const { data } = await axios.post(`${API_URL}/api/order/get`, storeId ? { storeId } : {});
 
       set({
         orders: data.orders || [],
@@ -76,7 +77,7 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   // Create new order
   createOrder: async (orderData) => {
     try {
-      const { data: newOrder } = await axios.post(`${API_URL}`, orderData);
+      const { data: newOrder } = await axios.post(`${API_URL}/api/order`, orderData);
 
       if (!newOrder || !newOrder.id) {
         toast.error("Failed to create order");
@@ -104,7 +105,7 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   updateOrderStatus: async (orderId, status) => {
   try {
     const { data: updatedOrder } = await axios.put(
-      `${API_URL}/${orderId}/status`,
+      `${API_URL}/api/order/${orderId}/status`,
       { status }
     );
 
@@ -128,7 +129,7 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
     try {
       console.log(storeId);
       
-      const { data } = await axios.post(`${API_URL}/get`, { storeId });
+      const { data } = await axios.post(`${API_URL}/api/order/get`, { storeId });
       
       set({ orders: data || [] });
 

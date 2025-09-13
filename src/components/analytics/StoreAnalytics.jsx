@@ -20,6 +20,7 @@ import {
   Cell,
 } from "recharts";
 import { TrendingUp, Package, AlertTriangle, DollarSign } from "lucide-react";
+import {formatNumber} from "../../lib/utils"
 
 const StoreAnalytics = ({ storeId }) => {
   const { getOrderStats, getStoreOrders } = useOrdersStore();
@@ -102,7 +103,7 @@ const StoreAnalytics = ({ storeId }) => {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalOrders}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats.totalOrders)}</div>
           </CardContent>
         </Card>
 
@@ -112,7 +113,7 @@ const StoreAnalytics = ({ storeId }) => {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{stats.totalRevenue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{formatNumber(stats.totalRevenue)}</div>
           </CardContent>
         </Card>
 

@@ -14,6 +14,8 @@ import {
 } from "../../components/ui/card";
 import { ShoppingBag } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
+import google from "../../assets/google.png";
+// import logo from "../../assets/full_logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -40,7 +42,7 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    window.location.href = `${import.meta.env.VITE_DEV_BACKEND_URL}/api/auth/google`;
   };
 
   return (
@@ -49,8 +51,7 @@ const Login = () => {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-2 flex flex-col items-center">
             <div className="flex items-center mb-2">
-              <ShoppingBag className="h-6 w-6 text-gold mr-2" />
-              <span className="font-display text-xl font-semibold">FashionVendor</span>
+              <img className="w-40" src={"/full_logo.png"} alt="" srcset="" />
             </div>
             <CardTitle className="text-2xl font-display">Welcome Back</CardTitle>
             <CardDescription>
@@ -65,6 +66,7 @@ const Login = () => {
             )}
             <Button onClick={handleGoogleLogin} className="mx-auto w-full  flex items-center justify-center">
               Login With Google
+              <img className="w-5" src={google} alt="" srcset="" />
             </Button>
             <form onSubmit={handleSubmit} className="space-y-4 mt-3">
               <div className="space-y-2">
@@ -85,7 +87,7 @@ const Login = () => {
                   <label htmlFor="password" className="text-sm font-medium">
                     Password
                   </label>
-                  <Link to="/forgot-password" className="text-sm text-gold hover:underline">
+                  <Link to="" className="text-sm text-gold hover:underline">
                     Forgot password?
                   </Link>
                 </div>

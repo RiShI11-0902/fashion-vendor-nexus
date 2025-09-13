@@ -18,6 +18,7 @@ interface AuthState {
   isAuthenticated: boolean;
   checkAuth: () => Promise<void>;
 }
+  const API_URL = import.meta.env.VITE_DEV_BACKEND_URL
 
 export const useAuthStore = create<AuthState>((set) => ({
   currentUser: null,
@@ -26,32 +27,32 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setCurrentUser: (user: User | null) => set({ currentUser: user }),
 
-  checkAuth: async () => {
-  console.log("called checkAuth");
-  try {
-    const res = await axios.get("http://localhost:5000/api/auth/check", {
-      withCredentials: true,
-    });
-    console.log("backend check:", res.data);
 
-    const user = res.data.user; // make sure backend sends this
-    if (user) {
-      set({ currentUser: user, isAuthenticated: true, loading: false });
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
+  checkAuth: async () => {
+    console.log("called checkAuth");
+    try {
+      const res = await axios.get(`${API_URL}/api/auth/check`, {
+        withCredentials: true,
+      });
+      console.log("backend check:", res.data);
+
+      const user = res.data.user; // make sure backend sends this
+      if (user) {
+        set({ currentUser: user, isAuthenticated: true, loading: false });
+        localStorage.setItem("user", JSON.stringify(user));
+      } else {
+        set({ currentUser: null, isAuthenticated: false, loading: false });
+      }
+    } catch (err) {
+      console.error("checkAuth failed", err);
       set({ currentUser: null, isAuthenticated: false, loading: false });
     }
-  } catch (err) {
-    console.error("checkAuth failed", err);
-    set({ currentUser: null, isAuthenticated: false, loading: false });
-  }
-},
-
+  },
 
   signup: async (email: string, password: string, name: string) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${API_URL}/api/auth/register`,
         { email, password, name },
         {
           withCredentials: true, // if using cookies for auth
@@ -70,7 +71,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           email,
           password,
@@ -104,10 +105,17 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  logout: () => {
-    localStorage.removeItem("user");
-    set({ currentUser: null });
-    toast.success("Logged out successfully");
+  logout: async () => {
+    try {
+      await axios.post(`${API_URL}/api/auth/logout`, {
+        withCredentials: true, // if using cookies for auth
+      });
+      localStorage.removeItem("user");
+      set({ currentUser: null });
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error("Error Ocuured");
+    }
   },
 }));
 

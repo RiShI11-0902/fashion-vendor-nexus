@@ -30,10 +30,9 @@ import { useStoreManager } from "../../stores/useStoreManager";
 
 const StoreDetail = () => {
   const { storeId } = useParams();
-  const { getUserStores, getStoreProducts, deleteStore } = useStoreManager();
+  const { getUserStores, getStoreProducts, deleteStore, deleteProduct, products } = useStoreManager();
   const { currentUser } = useAuthStore();
   const [store, setStore] = useState(null);
-  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
@@ -43,13 +42,8 @@ const StoreDetail = () => {
     const userStores = await getUserStores(currentUser.id);
     const foundStore = userStores.find(store => store.id === storeId);
 
-    console.log("found Store is", foundStore);
-    
-
     if (foundStore) {
       setStore(foundStore);
-      const storeProducts = await getStoreProducts(foundStore.id);
-      setProducts(storeProducts);
     } else {
       setError("Store not found or you don't have permission to view it");
       setTimeout(() => {
@@ -66,9 +60,14 @@ const StoreDetail = () => {
     }
   }, [currentUser, storeId, getUserStores, getStoreProducts, navigate]);
 
-  const handleDeleteStore = () => {
-    deleteStore(storeId);
-    navigate("/dashboard/stores");
+  const handleDelete = (id, isProduct) => {
+    setLoading(true)
+    if (isProduct) {
+      deleteProduct(id)
+    } else {
+      deleteStore(storeId);
+    }
+    setLoading(false)
   };
 
   if (loading) {
@@ -142,7 +141,7 @@ const StoreDetail = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteStore}>
+                <AlertDialogAction onClick={() => handleDelete(null, false)}>
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -248,6 +247,34 @@ const StoreDetail = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2">
+                    <AlertDialog open={isOpenDeleteDialog} onOpenChange={setIsOpenDeleteDialog}>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" size="sm">
+                          <Trash2 className="h-4 w-4 mr-2" /> Delete Product
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the product from "{store?.name}" .
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(product.id, true)}>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    {/* <Button variant="destructive" size="sm" onClick={()=>{
+                      setLoading(true)
+                      deleteProduct(product.id)
+                      setLoading(false)
+                    }}>
+                        {loading ? <Loader /> : "Delete"}
+                    </Button> */}
                     <Button asChild variant="ghost" size="sm">
                       <Link to={`/dashboard/products/edit/${product.id}`}>
                         Edit

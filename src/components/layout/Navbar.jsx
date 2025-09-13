@@ -20,7 +20,7 @@ const Navbar = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    window.location.href = `${import.meta.env.VITE_DEV_BACKEND_URL}/api/auth/google`;
   };
   return (
     <header className="bg-white border-b sticky top-0 z-50">
@@ -42,7 +42,7 @@ const Navbar = () => {
             About
           </Link>
           <Link to="/ai-video" className="text-sm flex flex-row font-medium items-center hover:text-purple-600 transition-colors">
-            Ai Model <Crown className="w-3 -mt-3 text-yellow-500" />
+            AI Model <Crown className="w-3 -mt-3 text-yellow-500" />
           </Link>
           <Link to="/pricing" className="text-sm font-medium hover:text-purple-600 transition-colors">
             Pricing
@@ -76,10 +76,12 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" onClick={handleGoogleLogin}>
-                Sign in with
-                <img className="w-5" src={google} alt="" srcset="" />
-              </Button>
+              <Link to={"/login"}>
+                <Button variant="outline" size="sm">
+                  Sign in
+                  {/* <img className="w-5" src={google} alt="" srcset="" /> */}
+                </Button>
+              </Link>
             </div>
           )}
         </nav>

@@ -5,12 +5,15 @@ import axios from "axios";
 export interface StoreActions {
   createStore: (store: Omit<Store, "id" | "createdAt">) => Promise<Store>;
   updateStore: (storeId: string, updates: Partial<Store>) => void;
-  deleteStore: (storeId: string) => void;
+  deleteStore: (storeId: any) => void;
   getStoreBySlug: (slug: string) => Promise<Store[]> | undefined;
   getUserStores: (userId: string) => Promise<Store[]>;
   updateStoreSettings: (storeId: string, settings: any) => void;
   updateStorePolicies: (storeId: string, policies: any) => void;
 }
+
+  const API_URL = import.meta.env.VITE_DEV_BACKEND_URL
+
 
 export const createStoreActions = (set: any, get: any): StoreActions => ({
   createStore: async (store) => {
@@ -24,7 +27,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       toast.error("You can only create one store");
       throw new Error("User already has a store");
     }
-    const res = await axios.post("http://localhost:5000/api/store", store);
+    const res = await axios.post(`${API_URL}/api/store`, store);
     const newStore = res.data.newStore;
 
     set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
@@ -34,9 +37,12 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
 
   updateStore: async (storeId, updates) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/store/${storeId}`, {
-        updates,
-      });
+      const res = await axios.put(
+        `${API_URL}/api/store/${storeId}`,
+        {
+          updates,
+        }
+      );
       const store = res.data.updatedStore;
 
       set((state: StoreState) => ({
@@ -49,8 +55,10 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
     } catch (error) {}
   },
 
-  deleteStore: (storeId) => {
-    set((state: StoreState) => ({
+  deleteStore: async (storeId) => {
+    try {
+      await axios.delete(`${API_URL}/api/store`, storeId);
+      set((state: StoreState) => ({
       stores: state.stores.filter((store) => store.id !== storeId),
       products: state.products.filter((product) => product.storeId !== storeId),
       discounts: state.discounts.filter((discount) => {
@@ -58,12 +66,15 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
         return product?.storeId !== storeId;
       }),
     }));
+    } catch (error) {
+
+    }
+    
     toast.success("Store deleted successfully");
   },
 
   getStoreBySlug: async (slug) => {
     try {
-      console.log(slug, "SLug from store");
 
       // const state = get();
 
@@ -71,7 +82,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       // if (state.stores.length > 0) {
       //       return get().stores.find((store: Store) => store?.slug === slug);
       // }
-      const res = await axios.get(`http://localhost:5000/api/store/${slug}`, {
+      const res = await axios.get(`${API_URL}/api/store/${slug}`, {
         withCredentials: true, // if using cookies for auth
       });
       console.log(res);
@@ -97,7 +108,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       }
 
       const res = await axios.get(
-        `http://localhost:5000/api/store/user/${userId}`,
+        `${API_URL}/api/store/user/${userId}`,
         {
           withCredentials: true,
         }

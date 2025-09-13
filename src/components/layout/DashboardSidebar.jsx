@@ -26,13 +26,18 @@ import {
   LogOut
 } from "lucide-react";
 import { Button } from "../ui/button";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const DashboardSidebar = () => {
   const location = useLocation();
   const { state } = useSidebar();
+  const { logout } = useAuthStore()
   const navigate = useNavigate()
 
   const isActive = (path) => {
+    if (!path) {
+      handleLogout()
+    }
     if (path === "/dashboard") {
       return location.pathname === "/dashboard";
     }
@@ -82,8 +87,17 @@ const DashboardSidebar = () => {
       path: "/dashboard/settings",
       active: isActive("/dashboard/settings")
     },
+    {
+      title: "Log out",
+      icon: LogOut,
+      path: null,
+      active: null
+    },
   ];
-
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
   return (
     <Sidebar
       variant="sidebar"
@@ -98,6 +112,34 @@ const DashboardSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu className="mt-5">
               {menuItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  {item.path ? (
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.active}
+                      className="w-full justify-start"
+                    >
+                      <Link
+                        to={item.path}
+                        className="flex items-center text-black mt-2 gap-2"
+                      >
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        <span className="truncate text-black">{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  ) : (
+                    <SidebarMenuButton
+                      onClick={handleLogout}
+                      className="w-full justify-start mt-2 text-black hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      <span className="truncate text-black">{item.title}</span>
+                    </SidebarMenuButton>
+                  )}
+                </SidebarMenuItem>
+              ))}
+
+              {/* {menuItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
                     asChild
@@ -110,13 +152,13 @@ const DashboardSidebar = () => {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-              {
+              ))} */}
+              {/* {
                 state == 'collapsed' ? <LogOut className="h-4 w-4 flex-shrink-0 ml-[0.6rem] mt-4" /> :
-                  <Button className="w-fit mt-5" size={"sm"}>
+                  <Button className="w-fit mt-5" size={"sm"} onClick={handleLogout}>
                     <LogOut /> Sign Out
                   </Button>
-              }
+              } */}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -12,6 +12,10 @@ import Pricing from "./pages/Pricing";
 import AiVideo from "./pages/AIVideo";
 import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
+import ContactPage from "./pages/ContactPage"
+import RefundPolicyPage from "./pages/RefundPolicyPage"
+import TermsPage from "./pages/TermsPage"
+
 
 // Auth Pages
 import Login from "./pages/auth/Login";
@@ -51,6 +55,7 @@ const App = () => {
   useEffect(() => {
     checkAuth(); // ✅ makes sure backend cookie is used
   }, [checkAuth]);
+  
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -62,8 +67,11 @@ const App = () => {
             {/* Main Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
-            <Route path="/pricing" element={<Pricing />} /> 
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/ai-video" element={<AiVideo />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/refund-policy" element={<RefundPolicyPage />} />
+            <Route path="/terms-condition" element={<TermsPage />} />
             <Route path="/:slug/cart" element={<Cart />} />
 
             {/* Auth Routes */}
@@ -97,7 +105,7 @@ const App = () => {
               path="/store/:storeSlug/product/:productId"
               element={<ProductDetail />}
             />
-             <Route
+            <Route
               path="/checkout"
               element={<Checkout />}
             />

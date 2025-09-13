@@ -43,3 +43,16 @@ _Status: ${orderData.status}_
   // Open WhatsApp
   window.open(`https://wa.me/${storeNumber}?text=${encodedMessage}`, "_blank");
 }
+
+// utils/formatNumber.js
+export const formatNumber = (num: Number) => {
+  if (num === null || num === undefined) return "0.00";
+
+  return num.toLocaleString("en-IN");
+};
+
+///{
+  //   minimumFractionDigits: 2,
+  //   maximumFractionDigits: 2,
+  // }
+

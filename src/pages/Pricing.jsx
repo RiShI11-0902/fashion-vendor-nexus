@@ -168,7 +168,7 @@ Hi! I’m interested in the ${plan.name} plan and would like to know more detail
               </Link>
             </p>
             <p className="text-sm text-muted-foreground mt-4">
-              * Custom domains are billed separately based on domain price.
+              * Payments are not refundable upon cancellation of subscription.
             </p>
           </div>
         </div>

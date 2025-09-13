@@ -17,33 +17,30 @@ const About = () => {
             beautiful online stores and connect with customers around the world.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-24">
           <div>
             <h2 className="text-3xl font-display font-bold mb-6">Our Story</h2>
             <p className="text-gray-600 mb-4">
-              FashionVendor was founded with a simple idea: make it easy for fashion designers
-              and entrepreneurs to bring their creative vision online without technical barriers.
+              Shop Monk is built with a simple mission: empower anyone to create their own online store in just 5 minutes, without any technical hurdles. Whether you are a fashion designer, artist, or entrepreneur, our platform makes it easy to go online.
             </p>
             <p className="text-gray-600 mb-4">
-              We understand the unique challenges faced by independent fashion brands.
-              From managing inventory to creating a beautiful shopping experience, 
-              our platform is designed specifically for the fashion industry.
+              We understand the challenges of managing a growing business. From handling inventory to providing a seamless shopping experience for your customers, Shop Monk is designed as a versatile multi-vendor platform to support creators across all industries.
             </p>
-            <p className="text-gray-600">
-              Today, we're proud to host hundreds of unique fashion stores, 
+            {/* <p className="text-gray-600">
+              Today, we're proud to host hundreds of unique fashion stores,
               helping designers and entrepreneurs reach customers worldwide.
-            </p>
+            </p> */}
           </div>
           <div className="bg-gray-100 rounded-lg overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" 
+            <img
+              src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
               alt="Fashion designer at work"
               className="w-full h-full object-cover"
             />
           </div>
         </div>
-        
+
         <div className="mb-24">
           <h2 className="text-3xl font-display font-bold text-center mb-16">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -59,7 +56,7 @@ const About = () => {
                 in an increasingly digital marketplace.
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="bg-gold/10 rounded-full p-4 inline-block mb-6">
                 <User className="h-8 w-8 text-gold" />
@@ -72,7 +69,7 @@ const About = () => {
                 exceptional experiences to their customers.
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="bg-gold/10 rounded-full p-4 inline-block mb-6">
                 <Package className="h-8 w-8 text-gold" />
@@ -87,8 +84,8 @@ const About = () => {
             </div>
           </div>
         </div>
-        
-        <div className="mb-24">
+
+        {/* <div className="mb-24">
           <h2 className="text-3xl font-display font-bold text-center mb-16">Our Team</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
@@ -136,8 +133,8 @@ const About = () => {
               </div>
             ))}
           </div>
-        </div>
-        
+        </div> */}
+
         <div className="bg-gray-900 text-white rounded-xl p-12 text-center mb-12">
           <h2 className="text-3xl font-display font-bold mb-6">
             Ready to Start Your Fashion Store?

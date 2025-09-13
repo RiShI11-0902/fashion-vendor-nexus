@@ -42,6 +42,7 @@ import {
   Calendar,
   IndianRupee
 } from "lucide-react";
+import { formatNumber } from "../../lib/utils";
 
 const Analytics = () => {
   const { currentUser } = useAuthStore();
@@ -213,9 +214,9 @@ useEffect(() => {
                   <ShoppingCart className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{analyticsData.stats.totalOrders}</div>
+                  <div className="text-2xl font-bold">{formatNumber(analyticsData.stats.totalOrders)}</div>
                   <p className="text-xs text-muted-foreground">
-                    {analyticsData.stats.pendingOrders} pending
+                    {formatNumber(analyticsData.stats.pendingOrders)} pending
                   </p>
                 </CardContent>
               </Card>
@@ -226,7 +227,7 @@ useEffect(() => {
                   <IndianRupee className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">₹{analyticsData.stats.totalRevenue.toFixed(2)}</div>
+                  <div className="text-2xl font-bold">₹{formatNumber(analyticsData.stats.totalRevenue)}</div>
                 </CardContent>
               </Card>
 
@@ -236,9 +237,9 @@ useEffect(() => {
                   <Package className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{analyticsData.totalProducts}</div>
+                  <div className="text-2xl font-bold">{formatNumber(analyticsData.totalProducts)}</div>
                   <p className="text-xs text-red-700 ">
-                    {analyticsData.lowStockCount} low stock
+                    {formatNumber(analyticsData.lowStockCount)} low stock
                   </p>
                 </CardContent>
               </Card>
@@ -250,7 +251,7 @@ useEffect(() => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    ₹{analyticsData.stats.totalOrders > 0 ? (analyticsData.stats.totalRevenue / analyticsData.stats.totalOrders).toFixed(2) : '0.00'}
+                    ₹{analyticsData.stats.totalOrders > 0 ? formatNumber((analyticsData.stats.totalRevenue / analyticsData.stats.totalOrders)) : '0.00'}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Per order
