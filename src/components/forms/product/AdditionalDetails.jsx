@@ -4,7 +4,6 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescripti
 import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
 import { ImageUpload } from "../../ui/image-upload";
-import { AiModelGenerate } from "../../ui/AiModelGenerate"
 import axios from 'axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 
@@ -110,9 +109,6 @@ const AdditionalDetails = ({ form,catgories }) => {
           <FormItem>
             <FormLabel className="flex flex-row items-center space-x-5">
               <p>Product Image</p>
-              <AiModelGenerate
-                field={field}
-              />
             </FormLabel>
             <FormControl>
               <ImageUpload
