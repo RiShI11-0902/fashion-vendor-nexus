@@ -22,6 +22,11 @@ const ContactPage = () => {
         </div>
 
         <div>
+          <p className="text-gray-700 font-medium">Address</p>
+          <p className="text-indigo-600 hover:text-indigo-800">Opp. gadikhana ground dhoble galli model mill sq. mahal Nagpur Maharashtra - 440032</p>
+        </div>
+
+        <div>
           <p className="text-gray-700 font-medium">Phone</p>
           <a href="tel:+917498140646" className="text-indigo-600 hover:text-indigo-800">
             +91 7498140646
