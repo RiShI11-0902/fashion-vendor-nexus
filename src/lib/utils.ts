@@ -49,7 +49,7 @@ export const formatNumber = (num: Number) => {
   return num.toLocaleString("en-IN");
 };
 
-export const handlePayment = async (user) => {
+export const handlePayment = async (user, setLoading) => {
   try {
     // 1. Create Razorpay order with user email and selected plan
     const {
@@ -121,6 +121,7 @@ export const handlePayment = async (user) => {
 
     const rzp = new window.Razorpay(options);
     rzp.open();
+    setLoading(false)
   } catch (error) {
     console.error("Payment Error:", error);
     alert("Something went wrong during the payment process.");

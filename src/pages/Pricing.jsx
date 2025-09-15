@@ -1,14 +1,16 @@
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 import handlePayment from "../lib/utils";
 import { useAuthStore } from "../stores/useAuthStore";
+import { useState } from "react";
 
 const Pricing = () => {
 
-  const {currentUser} = useAuthStore()
+  const { currentUser } = useAuthStore()
+  const [loading, setLoading] = useState()
   const plans = [
     {
       name: "Free",
@@ -53,7 +55,6 @@ const Pricing = () => {
   //     description: "100 AI model generations. Can be added to any plan or purchased standalone."
   //   }
   // ];
-
 
   return (
     <MainLayout>
@@ -109,10 +110,13 @@ const Pricing = () => {
                     variant={plan.highlighted ? "default" : "outline"}
                     size="lg"
                     onClick={() => {
-                      if (plan.name !== "Free") handlePayment(currentUser);
+                      if (plan.name !== "Free") {
+                        handlePayment(currentUser, setLoading)
+                        setLoading(true)
+                      };
                     }}
                   >
-                    {plan.name === "Free" ? "Get Started Free" : "Get Premium"}
+                    {plan.name === "Free" ? "Get Started Free" : (loading ? <Loader2 className="animate-spin"/>: "Get Premium")}
                   </Button>
                 </CardFooter>
               </Card>
