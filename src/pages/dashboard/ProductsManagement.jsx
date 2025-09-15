@@ -18,9 +18,8 @@ import {
 
 const ProductsManagement = () => {
   const { currentUser } = useAuthStore();
-  const { getUserStores, getStoreProducts } = useStoreManager();
+  const { getUserStores, getStoreProducts, products } = useStoreManager();
   const [userStores, setUserStores] = useState([]);
-  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStore, setSelectedStore] = useState("all");
   
@@ -29,21 +28,18 @@ const ProductsManagement = () => {
       if (currentUser) {
         try {
           const stores = await getUserStores(currentUser.id);
-          setUserStores(stores || []);
-
-          console.log(stores);
-          
+          setUserStores(stores || []);          
           
           // Get all products from all stores
-          let allProducts = [];
-          const storeProducts = await getStoreProducts(stores[0]?.id);
-          allProducts = [...allProducts, ...storeProducts];
+          // let allProducts = [];
+          // const storeProducts = await getStoreProducts(stores[0]?.id);
+          // allProducts = [...allProducts, ...storeProducts];
           // if (stores && Array.isArray(stores)) {
           //   stores.forEach(store => {
           //   });
           // }
           
-          setProducts(allProducts);
+          // setProducts(allProducts);
         } catch (error) {
           console.error('Failed to fetch user stores:', error);
           setUserStores([]);

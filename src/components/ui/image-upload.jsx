@@ -20,10 +20,7 @@ const ImageUpload = ({
   const [preview, setPreview] = useState(value || '');
   const [uploadMode, setUploadMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
-
-  console.log(value);
-  
+  const fileInputRef = useRef(null);  
 
   const handleFileSelect = (file) => {
     if (file && file.size <= maxSize) {

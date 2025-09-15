@@ -23,10 +23,7 @@ const AllStores = () => {
       ))
     );
     setFilteredStores(filtered);
-  }, [stores, searchTerm]);
-
-  console.log(filteredStores, stores);
-  
+  }, [stores, searchTerm]);  
   
   return (
     <MainLayout>

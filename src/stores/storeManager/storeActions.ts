@@ -12,27 +12,32 @@ export interface StoreActions {
   updateStorePolicies: (storeId: string, policies: any) => void;
 }
 
-  const API_URL = import.meta.env.VITE_DEV_BACKEND_URL
-
+const API_URL = import.meta.env.VITE_DEV_BACKEND_URL;
 
 export const createStoreActions = (set: any, get: any): StoreActions => ({
   createStore: async (store) => {
     // Check if user already has a store
-    const state = get();
-    const existingStores = state.stores.filter(
-      (s: Store) => s.ownerId === store.ownerId
-    );
+    try {
+      const state = get();
+      const existingStores = state.stores.filter(
+        (s: Store) => s.ownerId === store.ownerId
+      );
 
-    if (existingStores.length > 0) {
-      toast.error("You can only create one store");
-      throw new Error("User already has a store");
+      if (existingStores.length > 0) {
+        toast.error("You can only create one store");
+        throw new Error("User already has a store");
+      }
+      const res = await axios.post(`${API_URL}/api/store`, store, {
+        withCredentials: true,
+      });
+      const newStore = res.data.newStore;
+
+      set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
+      toast.success(`Store "${store.name}" created successfully`);
+      return newStore;
+    } catch (error) {
+      toast.error(`${error.data.message}` || 'Error Occurred');
     }
-    const res = await axios.post(`${API_URL}/api/store`, store);
-    const newStore = res.data.newStore;
-
-    set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
-    toast.success(`Store "${store.name}" created successfully`);
-    return newStore;
   },
 
   updateStore: async (storeId, updates) => {
@@ -41,6 +46,9 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
         `${API_URL}/api/store/${storeId}`,
         {
           updates,
+        },
+        {
+          withCredentials: true,
         }
       );
       const store = res.data.updatedStore;
@@ -57,25 +65,28 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
 
   deleteStore: async (storeId) => {
     try {
-      await axios.delete(`${API_URL}/api/store`, storeId);
+      await axios.delete(`${API_URL}/api/store/${storeId}`, {
+        withCredentials: true,
+      });
       set((state: StoreState) => ({
-      stores: state.stores.filter((store) => store.id !== storeId),
-      products: state.products.filter((product) => product.storeId !== storeId),
-      discounts: state.discounts.filter((discount) => {
-        const product = state.products.find((p) => p.id === discount.productId);
-        return product?.storeId !== storeId;
-      }),
-    }));
-    } catch (error) {
+        stores: state.stores.filter((store) => store.id !== storeId),
+        products: state.products.filter(
+          (product) => product.storeId !== storeId
+        ),
+        discounts: state.discounts.filter((discount) => {
+          const product = state.products.find(
+            (p) => p.id === discount.productId
+          );
+          return product?.storeId !== storeId;
+        }),
+      }));
+    } catch (error) {}
 
-    }
-    
     toast.success("Store deleted successfully");
   },
 
   getStoreBySlug: async (slug) => {
     try {
-
       // const state = get();
 
       // // 1. If already loaded in state, return that
@@ -85,7 +96,6 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       const res = await axios.get(`${API_URL}/api/store/${slug}`, {
         withCredentials: true, // if using cookies for auth
       });
-      console.log(res);
       const stores = res.data.store;
 
       return stores;
@@ -107,12 +117,9 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
         return userStores.slice(0, 1); // Return only the first store
       }
 
-      const res = await axios.get(
-        `${API_URL}/api/store/user/${userId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.get(`${API_URL}/api/store/user/${userId}`, {
+        withCredentials: true,
+      });
 
       const stores = res.data.stores.slice(0, 1); // Limit to one store
 

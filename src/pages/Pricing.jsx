@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
+import handlePayment from "../lib/utils";
+import { useAuthStore } from "../stores/useAuthStore";
 
 const Pricing = () => {
+
+  const {currentUser} = useAuthStore()
   const plans = [
     {
       name: "Free",
@@ -15,20 +19,21 @@ const Pricing = () => {
         "Up to 10 products",
         "Unlimited orders",
         "Basic analytics (orders & revenue)",
-        "No AI model generation"
+        "1 AI model generation"
       ],
       highlighted: false
     },
     {
       name: "Premium",
-      price: "₹2,000",
+      price: "₹3,000",
       period: "/month",
-      description: "Full features with custom domain and 150 AI model generations/month.",
+      description: "Unlimited Products and Orders with 200 AI model generations/month.",
       features: [
         "Unlimited products",
         "Unlimited orders",
         "Full analytics dashboard",
-        "100 AI model generations/month",
+        "200 AI model generations/month",
+        "Access to new Features ( extra charges may apply)",
         "Priority support"
       ],
       highlighted: true
@@ -36,26 +41,19 @@ const Pricing = () => {
   ];
 
   // Optional AI Packs
-  const aiPacks = [
-    {
-      name: "50 AI Models Pack",
-      price: "₹300",
-      description: "50 AI model generations. Can be added to any plan or purchased standalone."
-    },
-    {
-      name: "100 AI Models Pack",
-      price: "₹550",
-      description: "100 AI model generations. Can be added to any plan or purchased standalone."
-    }
-  ];
+  // const aiPacks = [
+  //   {
+  //     name: "50 AI Models Pack",
+  //     price: "₹300",
+  //     description: "50 AI model generations. Can be added to any plan or purchased standalone."
+  //   },
+  //   {
+  //     name: "100 AI Models Pack",
+  //     price: "₹550",
+  //     description: "100 AI model generations. Can be added to any plan or purchased standalone."
+  //   }
+  // ];
 
-
-  const sendMsg = (plan) => {
-    const message = `
-Hi! I’m interested in the ${plan.name} plan and would like to know more details about it before subscribing.
-`; const url = `https://wa.me/917498140646?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-  }
 
   return (
     <MainLayout>
@@ -72,7 +70,7 @@ Hi! I’m interested in the ${plan.name} plan and would like to know more detail
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-8 justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-center">
 
             {/* Plan Cards (Free & Premium) */}
             {plans.map((plan, index) => (
@@ -111,17 +109,17 @@ Hi! I’m interested in the ${plan.name} plan and would like to know more detail
                     variant={plan.highlighted ? "default" : "outline"}
                     size="lg"
                     onClick={() => {
-                      if (plan.name !== "Free") sendMsg(plan);
+                      if (plan.name !== "Free") handlePayment(currentUser);
                     }}
                   >
-                    {plan.name === "Free" ? "Get Started Free" : "Contact Owner"}
+                    {plan.name === "Free" ? "Get Started Free" : "Get Premium"}
                   </Button>
                 </CardFooter>
               </Card>
             ))}
 
             {/* AI Packs Card (Third Box) */}
-            <Card className="w-full max-w-md mx-auto border-dashed border-2 border-gray-300">
+            {/* <Card className="w-full max-w-md mx-auto border-dashed border-2 border-gray-300">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl font-bold">AI Packs</CardTitle>
                 <CardDescription className="text-base">
@@ -143,7 +141,7 @@ Hi! I’m interested in the ${plan.name} plan and would like to know more detail
                         </div>
                       </li>
                       <div class="flex justify-end">
-                        <Button onClick={()=> sendMsg(pack.name)} className="flex flex-row items-end"> Get Pack </Button>
+                        <Button onClick={()=> handlePayment(currentUser)} className="flex flex-row items-end"> Get Pack </Button>
                       </div>
                     </div>
                   ))}
@@ -151,7 +149,7 @@ Hi! I’m interested in the ${plan.name} plan and would like to know more detail
               </CardContent>
 
 
-            </Card>
+            </Card> */}
 
           </div>
 

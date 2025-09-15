@@ -20,7 +20,9 @@ export interface ProductActions {
 export const createProductActions = (set: any, get: any): ProductActions => ({
   createProduct: async (product) => {
     try {
-      const res = await axios.post(`${API_URL}/api/products`, product);
+      const res = await axios.post(`${API_URL}/api/products`, product, {
+      withCredentials: true
+    });
       set((state: StoreState) => ({
         products: [...state.products, res.data],
       }));
@@ -33,7 +35,9 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
 
   updateProduct: async (productId, updates) => {
     try {
-      const res = await axios.put(`${API_URL}/api/products/${productId}`, updates);
+      const res = await axios.put(`${API_URL}/api/products/${productId}`, updates, {
+      withCredentials: true
+    });
       set((state: StoreState) => ({
         products: state.products.map((product) =>
           product.id === productId ? res.data : product
@@ -48,7 +52,9 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
 
   deleteProduct: async (productId) => {
     try {
-      await axios.delete(`${API_URL}/api/products/delete/${productId}`);
+      await axios.delete(`${API_URL}/api/products/delete/${productId}`, {
+      withCredentials: true
+    });
       set((state: StoreState) => ({
         products: state.products.filter((product) => product.id !== productId),
         discounts: state.discounts.filter(
@@ -79,9 +85,6 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
         ),
       }));
 
-      console.log(
-        `Updated inventory for product ${productId}, subtracted ${quantityToSubtract}`
-      );
     } catch (error: any) {
       console.error("Error updating inventory:", error);
       toast.error(error.response?.data?.error || "Failed to update inventory");

@@ -11,6 +11,7 @@ import { z } from "zod";
 import StoreSelector from "./product/StoreSelector";
 import BasicProductDetails from "./product/BasicProductDetails";
 import AdditionalDetails from "./product/AdditionalDetails";
+import { toast } from "sonner";
 
 const productSchema = z.object({
   name: z.string().min(2, "Product name must be at least 2 characters"),
@@ -59,7 +60,7 @@ const ProductForm = ({ initialData = null }) => {
       image: initialData?.image || "",
       category: initialData?.category || "",
       storeId: initialData?.storeId || "",
-      inventory: initialData?.inventory?.toString() || "0",
+      inventory: initialData?.inventory?.toString() || "1",
       discount: initialData?.discount?.toString() || "0",
       sizes: initialData?.sizes || [],  // 👈 default empty array
     },
@@ -69,51 +70,41 @@ const ProductForm = ({ initialData = null }) => {
     if (!initialData && userStores.length > 0 && !form.getValues("storeId")) {
       form.setValue("storeId", userStores[0].id);
     }
-    
+
   }, [userStores, form, initialData]);
 
   const onSubmit = (data) => {
-  const productData = {
-    ...data,
-    price: Number(data.price),
-    inventory: Number(data.inventory),
-    discount: Number(data.discount),
-    sizes: data.sizes || [],   // ensure array exists
+    const productData = {
+      ...data,
+      price: Number(data.price),
+      inventory: Number(data.inventory),
+      discount: Number(data.discount) || 0,
+      sizes: data.sizes || [],   // ensure array exists
+    };
+
+    const requiredFields = ["name", "price", "inventory", "description", "image", "category"
+    ];
+
+    for (let field of requiredFields) {
+      if (!productData[field] || productData[field].toString().trim() === "") {
+        toast.error(`Please enter ${field}`)
+        return;
+      }
+    }
+
+    if (productData.sizes.length == 0) {
+      toast.error(`Please enter Sizes`)
+      return;
+    }
+
+    if (initialData) {
+      updateProduct(initialData.id, productData);
+      navigate("/dashboard/products");
+    } else {
+      createProduct(productData);
+      navigate("/dashboard/products");
+    }
   };
-
-  if (initialData) {
-    updateProduct(initialData.id, productData);
-    navigate("/dashboard/products");
-  } else {
-    createProduct(productData);
-    navigate("/dashboard/products");
-  }
-};
-
-
-  // const onSubmit = (data) => {
-
-  //   console.log(data);
-
-  //   const productData = {
-  //     ...data,
-  //     price: Number(data.price),
-  //     inventory: Number(data.inventory),
-  //     discount: 20
-  //   };
-
-  //   console.log(productData);
-
-
-  //   if (initialData) {
-  //     updateProduct(initialData.id, productData);
-  //     navigate("/dashboard/products");
-  //   } else {
-  //     createProduct(productData);
-  //     navigate("/dashboard/products");
-  //   }
-  // };
-
   if (userStores.length === 0) {
     return (
       <div className="text-center py-12">
@@ -125,15 +116,14 @@ const ProductForm = ({ initialData = null }) => {
     );
   }
 
-  const onError = (errors) => {
+ const onError = (errors) => {
     console.error("Form submission errors:", errors);
     // You can iterate through errors to display them in your UI
     // For example, errors.email?.message will give you the error message for the email field
   };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit,onError)} className="space-y-6">
         <StoreSelector form={form} stores={userStores} />
         <BasicProductDetails form={form} />
         <AdditionalDetails form={form} catgories={userStores[0].categories} />

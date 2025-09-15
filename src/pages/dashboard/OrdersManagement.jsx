@@ -104,11 +104,7 @@ const OrdersManagement = () => {
     setSelectedOrder((prev) =>
       prev ? { ...prev, newStatus } : prev
     );
-    console.log(selectedOrder);
   };
-
-  console.log(filteredOrders, "filterrrrrrr");
-
 
   return (
     <DashboardLayout>

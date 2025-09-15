@@ -19,7 +19,6 @@ const Checkout = () => {
     // Handle input changes properly
     const handleInputChange = (e) => {
         e.preventDefault()
-        console.log(e);
 
         const { id, value } = e.target;
         setCustomerInfo(prev => ({

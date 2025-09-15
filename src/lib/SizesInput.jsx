@@ -1,3 +1,5 @@
+import { Input } from "../components/ui/input";
+
 export const SizesInput = ({ form }) => {
   const sizes = form.watch("sizes") || [];
 
@@ -22,7 +24,7 @@ export const SizesInput = ({ form }) => {
       <label className="block font-medium mb-2">Sizes</label>
       {sizes.map((size, index) => (
         <div key={index} className="flex items-center mb-2">
-          <input
+          <Input
             type="text"
             value={size}
             onChange={(e) => updateSize(index, e.target.value)}

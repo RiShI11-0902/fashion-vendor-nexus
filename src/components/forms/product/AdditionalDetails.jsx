@@ -8,12 +8,8 @@ import axios from 'axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 
 const AdditionalDetails = ({ form,catgories }) => {
-  const [imageFile, setImageFile] = useState(null);
-  const [isAiModel, setisAiModel] = useState(false)
   const [isUploading, setIsUploading] = useState(false) 
-  
-  console.log(catgories);
-  
+    
   const handleImage = async (image, field) => {
 
     if (!image) return;

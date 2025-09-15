@@ -26,10 +26,7 @@ const StoreView = () => {
     handleCategorySelect
   } = useStoreData(storeSlug);
 
-  const {currentUser} = useAuthStore()
-
-  console.log(categories, handleCategorySelect);
-  
+  const {currentUser} = useAuthStore()  
 
   if (loading) {
     return (

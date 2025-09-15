@@ -15,6 +15,7 @@ import Cart from "./pages/Cart";
 import ContactPage from "./pages/ContactPage"
 import RefundPolicyPage from "./pages/RefundPolicyPage"
 import TermsPage from "./pages/TermsPage"
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 
 // Auth Pages
@@ -37,6 +38,7 @@ import StoreDetail from "./pages/dashboard/StoreDetail";
 import Settings from "./pages/dashboard/Settings";
 import StorefrontCustomization from "./pages/dashboard/StorefrontCustomization";
 import GenerateModel from "./pages/dashboard/GenerateModel";
+
 
 
 // Store Pages
@@ -97,6 +99,7 @@ const App = () => {
             <Route path="/dashboard/products/create" element={<CreateProduct />} />
             <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
             <Route path="/dashboard/settings" element={<Settings />} />
+            <Route path='/payment-success' element={<PaymentSuccess />} />
 
             {/* Store Routes */}
             <Route path="/stores" element={<AllStores />} />

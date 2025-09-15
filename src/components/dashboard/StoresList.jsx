@@ -3,9 +3,7 @@ import { Plus } from "lucide-react";
 import StoreCard from "../stores/StoreCard";
 import { Button } from "../ui/button";
 
-const StoresList = ({ stores, searchTerm, onClearSearch }) => {
-  console.log(stores);
-  
+const StoresList = ({ stores, searchTerm, onClearSearch }) => {  
   if (stores.length === 0) {
     return (
       <div className="text-center py-12 bg-gray-50 rounded-lg">

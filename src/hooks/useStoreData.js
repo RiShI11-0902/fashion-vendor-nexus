@@ -9,8 +9,6 @@ export const useStoreData = (storeSlug) => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  console.log(storeSlug);
   
 
   const foundStore = async () => {

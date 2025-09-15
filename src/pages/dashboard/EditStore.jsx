@@ -18,7 +18,6 @@ const EditStore = () => {
 
   const fetchStores = async () => {
     const userStores = await getUserStores(currentUser.id);
-    console.log(userStores);
 
     const foundStore = userStores?.find(store => store?.id === storeId);
 

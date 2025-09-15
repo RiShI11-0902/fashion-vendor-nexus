@@ -1,121 +1,187 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { 
+import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
 import { toast } from "sonner";
 import { useAuthStore } from "../../stores/useAuthStore";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { currentUser } = useAuthStore();
-  const [name, setName] = useState(currentUser?.name || "");
-  const [email, setEmail] = useState(currentUser?.email || "");
-  
-  const handleSaveProfile = (e) => {
-    e.preventDefault();
-    // In a real app, this would update the user's profile in the database
-    toast.success("Profile settings saved successfully");
+  const [subscriptions, setSubscriptions] = useState([]);
+
+  useEffect(() => {
+    const fetchSubscriptions = async () => {
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/user-subcription`, {
+          withCredentials: true
+        }
+        );
+        setSubscriptions(data.subscription || []);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load subscriptions");
+      }
+    };
+
+    fetchSubscriptions();
+  }, [currentUser?.id]);
+
+  const handleDeleteSubscription = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/subscription-cancel`, {
+        withCredentials: true
+      }
+      );
+      toast.success("Subscription canceled successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete subscription");
+    }
   };
-  
-  const handleSavePassword = (e) => {
-    e.preventDefault();
-    // In a real app, this would update the user's password
-    toast.success("Password updated successfully");
-  };
-  
+
   return (
     <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-display font-bold mb-2">Account Settings</h1>
-        <p className="text-gray-600">Manage your account preferences</p>
+        <p className="text-gray-600">
+          Manage your account and subscription details
+        </p>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <CardDescription>
-              Update your account's profile information
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSaveProfile} className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Name
-                </label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+
+      {/* User Profile */}
+      <Card className="mb-8 shadow-lg border rounded-2xl">
+        <CardHeader className="text-center border-b pb-4">
+          <CardTitle className="text-2xl font-bold">User Profile</CardTitle>
+          <CardDescription>
+            Manage your personal details and subscription information
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+            {/* Avatar */}
+            <div className="relative">
+              {currentUser?.avatar ? (
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name || "User Avatar"}
+                  className="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow-md"
                 />
+              ) : (
+                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-3xl font-bold text-gray-600 shadow-md">
+                  {currentUser?.name?.[0]?.toUpperCase() || "U"}
+                </div>
+              )}
+              {/* Small badge */}
+              <span className="absolute bottom-2 right-2 w-4 h-4 rounded-full bg-green-500 border-2 border-white"></span>
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-500">Name</p>
+                  <p className="font-medium text-gray-900">{currentUser?.name || "N/A"}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Email</p>
+                  <p className="font-medium text-gray-900">{currentUser?.email}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Plan</p>
+                  <p className="font-medium text-indigo-600">
+                    {subscriptions?.status == 'ACTIVE'? 'Premium' : "Free Trial"}
+                  </p>
+                </div>
+                <div className="">
+                  <p className="text-gray-500">Joined On</p>
+                  <p className="font-medium text-gray-900">
+                    {currentUser?.createdAt
+                      ? new Date(currentUser.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      {/* Subscriptions */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Subscriptions</CardTitle>
+          <CardDescription>
+            Manage your active and past subscriptions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {subscriptions.length === 0 && (
+            <p className="text-gray-600 text-sm">No subscriptions found</p>
+          )}
+
+          {
+            <div
+              className="border p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center"
+            >
+              <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5">
+                <p>
+                  <strong>Plan:</strong> {subscriptions?.name || "Premium"}
+                </p>
+                <p>
+                  <strong >Status:</strong> <span className={`${subscriptions?.status === 'ACTIVE' ? 'text-green-500' : 'text-red-600'}`}>{subscriptions?.status?.toLocaleUpperCase() || "N/A"}</span>
+                </p>
+                <p>
+                  <strong>Started:</strong>{" "}
+                  {new Date(subscriptions?.startedAt).toLocaleDateString()}
+                </p>
+                {/* <p>
+                  <strong>Expires:</strong>{" "}
+                  {subscriptions?.expiresAt
+                    ? new Date(subscriptions.expiresAt).toLocaleDateString()
+                    : "N/A"}
+                </p>
+                <p>
+                  <strong>Subscription ID:</strong>{" "}
+                  {subscriptions?.razorpaySubscriptionId}
+                </p> */}
               </div>
-              <Button type="submit">Save Changes</Button>
-            </form>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Update Password</CardTitle>
-            <CardDescription>
-              Ensure your account is using a secure password
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSavePassword} className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="current_password" className="text-sm font-medium">
-                  Current Password
-                </label>
-                <Input
-                  id="current_password"
-                  type="password"
-                />
+              <div className="mt-4 md:mt-0">
+                {
+                  subscriptions.status == 'ACTIVE' ? <div>
+                    <Button
+                      variant="destructive"
+                      onClick={() => handleDeleteSubscription()}
+                    >
+                      Cancel Subscription
+                    </Button>
+                    <p className="text-sm text-muted-foreground mt-4">
+                      * Payments are not refundable upon cancellation of subscription.
+                    </p>
+                  </div> : <Link to={"/pricing"}>
+                    <Button
+                      variant="outline"
+                      className="hover:bg-green-300"
+                    >
+                      Buy Premium
+                    </Button>
+                  </Link>
+                }
               </div>
-              <div className="space-y-2">
-                <label htmlFor="new_password" className="text-sm font-medium">
-                  New Password
-                </label>
-                <Input
-                  id="new_password"
-                  type="password"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="confirm_password" className="text-sm font-medium">
-                  Confirm Password
-                </label>
-                <Input
-                  id="confirm_password"
-                  type="password"
-                />
-              </div>
-              <Button type="submit">Update Password</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-      
+            </div>
+          }
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone */}
       <Card className="mt-8">
         <CardHeader>
           <CardTitle>Danger Zone</CardTitle>
@@ -125,9 +191,12 @@ const Settings = () => {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-600 mb-4">
-            Once you delete your account, there is no going back. Please be certain.
+            Once you delete your account, there is no going back. Please be
+            certain.
           </p>
-          <Button variant="destructive" className="cursor-pointer">Delete Account</Button>
+          <Button variant="destructive" className="cursor-pointer">
+            Delete Account
+          </Button>
         </CardContent>
       </Card>
     </DashboardLayout>

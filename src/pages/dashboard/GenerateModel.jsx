@@ -5,6 +5,7 @@ import { Textarea } from "../../components/ui/textarea";
 import axios from "axios";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import { ArrowLeft, Download } from "lucide-react";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 // Predefined prompt templates
 const promptTemplates = {
@@ -20,6 +21,8 @@ const GenerateModel = ({ field }) => {
   const [generatedImage, setGeneratedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState()
+  const { currentUser } = useAuthStore()
+const [remaining, setRemaining] = useState(currentUser?.allowedGenerate)
 
   const [selectedType, setSelectedType] = useState("model");
 
@@ -38,8 +41,8 @@ const GenerateModel = ({ field }) => {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
       setGeneratedImage(sendData.data.images[0]);
+      setRemaining((prev)=> prev - 1)
     } catch (error) {
-      console.log(error);
       setError(error.data.message || "Cannot Generate Model")
     } finally {
       setIsLoading(false);
@@ -57,6 +60,12 @@ const GenerateModel = ({ field }) => {
 
   return (
     <DashboardLayout>
+      <div className="flex flex-row space-x-2">
+          <p className="text-gray-500">Remaining Generations: </p>
+          <p className="font-medium text-gray-900">
+            {remaining}
+          </p>
+        </div>
       <div className="flex flex-col items-center justify-center gap-6 p-8 max-w-2xl mx-auto">
         <h1 className="text-3xl font-semibold">AI Generator</h1>
 

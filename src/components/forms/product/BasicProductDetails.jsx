@@ -47,7 +47,7 @@ const BasicProductDetails = ({ form }) => {
           name="discount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Discount ($)</FormLabel>
+              <FormLabel>Discount (₹)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 

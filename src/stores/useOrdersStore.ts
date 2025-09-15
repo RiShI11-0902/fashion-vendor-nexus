@@ -126,9 +126,7 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
 
   // Fetch store-specific orders
   getStoreOrders: async (storeId) => {
-    try {
-      console.log(storeId);
-      
+    try {      
       const { data } = await axios.post(`${API_URL}/api/order/get`, { storeId });
       
       set({ orders: data || [] });

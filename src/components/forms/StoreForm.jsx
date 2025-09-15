@@ -21,6 +21,7 @@ import { X } from "lucide-react";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { useAuthStore } from "../../stores/useAuthStore";
 import axios from "axios";
+import { toast } from "sonner";
 
 const storeSchema = z.object({
   name: z.string().min(2, "Store name must be at least 2 characters"),
@@ -74,7 +75,9 @@ const StoreForm = ({ initialData = null }) => {
 
     setIsUploading(false)
   };
+
   const onSubmit = async (formData) => {
+
     let mobileNumber = formData.mobileNumber
       ? `+91${formData.mobileNumber}`
       : null;
@@ -84,10 +87,13 @@ const StoreForm = ({ initialData = null }) => {
       mobileNumber,
       categories,
       ownerId: currentUser?.id,
-      url: `http://localhost:8080/store/${formData.slug}`,
+      url: `${import.meta.env.VITE_CLIENT_URL}/store/${formData.slug}`,
     };
 
-    console.log(storeData);
+    if (!storeData.name || !storeData.slug || !storeData.mobileNumber || !storeData.description || !storeData.logo || !storeData.banner) {
+      toast.error("Please enter all field and upload banner and logo")
+      return;
+    }
 
     if (initialData) {
       updateStore(initialData.id, storeData);
@@ -131,7 +137,7 @@ const StoreForm = ({ initialData = null }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store Name</FormLabel>
+              <FormLabel>Store Name <span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <Input placeholder="My Fashion Store" {...field} />
               </FormControl>
@@ -145,7 +151,7 @@ const StoreForm = ({ initialData = null }) => {
           name="slug"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store URL</FormLabel>
+              <FormLabel>Store URL <span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <Input placeholder="my-fashion-store" {...field} />
               </FormControl>
@@ -162,7 +168,7 @@ const StoreForm = ({ initialData = null }) => {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store Description</FormLabel>
+              <FormLabel>Store Description <span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Tell customers about your store..."
@@ -181,12 +187,12 @@ const StoreForm = ({ initialData = null }) => {
             name="mobileNumber"
             render={({ field }) => (
               <FormItem className="flex-1 flex-row items-center justify-center">
-                <FormLabel>Store Whatss App Number</FormLabel>
+                <FormLabel>Store Whatss App Number <span className="text-red-600">*</span></FormLabel>
                 <div className="flex-row flex items-center space-x-2 justify-center">
-                <Input placeholder="+91" className="w-14" value="+91" disabled />
-                <FormControl>
-                  <Input placeholder="Enter WhatsApp Number" {...field} />
-                </FormControl>
+                  <Input placeholder="+91" className="w-14" value="+91" disabled />
+                  <FormControl>
+                    <Input placeholder="Enter WhatsApp Number" {...field} />
+                  </FormControl>
                 </div>
                 <FormMessage />
               </FormItem>
@@ -200,7 +206,7 @@ const StoreForm = ({ initialData = null }) => {
           name="banner"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store Banner</FormLabel>
+              <FormLabel>Store Banner <span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <ImageUpload
                   value={field.value}
@@ -226,7 +232,7 @@ const StoreForm = ({ initialData = null }) => {
           name="logo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store Logo</FormLabel>
+              <FormLabel>Store Logo <span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <ImageUpload
                   value={field.value}
@@ -248,7 +254,7 @@ const StoreForm = ({ initialData = null }) => {
         />
 
         <div className="space-y-2">
-          <FormLabel>Store Categories</FormLabel>
+          <FormLabel>Store Categories <span className="text-red-600">*</span></FormLabel>
           <div className="flex">
             <Input
               value={newCategory}
@@ -260,7 +266,7 @@ const StoreForm = ({ initialData = null }) => {
             <Button type="button" onClick={addCategory}>Add</Button>
           </div>
           <FormDescription>
-            Press Enter to add multiple categories
+            Press Enter to add multiple categories of products on your store
           </FormDescription>
 
           {categories.length > 0 && (

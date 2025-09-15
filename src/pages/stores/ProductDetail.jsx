@@ -63,8 +63,6 @@ const ProductDetail = () => {
 
     // Add the specified quantity to cart
     for (let i = 0; i < quantity; i++) {
-      console.log(product, "Product going in cart");
-
       addToCart(product, store);
     }
 

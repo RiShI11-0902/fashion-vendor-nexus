@@ -23,9 +23,7 @@ const StorefrontCustomization = () => {
   const [error, setError] = useState("");
 
   const fetchUserStores = async ()=>{
-    const userStores = await getUserStores(currentUser.id, true); // force reload;
-      console.log(userStores);
-      
+    const userStores = await getUserStores(currentUser.id, true); // force reload;      
       const foundStore = userStores?.find(store => store.id === storeId);
       
       if (foundStore) {

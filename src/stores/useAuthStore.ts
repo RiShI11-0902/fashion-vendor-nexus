@@ -29,13 +29,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 
   checkAuth: async () => {
-    console.log("called checkAuth");
     try {
       const res = await axios.get(`${API_URL}/api/auth/check`, {
         withCredentials: true,
       });
-      console.log("backend check:", res.data);
-
       const user = res.data.user; // make sure backend sends this
       if (user) {
         set({ currentUser: user, isAuthenticated: true, loading: false });
@@ -86,20 +83,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       toast.success("Logged in successfully");
       return user;
     } catch (error) {
-      // Fallback for development when backend is not running
-      // if (error.code === "ERR_NETWORK") {
-      //   console.warn("Backend not running, using mock authentication");
-      //   const user = {
-      //     id: Date.now().toString(),
-      //     email,
-      //     name: email.split("@")[0],
-      //     role: "vendor"
-      //   };
-      //   localStorage.setItem("user", JSON.stringify(user));
-      //   set({ currentUser: user });
-      //   toast.success("Logged in successfully (mock mode)");
-      //   return user;
-      // }
       toast.error("Failed to log in");
       throw error;
     }
