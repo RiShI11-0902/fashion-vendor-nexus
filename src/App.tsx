@@ -16,6 +16,8 @@ import ContactPage from "./pages/ContactPage"
 import RefundPolicyPage from "./pages/RefundPolicyPage"
 import TermsPage from "./pages/TermsPage"
 import PaymentSuccess from "./pages/PaymentSuccess";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+
 
 
 // Auth Pages
@@ -74,6 +76,7 @@ const App = () => {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/refund-policy" element={<RefundPolicyPage />} />
             <Route path="/terms-condition" element={<TermsPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/:slug/cart" element={<Cart />} />
 
             {/* Auth Routes */}
