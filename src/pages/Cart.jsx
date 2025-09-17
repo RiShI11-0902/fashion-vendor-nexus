@@ -197,7 +197,7 @@ const Cart = () => {
                       {items.map((item) => (
                         <div key={`${item.productId}-${item.storeSlug}`} className="flex justify-between">
                           <span>{item.name} x{item.quantity}</span>
-                          <span>${(item.price * item.quantity).toFixed(2)}</span>
+                          <span className="flex flow-row space-x-1"><IndianRupee className="w-5" /><p>{(item.price * item.quantity).toFixed(2)}</p></span>
                         </div>
                       ))}
                     </div>

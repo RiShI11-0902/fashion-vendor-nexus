@@ -12,6 +12,7 @@ interface CartItem {
   storeName: string;
   storeSlug: string;
   quantity: number;
+  size: string
 }
 
 interface CartState {
@@ -63,7 +64,8 @@ export const useCartStore = create<CartState>((set, get) => ({
         storeId: product.storeId,
         storeName: store.name,
         storeSlug: store.slug,
-        quantity: 1
+        quantity: 1,
+        size:product.size
       };
       
       set(state => ({

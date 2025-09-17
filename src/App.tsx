@@ -17,6 +17,7 @@ import RefundPolicyPage from "./pages/RefundPolicyPage"
 import TermsPage from "./pages/TermsPage"
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ShippingPolicy from "./pages/ShippingPolicy";
 
 
 
@@ -77,6 +78,7 @@ const App = () => {
             <Route path="/refund-policy" element={<RefundPolicyPage />} />
             <Route path="/terms-condition" element={<TermsPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
             <Route path="/:slug/cart" element={<Cart />} />
 
             {/* Auth Routes */}

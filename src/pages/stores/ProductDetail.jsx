@@ -11,13 +11,14 @@ import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { storeSlug, productId } = useParams();
-  const { getStoreBySlug, products } = useStoreManager();
+  const { getStoreBySlug, products, getProductById } = useStoreManager();
   const { addToCart, items, updateQuantity } = useCartStore();
   const [product, setProduct] = useState(null);
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [selectSize, setselectSize] = useState()
   const navigate = useNavigate();
 
   // Get existing cart item for this product
@@ -25,10 +26,11 @@ const ProductDetail = () => {
 
   const fetchStoreProducts = async () => {
     const foundStore = await getStoreBySlug(storeSlug);
+    const foundProduct = await getProductById(productId)
+
 
     if (foundStore) {
       setStore(foundStore);
-      const foundProduct = products.find(p => p.id === productId && p.storeId === foundStore.id);
 
       if (foundProduct) {
         setProduct(foundProduct);
@@ -63,7 +65,10 @@ const ProductDetail = () => {
 
     // Add the specified quantity to cart
     for (let i = 0; i < quantity; i++) {
-      addToCart(product, store);
+      product.size = selectSize
+      console.log(product);
+      
+      // addToCart(product, store);
     }
 
     // Reset quantity to 1 after adding
@@ -117,19 +122,6 @@ const ProductDetail = () => {
       </Button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* <div className="h-96 md:h-[37rem] bg-gray-100 rounded-lg overflow-hidden">
-            {product.image ? (
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-400">
-                <Package className="h-16 w-16" />
-              </div>
-            )}
-          </div> */}
         <div className="h-96 md:h-[37rem] bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
           {product.image ? (
             <img
@@ -161,6 +153,25 @@ const ProductDetail = () => {
               {product.description || "No description available"}
             </p>
           </div>
+          <div className="prose max-w-none mb-8">
+            <p className="mb-2 font-medium">Available Sizes</p>
+            <div className="flex flex-wrap gap-3">
+              {product.sizes?.length > 0 &&
+                product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setselectSize(size)}
+                    className={`w-12 h-12 flex items-center justify-center rounded-lg border text-sm font-medium transition
+            ${selectSize === size
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border-gray-300 hover:border-black"}`}
+                  >
+                    {size}
+                  </button>
+                ))}
+            </div>
+          </div>
+
 
           <div className="mb-8">
             <h3 className="font-medium mb-2">Availability:</h3>

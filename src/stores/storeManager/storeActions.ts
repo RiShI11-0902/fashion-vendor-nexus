@@ -110,12 +110,12 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       const state = get();
 
       // 1. If already loaded in state, return that (single store only)
-      if (!forceRefresh && state.stores.length > 0) {
-        const userStores = state.stores.filter(
-          (store) => store?.ownerId === userId
-        );
-        return userStores.slice(0, 1); // Return only the first store
-      }
+      // if (!forceRefresh && state.stores.length > 0) {
+      //   const userStores = state.stores.filter(
+      //     (store) => store?.ownerId === userId
+      //   );
+      //   return userStores.slice(0, 1); // Return only the first store
+      // }
 
       const res = await axios.get(`${API_URL}/api/store/user/${userId}`, {
         withCredentials: true,
