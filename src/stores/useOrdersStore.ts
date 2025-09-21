@@ -12,7 +12,7 @@ export interface OrderItem {
   imageUrl?: string;
   storeId: string;
   storeName: string;
-  size: string
+  size: string;
 }
 
 export interface Order {
@@ -38,7 +38,10 @@ interface OrdersState {
   createOrder: (
     orderData: Omit<Order, "id" | "createdAt" | "updatedAt">
   ) => Promise<Order | null>;
-  updateOrderStatus: (orderId: string, status: Order["status"]) => Promise<void>;
+  updateOrderStatus: (
+    orderId: string,
+    status: Order["status"]
+  ) => Promise<void>;
   getStoreOrders: (storeId: string) => Promise<void>;
   getOrderById: (orderId: string) => Order | undefined;
   getOrderStats: (storeId?: string) => {
@@ -48,9 +51,8 @@ interface OrdersState {
   };
 }
 
-const API_URL = import.meta.env.VITE_DEV_BACKEND_URL  // adjust if different
+const API_URL = import.meta.env.VITE_DEV_BACKEND_URL; // adjust if different
 // "http://localhost:5000/api/order";
-
 
 export const useOrdersStore = create<OrdersState>((set, get) => ({
   orders: [],
@@ -61,10 +63,18 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   initializeData: async (storeId?: string) => {
     try {
       set({ loading: true });
+      const token = localStorage.getItem("token");
 
-      const { data } = await axios.post(`${API_URL}/api/order/get`, storeId ? { storeId } : {}, {
-        withCredentials: true
-      });
+      const { data } = await axios.post(
+        `${API_URL}/api/order/get`,
+        storeId ? { storeId } : {},
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`, // middleware reads this
+          },
+        }
+      );
 
       set({
         orders: data.orders || [],
@@ -80,7 +90,10 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   // Create new order
   createOrder: async (orderData) => {
     try {
-      const { data: newOrder } = await axios.post(`${API_URL}/api/order`, orderData);
+      const { data: newOrder } = await axios.post(
+        `${API_URL}/api/order`,
+        orderData
+      );
 
       if (!newOrder || !newOrder.id) {
         toast.error("Failed to create order");
@@ -106,37 +119,49 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
 
   // Update order status
   updateOrderStatus: async (orderId, status) => {
-  try {
-    const { data: updatedOrder } = await axios.put(
-      `${API_URL}/api/order/${orderId}/status`,
-      { status },
-      {
-        withCredentials: true
-      }
-    );
+    try {
+          const token =  localStorage.getItem("token");
+      const { data: updatedOrder } = await axios.put(
+        `${API_URL}/api/order/${orderId}/status`,
+        { status },
+        {
+          withCredentials: true,
+          headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
+        }
+      );
 
-    // Update only the matching order
-    set((state) => ({
-      orders: state.orders.map((order) =>
-        order.id === orderId ? { ...order, ...updatedOrder } : order
-      ),
-    }));
+      // Update only the matching order
+      set((state) => ({
+        orders: state.orders.map((order) =>
+          order.id === orderId ? { ...order, ...updatedOrder } : order
+        ),
+      }));
 
-    toast.success(`Order status updated to ${status}`);
-  } catch (err) {
-    console.error("Error updating order status:", err);
-    toast.error("Failed to update order status");
-  }
-},
-
+      toast.success(`Order status updated to ${status}`);
+    } catch (err) {
+      console.error("Error updating order status:", err);
+      toast.error("Failed to update order status");
+    }
+  },
 
   // Fetch store-specific orders
-  getStoreOrders: async (storeId) => {    
-    try {      
-      const { data } = await axios.post(`${API_URL}/api/order/get`, { storeId },{
-        withCredentials: true
-      });
-      
+  getStoreOrders: async (storeId) => {
+    try {
+          const token =  localStorage.getItem("token");
+
+      const { data } = await axios.post(
+        `${API_URL}/api/order/get`,
+        { storeId },
+        {
+          withCredentials: true,
+          headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
+        }
+      );
+
       set({ orders: data || [] });
 
       return data;
@@ -157,7 +182,8 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
     return {
       totalOrders: orders.length,
       totalRevenue: orders.reduce((sum, order) => sum + order.totalAmount, 0),
-      pendingOrders: orders.filter((order) => order.status === "PENDING").length,
+      pendingOrders: orders.filter((order) => order.status === "PENDING")
+        .length,
     };
   },
 }));

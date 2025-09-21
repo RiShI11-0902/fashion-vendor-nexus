@@ -17,7 +17,11 @@ const StoreManagement = () => {
 
   const fetchUserStore = async () => {
     setLoading(true);
-    const stores = await getUserStores(currentUser.id);
+    const stores = await getUserStores(currentUser.id, true);
+    console.log(currentUser.id);
+    
+    console.log(stores, "sdmfdsjafnmijsfmajk");
+    
     setUserStore(stores.length > 0 ? stores[0] : null);
     setLoading(false);
   };

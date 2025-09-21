@@ -18,6 +18,8 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
   createStore: async (store) => {
     // Check if user already has a store
     try {
+      const token = localStorage.getItem("token");
+
       const state = get();
       const existingStores = state.stores.filter(
         (s: Store) => s.ownerId === store.ownerId
@@ -29,6 +31,9 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       }
       const res = await axios.post(`${API_URL}/api/store`, store, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
       });
       const newStore = res.data.newStore;
 
@@ -36,12 +41,13 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       toast.success(`Store "${store.name}" created successfully`);
       return newStore;
     } catch (error) {
-      toast.error(`${error.data.message}` || 'Error Occurred');
+      toast.error(`${error.data.message}` || "Error Occurred");
     }
   },
 
   updateStore: async (storeId, updates) => {
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.put(
         `${API_URL}/api/store/${storeId}`,
         {
@@ -49,6 +55,9 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
         },
         {
           withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`, // middleware reads this
+          },
         }
       );
       const store = res.data.updatedStore;
@@ -65,8 +74,13 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
 
   deleteStore: async (storeId) => {
     try {
+      const token = localStorage.getItem("token");
+
       await axios.delete(`${API_URL}/api/store/${storeId}`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
       });
       set((state: StoreState) => ({
         stores: state.stores.filter((store) => store.id !== storeId),
@@ -108,7 +122,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
   getUserStores: async (userId, forceRefresh = false) => {
     try {
       const state = get();
-
+      const token = localStorage.getItem("token");
       // 1. If already loaded in state, return that (single store only)
       if (!forceRefresh && state.stores.length > 0) {
         const userStores = state.stores.filter(
@@ -119,6 +133,9 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
 
       const res = await axios.get(`${API_URL}/api/store/user/${userId}`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
       });
 
       const stores = res.data.stores.slice(0, 1); // Limit to one store

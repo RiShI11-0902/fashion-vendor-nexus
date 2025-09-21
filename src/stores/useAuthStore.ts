@@ -18,7 +18,7 @@ interface AuthState {
   isAuthenticated: boolean;
   checkAuth: () => Promise<void>;
 }
-  const API_URL = import.meta.env.VITE_DEV_BACKEND_URL
+const API_URL = import.meta.env.VITE_DEV_BACKEND_URL;
 
 export const useAuthStore = create<AuthState>((set) => ({
   currentUser: null,
@@ -27,11 +27,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setCurrentUser: (user: User | null) => set({ currentUser: user }),
 
-
   checkAuth: async () => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await axios.get(`${API_URL}/api/auth/check`, {
         withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
       });
       const user = res.data.user; // make sure backend sends this
       if (user) {
@@ -57,6 +61,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       );
       const user = res.data.user;
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", res.data.token);
+
       set({ currentUser: user });
       return user;
     } catch (error) {
@@ -79,6 +85,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       );
       const user = res.data.user;
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", res.data.token);
       set({ currentUser: user });
       toast.success("Logged in successfully");
       return user;
@@ -95,6 +102,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
       localStorage.removeItem("user");
       localStorage.removeItem("store-manager");
+      localStorage.removeItem("token");
       set({ currentUser: null });
       toast.success("Logged out successfully");
     } catch (error) {

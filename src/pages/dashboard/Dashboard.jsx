@@ -22,6 +22,8 @@ const Dashboard = () => {
   const fetchStoreData = async () => {
     setLoading(true);
     const store = await getUserStores(currentUser.id);
+    console.log(store, "fetch storeeeeeeeeeeeee");
+    
     // const store = stores[0]
     
     setUserStore(store);

@@ -4,25 +4,38 @@ import { Product, StoreState } from "../types/storeTypes";
 
 export interface ProductActions {
   createProduct: (product: Omit<Product, "id" | "createdAt">) => Promise<void>;
-  updateProduct: (productId: string, updates: Partial<Product>) => Promise<void>;
+  updateProduct: (
+    productId: string,
+    updates: Partial<Product>
+  ) => Promise<void>;
   deleteProduct: (productId: string) => Promise<void>;
-  updateProductInventory: (productId: string, quantityToSubtract: number) => Promise<void>;
-  getStoreProducts: (storeId: string, page: number, selectedCategory: string) => Promise<void>;
+  updateProductInventory: (
+    productId: string,
+    quantityToSubtract: number
+  ) => Promise<void>;
+  getStoreProducts: (
+    storeId: string,
+    page: number,
+    selectedCategory: string
+  ) => Promise<void>;
   getProductById: (productId: string) => Promise<void>;
-  getlowStockProducts:(storeId: string)=> {
-    lowStockProducts: Product
+  getlowStockProducts: (storeId: string) => {
+    lowStockProducts: Product;
   };
 }
 
- const API_URL = import.meta.env.VITE_DEV_BACKEND_URL
-; // adjust if different
-
+const API_URL = import.meta.env.VITE_DEV_BACKEND_URL; // adjust if different
 export const createProductActions = (set: any, get: any): ProductActions => ({
   createProduct: async (product) => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await axios.post(`${API_URL}/api/products`, product, {
-      withCredentials: true
-    });
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
+      });
       set((state: StoreState) => ({
         products: [...state.products, res.data],
       }));
@@ -35,9 +48,18 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
 
   updateProduct: async (productId, updates) => {
     try {
-      const res = await axios.put(`${API_URL}/api/products/${productId}`, updates, {
-      withCredentials: true
-    });
+      const token = localStorage.getItem("token");
+
+      const res = await axios.put(
+        `${API_URL}/api/products/${productId}`,
+        updates,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`, // middleware reads this
+          },
+        }
+      );
       set((state: StoreState) => ({
         products: state.products.map((product) =>
           product.id === productId ? res.data : product
@@ -52,9 +74,14 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
 
   deleteProduct: async (productId) => {
     try {
+          const token =  localStorage.getItem("token");
+
       await axios.delete(`${API_URL}/api/products/delete/${productId}`, {
-      withCredentials: true
-    });
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
+      });
       set((state: StoreState) => ({
         products: state.products.filter((product) => product.id !== productId),
         discounts: state.discounts.filter(
@@ -84,23 +111,31 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
           p.id === productId ? res.data : p
         ),
       }));
-
     } catch (error: any) {
       console.error("Error updating inventory:", error);
       toast.error(error.response?.data?.error || "Failed to update inventory");
     }
   },
 
-  getStoreProducts: async (storeId,page,selectedCategory) => {
-    try {      
-      const res = await axios.post(`${API_URL}/api/products/store`, { storeId, page, category:selectedCategory },{
-        withCredentials: true
-      });
+  getStoreProducts: async (storeId, page, selectedCategory) => {
+    try {
+          const token =  localStorage.getItem("token");
+
+      const res = await axios.post(
+        `${API_URL}/api/products/store`,
+        { storeId, page, category: selectedCategory },
+        {
+          withCredentials: true,
+          headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
+        }
+      );
       set((state: StoreState) => ({
         ...state,
         products: res.data.products,
       }));
-      return res.data
+      return res.data;
     } catch (error: any) {
       console.error("Error fetching store products:", error);
       toast.error(error.response?.data?.error || "Failed to fetch products");
@@ -117,22 +152,21 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
     }
   },
 
-  getlowStockProducts: (storeId)=>{
-     const products = storeId
+  getlowStockProducts: (storeId) => {
+    const products = storeId
       ? get().products.filter((product) => product.storeId === storeId)
       : get().product;
-      const low = products?.filter((product)=>{
-        if(product.inventory < 3){
-          return product ;
-        }
-      })      
+    const low = products?.filter((product) => {
+      if (product.inventory < 3) {
+        return product;
+      }
+    });
     return {
-      lowStockProducts: products?.filter((product)=>{
-        if(product.inventory < 3){
-          return product ;
+      lowStockProducts: products?.filter((product) => {
+        if (product.inventory < 3) {
+          return product;
         }
       }),
     };
-  }
-
+  },
 });
