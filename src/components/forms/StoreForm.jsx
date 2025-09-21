@@ -51,7 +51,7 @@ const StoreForm = ({ initialData = null }) => {
       description: initialData?.description || "",
       banner: initialData?.banner || "",
       logo: initialData?.logo || "",
-      mobileNumber: initialData?.mobileNumber || "",
+      mobileNumber: initialData?.mobileNumber.slice(3) || "",
     },
   });
 

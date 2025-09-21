@@ -2,24 +2,27 @@ import { Package } from "lucide-react";
 import ProductCard from "../products/ProductCard";
 import { Button } from "../../components/ui/button";
 
-const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, categories, handleCategorySelect }) => {
+const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, categories, handleCategorySelect, page, setPage, total }) => {
+
+  const totalPages = Math.ceil(total / 10);
+    
   return (
     <div className="flex flex-col gap-6">
-      
+
       {/* Horizontal category pills */}
       <div className="flex flex-wrap gap-2 mb-4">
-        <Button 
+        <Button
           size="sm"
-          variant={selectedCategory === "All" ? "default" : "outline"} 
+          variant={selectedCategory === "All" ? "default" : "outline"}
           onClick={() => handleCategorySelect("All")}
         >
           All
         </Button>
         {categories?.map((cat, idx) => (
-          <Button 
-            key={idx} 
+          <Button
+            key={idx}
             size="sm"
-            variant={selectedCategory === cat ? "default" : "outline"} 
+            variant={selectedCategory === cat ? "default" : "outline"}
             onClick={() => handleCategorySelect(cat)}
           >
             {cat}
@@ -50,14 +53,24 @@ const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, catego
                 {selectedCategory === "All" ? "No Products Available" : `No ${selectedCategory} Products`}
               </h3>
               <p className="text-gray-600">
-                {selectedCategory === "All" 
-                  ? "This store doesn't have any products yet. Check back later!" 
+                {selectedCategory === "All"
+                  ? "This store doesn't have any products yet. Check back later!"
                   : `No products found in the ${selectedCategory} category.`}
               </p>
             </div>
           )}
         </div>
+
       </div>
+        <div className="flex items-center flex-row w-full mx-auto justify-around">
+          <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
+            Prev
+          </Button>
+          <span>{page} / {totalPages}</span>
+          <Button onClick={() => setPage(page + 1)} disabled={page >= totalPages}>
+            Next
+          </Button>
+        </div>
     </div>
   );
 };

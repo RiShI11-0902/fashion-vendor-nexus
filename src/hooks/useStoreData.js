@@ -9,47 +9,67 @@ export const useStoreData = (storeSlug) => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const foundStore = async () => {
-    const foundStore = await getStoreBySlug(storeSlug);
-
-    if (foundStore) {
-      setStore(foundStore);
-      const storeProducts = await getStoreProducts(foundStore.id);
+  const fetchStoreProducts = async (storeId, page, category) => {
+    setLoading(true);
+    try {
+      const { products: storeProducts, total } = await getStoreProducts(
+        storeId,
+        page,
+        category === "All" ? null : category
+      );
       setProducts(storeProducts);
       setFilteredProducts(storeProducts);
-    } else {
-      setError("Store not found");
+      setTotal(total);
+    } catch (err) {
+      setError("Failed to fetch products");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setLoading(false);
+  const initStore = async () => {
+    try {
+      const foundStore = await getStoreBySlug(storeSlug);
+      if (!foundStore) {
+        setError("Store not found");
+        setLoading(false);
+        return;
+      }
+
+      setStore(foundStore);
+      await fetchStoreProducts(foundStore.id, page, selectedCategory);
+    } catch (err) {
+      setError("Failed to fetch store");
+      setLoading(false);
+      console.error(err);
+    }
   };
 
   useEffect(() => {
     if (storeSlug) {
-      foundStore()
+      initStore();
     }
-  }, [storeSlug, getStoreBySlug, getStoreProducts]);
+  }, [storeSlug]);
 
-  // Filter products by category
+  // Refetch products when page or category changes
   useEffect(() => {
-    if (selectedCategory === "All") {
-      setFilteredProducts(products);
-    } else {
-      setFilteredProducts(
-        products?.filter((product) => product.category === selectedCategory)
-      );
+    if (store) {
+      fetchStoreProducts(store.id, page, selectedCategory);
     }
-  }, [selectedCategory, products]);
+  }, [store, page, selectedCategory]);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
+    setPage(1); // reset to first page when category changes
   };
 
-  // Get unique categories from products
+  // Get unique categories from all products fetched
   const categories = [
-    ...new Set(products?.map((product) => product?.category).filter(Boolean)),
+    ...new Set(store?.categories?.map((category) => category).filter(Boolean)),
   ];
 
   return {
@@ -60,6 +80,9 @@ export const useStoreData = (storeSlug) => {
     categories,
     loading,
     error,
+    page,
+    setPage,
+    total,
     handleCategorySelect,
   };
 };

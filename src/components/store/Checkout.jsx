@@ -5,7 +5,7 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { IndianRupee } from "lucide-react";
 import { sendOrderToWhatsApp } from "../../lib/utils"
-
+import whatssapp from '../../assets/whatsapp.png'
 const Checkout = () => {
 
     const [customerInfo, setCustomerInfo] = useState({
@@ -149,7 +149,7 @@ const Checkout = () => {
 
                                     <div className="space-y-3 mt-6">
                                         <Button className="w-full" size="lg" onClick={handlePlaceOrder}>
-                                            Place Order
+                                            Place Order s djn <img src={whatssapp} />
                                         </Button>
                                         <Button variant="outline" className="w-full" onClick={() => setShowCheckout(false)}>
                                             Back to Cart

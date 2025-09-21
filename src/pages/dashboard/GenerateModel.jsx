@@ -9,9 +9,9 @@ import { useAuthStore } from "../../stores/useAuthStore";
 
 // Predefined prompt templates
 const promptTemplates = {
-  model: "Generate a high-quality 1:1 ratio image of an Indian model wearing the uploaded product. The model should stand in a stylish ecommerce pose with a clean minimal background. The product must look realistic, well-lit, and fashion-focused.",
+  model: "Generate a high-quality 1:1 ratio image of an Indian model wearing the uploaded product. The model should stand in a stylish ecommerce pose with a fashionable background with a styling pose. The product must look realistic, well-lit, and fashion-focused.",
   photoshoot: "Generate a professional product photoshoot image of the uploaded item. Use a modern studio setting with soft lighting, realistic textures, and a clean background. Highlight the product clearly for ecommerce use.",
-  instagramPost: "Create a stylish Instagram post featuring the uploaded product. Use an aesthetic background, vibrant colors, and trendy composition. The focus should remain on the product while looking social-media ready.",
+  instagramPost: "Create a stylish Instagram post featuring the uploaded product. Use an aesthetic background, vibrant colors, and trendy composition. The focus should remain on the product while looking social-media ready also a text on a fahionable way behind the model front of background, Text - New Arrival",
   instagramStory: "Generate a vertical Instagram Story image featuring the uploaded product. Use a minimal but modern layout with bold highlights, clean background, and attention-grabbing framing."
 };
 
@@ -38,7 +38,10 @@ const [remaining, setRemaining] = useState(currentUser?.allowedGenerate)
       const sendData = await axios.post(
         `${import.meta.env.VITE_DEV_BACKEND_URL}/api/generate-model`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          withCredentials: true
+        },
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
       setGeneratedImage(sendData.data.images[0]);
       setRemaining((prev)=> prev - 1)

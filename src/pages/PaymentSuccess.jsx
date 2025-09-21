@@ -21,10 +21,10 @@ const PaymentSuccess = () => {
           <CheckCircle2 className="w-16 h-16 text-green-500" />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Payment Successful 🎉
+          Payment Verified updating your account.... 🎉
         </h1>
         <p className="text-gray-600 mb-6">
-          Thank you! Your payment has been successfully processed.
+          Thank you! Your payment has been successfully verified.
         </p>
 
         {referenceId && (

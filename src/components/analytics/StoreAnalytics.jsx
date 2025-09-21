@@ -20,7 +20,8 @@ import {
   Cell,
 } from "recharts";
 import { TrendingUp, Package, AlertTriangle, DollarSign } from "lucide-react";
-import {formatNumber} from "../../lib/utils"
+import { formatNumber } from "../../lib/utils"
+import DashboardLayout from "../layout/DashboardLayout";
 
 const StoreAnalytics = ({ storeId }) => {
   const { getOrderStats, getStoreOrders } = useOrdersStore();
@@ -43,9 +44,10 @@ const StoreAnalytics = ({ storeId }) => {
 
   const fetchUserStore = async () => {
     const storeOrders = await getStoreOrders(storeId);
-    const products = await getStoreProducts(storeId);
-    const orderStats = getOrderStats(storeId);
+    const {products} = await getStoreProducts(storeId);
+    const orderStats = await getOrderStats(storeId);  
     
+
     setStats(orderStats);
     const { lowStockProducts } = getlowStockProducts(storeId);
 
@@ -91,7 +93,17 @@ const StoreAnalytics = ({ storeId }) => {
     }
   }, [storeId, getOrderStats, getStoreOrders, getStoreProducts, getlowStockProducts]);
 
-  if (!stats) return null;
+  // if (!stats) return null;
+
+  if (!storeId) {
+    return (
+        <div className="text-center py-12">
+          <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+          <h2 className="text-2xl font-semibold mb-4">No stores found</h2>
+          <p className="text-gray-600 mb-6">Create your first store to see analytics</p>
+        </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -103,7 +115,7 @@ const StoreAnalytics = ({ storeId }) => {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(stats.totalOrders)}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats?.totalOrders)}</div>
           </CardContent>
         </Card>
 
@@ -113,7 +125,7 @@ const StoreAnalytics = ({ storeId }) => {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{formatNumber(stats.totalRevenue)}</div>
+            <div className="text-2xl font-bold">₹{formatNumber(stats?.totalRevenue)}</div>
           </CardContent>
         </Card>
 
@@ -123,7 +135,7 @@ const StoreAnalytics = ({ storeId }) => {
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingOrders}</div>
+            <div className="text-2xl font-bold">{stats?.pendingOrders}</div>
           </CardContent>
         </Card>
       </div>

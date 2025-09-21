@@ -7,7 +7,7 @@ export interface ProductActions {
   updateProduct: (productId: string, updates: Partial<Product>) => Promise<void>;
   deleteProduct: (productId: string) => Promise<void>;
   updateProductInventory: (productId: string, quantityToSubtract: number) => Promise<void>;
-  getStoreProducts: (storeId: string) => Promise<void>;
+  getStoreProducts: (storeId: string, page: number, selectedCategory: string) => Promise<void>;
   getProductById: (productId: string) => Promise<void>;
   getlowStockProducts:(storeId: string)=> {
     lowStockProducts: Product
@@ -91,14 +91,16 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
     }
   },
 
-  getStoreProducts: async (storeId) => {
-    try {
-      const res = await axios.post(`${API_URL}/api/products/store`, { storeId });
+  getStoreProducts: async (storeId,page,selectedCategory) => {
+    try {      
+      const res = await axios.post(`${API_URL}/api/products/store`, { storeId, page, category:selectedCategory },{
+        withCredentials: true
+      });
       set((state: StoreState) => ({
         ...state,
         products: res.data.products,
       }));
-      return res.data.products
+      return res.data
     } catch (error: any) {
       console.error("Error fetching store products:", error);
       toast.error(error.response?.data?.error || "Failed to fetch products");
@@ -119,9 +121,13 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
      const products = storeId
       ? get().products.filter((product) => product.storeId === storeId)
       : get().product;
-
+      const low = products?.filter((product)=>{
+        if(product.inventory < 3){
+          return product ;
+        }
+      })      
     return {
-      lowStockProducts: products.map((product)=>{
+      lowStockProducts: products?.filter((product)=>{
         if(product.inventory < 3){
           return product ;
         }

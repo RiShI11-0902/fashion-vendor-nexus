@@ -18,7 +18,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [selectSize, setselectSize] = useState()
+  const [selectSize, setselectSize] = useState(null)
   const navigate = useNavigate();
 
   // Get existing cart item for this product
@@ -50,6 +50,7 @@ const ProductDetail = () => {
     }
   }, [storeSlug, productId, getStoreBySlug, products]);
 
+
   const handleAddToCart = () => {
     if (!product.inventory || product.inventory <= 0) {
       toast.error("Product is out of stock");
@@ -63,12 +64,15 @@ const ProductDetail = () => {
       return;
     }
 
+    if (product.sizes.length > 0 && selectSize == null) {
+      toast.error(`Please select size`);
+      return;
+    }
+
     // Add the specified quantity to cart
     for (let i = 0; i < quantity; i++) {
       product.size = selectSize
-      console.log(product);
-      
-      // addToCart(product, store);
+      addToCart(product, store);
     }
 
     // Reset quantity to 1 after adding
@@ -88,28 +92,24 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <MainLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      </MainLayout>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
     );
   }
 
   if (error || !store || !product) {
     return (
-      <MainLayout>
-        <div className="container mx-auto px-4 py-12 text-center">
-          <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-          <h2 className="text-2xl font-display font-semibold mb-2">Product Not Found</h2>
-          <p className="text-gray-600 mb-6">
-            The product you're looking for doesn't exist or might have been removed.
-          </p>
-          <Button asChild>
-            <Link to={`/store/${storeSlug}`}>Back to Store</Link>
-          </Button>
-        </div>
-      </MainLayout>
+      <div className="container mx-auto px-4 py-12 text-center">
+        <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <h2 className="text-2xl font-display font-semibold mb-2">Product Not Found</h2>
+        <p className="text-gray-600 mb-6">
+          The product you're looking for doesn't exist or might have been removed.
+        </p>
+        <Button asChild>
+          <Link to={`/store/${storeSlug}`}>Back to Store</Link>
+        </Button>
+      </div>
     );
   }
 
@@ -122,12 +122,12 @@ const ProductDetail = () => {
       </Button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="h-96 md:h-[37rem] bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+        <div className="h-96 md:h-[37rem] rounded-lg overflow-hidden flex items-center justify-center">
           {product.image ? (
             <img
               src={product.image}
               alt={product.name}
-              className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+              className="max-h-full rounded-2xl max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
@@ -153,24 +153,26 @@ const ProductDetail = () => {
               {product.description || "No description available"}
             </p>
           </div>
-          <div className="prose max-w-none mb-8">
-            <p className="mb-2 font-medium">Available Sizes</p>
-            <div className="flex flex-wrap gap-3">
-              {product.sizes?.length > 0 &&
-                product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setselectSize(size)}
-                    className={`w-12 h-12 flex items-center justify-center rounded-lg border text-sm font-medium transition
+          {
+            product.sizes.length > 0 && <div className="prose max-w-none mb-8">
+              <p className="mb-2 font-medium">Available Sizes</p>
+              <div className="flex flex-wrap gap-3">
+                {product.sizes?.length > 0 &&
+                  product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setselectSize(size)}
+                      className={`w-12 h-12 flex items-center justify-center rounded-lg border text-sm font-medium transition
             ${selectSize === size
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border-gray-300 hover:border-black"}`}
-                  >
-                    {size}
-                  </button>
-                ))}
+                          ? "bg-black text-white border-black"
+                          : "bg-white text-black border-gray-300 hover:border-black"}`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+              </div>
             </div>
-          </div>
+          }
 
 
           <div className="mb-8">

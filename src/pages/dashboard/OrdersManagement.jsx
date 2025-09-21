@@ -36,29 +36,28 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
+import { Input } from "../../components/ui/input";
 
 const OrdersManagement = () => {
   const { currentUser } = useAuthStore();
   const { getUserStores } = useStoreManager();
   const { orders, updateOrderStatus, getStoreOrders } = useOrdersStore();
-  const [selectedStore, setSelectedStore] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [userStores, setUserStores] = useState([]);
   const [allUserOrders, setAllUserOrders] = useState([]);
+  const [orderNumber, setorderNumber] = useState()
   useEffect(() => {
     const fetchUserStores = async () => {
       if (currentUser) {
-
         try {
           const store = await getUserStores(currentUser.id);
           setUserStores(store || []);
-
           // Get orders for user's stores
-          const orders = await getStoreOrders(store[0].id);
+          const orders = await getStoreOrders(store[0]?.id);
+          
           setAllUserOrders(orders);
-
         } catch (error) {
           console.error('Failed to fetch user stores:', error);
 
@@ -71,19 +70,19 @@ const OrdersManagement = () => {
 
   // Apply filters
   const filteredOrders = orders?.filter(order => {
-    const storeMatch = selectedStore === "all" ||
-      order.items.some(item => item.storeId === selectedStore);
+    const orderNumberMatch = orderNumber ?
+      Number(orderNumber) === order.orderNumber : true;
     const statusMatch = statusFilter === "all" || order.status === statusFilter;
-    return storeMatch && statusMatch;
+    return orderNumberMatch && statusMatch;
   });
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "pending": return <Clock className="h-4 w-4" />;
-      case "confirmed": return <CheckCircle className="h-4 w-4" />;
-      case "shipped": return <Truck className="h-4 w-4" />;
-      case "delivered": return <CheckCircle className="h-4 w-4" />;
-      case "cancelled": return <XCircle className="h-4 w-4" />;
+      case "PENDING": return <Clock className="h-4 w-4" />;
+      case "CONFIRMED": return <CheckCircle className="h-4 w-4" />;
+      case "SHIPPED": return <Truck className="h-4 w-4" />;
+      case "DELIVERED": return <CheckCircle className="h-4 w-4" />;
+      case "CANCELLED": return <XCircle className="h-4 w-4" />;
       default: return <Package className="h-4 w-4" />;
     }
   };
@@ -115,19 +114,7 @@ const OrdersManagement = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="w-full sm:w-[200px]">
-              <SelectValue placeholder="Filter by store" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Stores</SelectItem>
-              {userStores.map(store => (
-                <SelectItem key={store.id} value={store.id}>
-                  {store.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input placeholder='Search by order Number' onChange={(e) => setorderNumber(e.target.value)} />
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-[200px]">
@@ -197,8 +184,8 @@ const OrdersManagement = () => {
                       </TableCell>
                       <TableCell >
                         <div className="flex flex-row space-x-2 items-center">
-                        <IndianRupee className="w-4" />
-                        {order.totalAmount.toFixed(2)}
+                          <IndianRupee className="w-4" />
+                          {order.totalAmount.toFixed(2)}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -282,10 +269,12 @@ const OrdersManagement = () => {
                         <span>
                           {item.name} × {item.quantity}
                         </span>
+                        <span>Size: {item.size}</span>
                         <div className="flex flex-row space-x-2 items-center">
                           <IndianRupee className="w-4" />
                           {item.price}
                         </div>
+
                       </li>
                     ))}
                   </ul>

@@ -12,6 +12,7 @@ export interface OrderItem {
   imageUrl?: string;
   storeId: string;
   storeName: string;
+  size: string
 }
 
 export interface Order {
@@ -61,7 +62,9 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
     try {
       set({ loading: true });
 
-      const { data } = await axios.post(`${API_URL}/api/order/get`, storeId ? { storeId } : {});
+      const { data } = await axios.post(`${API_URL}/api/order/get`, storeId ? { storeId } : {}, {
+        withCredentials: true
+      });
 
       set({
         orders: data.orders || [],
@@ -106,7 +109,10 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   try {
     const { data: updatedOrder } = await axios.put(
       `${API_URL}/api/order/${orderId}/status`,
-      { status }
+      { status },
+      {
+        withCredentials: true
+      }
     );
 
     // Update only the matching order
@@ -125,9 +131,11 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
 
 
   // Fetch store-specific orders
-  getStoreOrders: async (storeId) => {
+  getStoreOrders: async (storeId) => {    
     try {      
-      const { data } = await axios.post(`${API_URL}/api/order/get`, { storeId });
+      const { data } = await axios.post(`${API_URL}/api/order/get`, { storeId },{
+        withCredentials: true
+      });
       
       set({ orders: data || [] });
 

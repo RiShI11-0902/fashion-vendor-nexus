@@ -92,11 +92,6 @@ const ProductForm = ({ initialData = null }) => {
       }
     }
 
-    if (productData.sizes.length == 0) {
-      toast.error(`Please enter Sizes`)
-      return;
-    }
-
     if (initialData) {
       updateProduct(initialData.id, productData);
       navigate("/dashboard/products");

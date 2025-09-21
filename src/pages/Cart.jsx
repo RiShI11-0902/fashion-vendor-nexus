@@ -12,6 +12,8 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Minus, Plus, Trash2, ShoppingBag, IndianRupee } from "lucide-react";
 import { sendOrderToWhatsApp } from "../lib/utils"
+import whatssapp from '../assets/whatsapp.png'
+import { toast } from "sonner";
 
 const Cart = () => {
   const { slug } = useParams();
@@ -58,6 +60,15 @@ const Cart = () => {
   const handlePlaceOrder = async () => {
     // Validation logic here
 
+    const isValid = Object.entries(customerInfo)
+      .filter(([key]) => key !== "alternateMobileNumber") // ignore optional
+      .every(([_, value]) => value.trim() !== "");
+
+      if(!isValid){
+        toast.error("Please enter all required fields")
+        return
+      }
+
     const storeId = items[0]?.storeId;
     if (!storeId) return;
 
@@ -71,6 +82,7 @@ const Cart = () => {
       imageUrl: item.image,
       storeId: item.storeId,
       storeName: item.storeName,
+      size: item.size
     }));
 
     const orderData = {
@@ -81,7 +93,7 @@ const Cart = () => {
       alternateMobileNumber: customerInfo.alternateMobileNumber,
       items: orderItems,
       totalAmount: getTotalPrice(),
-      status: "pending",
+      status: "PENDING",
       storeId: storeId,
     };
 
@@ -210,7 +222,7 @@ const Cart = () => {
 
                     <div className="space-y-3 mt-6">
                       <Button className="w-full" size="lg" onClick={handlePlaceOrder}>
-                        Place Order
+                        Place Order <img className="w-5" src={whatssapp} />
                       </Button>
                       <Button variant="outline" className="w-full" onClick={() => setShowCheckout(false)}>
                         Back to Cart

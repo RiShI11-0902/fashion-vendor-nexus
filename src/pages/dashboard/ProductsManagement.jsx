@@ -29,17 +29,6 @@ const ProductsManagement = () => {
         try {
           const stores = await getUserStores(currentUser.id);
           setUserStores(stores || []);          
-          
-          // Get all products from all stores
-          // let allProducts = [];
-          // const storeProducts = await getStoreProducts(stores[0]?.id);
-          // allProducts = [...allProducts, ...storeProducts];
-          // if (stores && Array.isArray(stores)) {
-          //   stores.forEach(store => {
-          //   });
-          // }
-          
-          // setProducts(allProducts);
         } catch (error) {
           console.error('Failed to fetch user stores:', error);
           setUserStores([]);
@@ -157,7 +146,7 @@ const ProductsManagement = () => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
           {filteredProducts.map(product => {
             const store = userStores.find(store => store.id === product.storeId);
             return (

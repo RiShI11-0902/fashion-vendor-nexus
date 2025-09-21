@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 // utils/whatsapp.ts
 export function sendOrderToWhatsApp(orderData: any, storeNumber: string) {
   // Build order message
-  const itemsText = orderData.items
+  const itemsText = orderData?.items
     .map(
       (item: any, idx: number) =>
         `${idx + 1}. ${item.name} (x${item.quantity}) - ₹${
@@ -49,7 +49,7 @@ export const formatNumber = (num: Number) => {
   return num.toLocaleString("en-IN");
 };
 
-export const handlePayment = async (user, setLoading) => {
+export const handlePayment = async (user, setLoading, isOneTime) => {  
   try {
     // 1. Create Razorpay order with user email and selected plan
     const {
@@ -89,9 +89,7 @@ export const handlePayment = async (user, setLoading) => {
       },
       notes: {
         address: "Shop Monk Office",
-      },
-      theme: {
-        color: "#3399cc",
+        userId: user.id
       },
       handler: async function (response) {
         // 4. Verify payment
@@ -113,7 +111,7 @@ export const handlePayment = async (user, setLoading) => {
               // Redirect to payment success
               window.location.href = `${
                 import.meta.env.VITE_CLIENT_URL
-              }/payment-success?referenceid=${res.data.referenceId}`;
+              }/payment-success?razorpay-payment-id=${res.data.razorpay_payment_id}`;
             }
           });
       },
@@ -121,14 +119,93 @@ export const handlePayment = async (user, setLoading) => {
 
     const rzp = new window.Razorpay(options);
     rzp.open();
-    setLoading(false)
+    setLoading(false);
   } catch (error) {
     console.error("Payment Error:", error);
     alert("Something went wrong during the payment process.");
   }
 };
 
-export default handlePayment;
+export const handleOrder = async (user, setLoading, isOneTime) => {  
+  try {
+    // 1. Create Razorpay order with user email and selected plan
+    const {
+      data: { order },
+    } = await axios.get(
+      `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/buy-images`,
+      {
+        withCredentials: true, // if using cookies for auth
+      }
+    );
+
+    // 2. Get Razorpay key
+    const {
+      data: { key },
+    } = await axios.get(
+      `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/get-key`,
+      {
+        withCredentials: true, // if using cookies for auth
+      }
+    );
+
+    // 3. Set up Razorpay options
+    const options = {
+      key,
+      amount: order.amount,
+      currency: "INR",
+      name: "Shop Monk",
+      description: "Premium Package",
+      image: "/full_logo.png",
+      order_id: order.id,
+      callback_url: `${
+        import.meta.env.VITE_DEV_BACKEND_URL
+      }/api/payment/verification`,
+      prefill: {
+        name: user.name || "Customer",
+        email: user.email,
+      },
+      notes: {
+        address: "Shop Monk Office",
+        userId: user.id
+      },
+      handler: async function (response) {
+        // 4. Verify payment
+        await axios
+          .post(
+            `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/verification`,
+            {
+              razorpay_subscription_id: response.razorpay_subscription_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              email: user.email,
+            },
+            {
+              withCredentials: true, // if using cookies for auth
+            }
+          )
+          .then((res) => {
+            if (res.data.success) {
+              // Redirect to payment success
+              window.location.href = `${
+                import.meta.env.VITE_CLIENT_URL
+              }/payment-success?razorpay-payment-id=${res.data.razorpay_payment_id}`;
+            }
+          });
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+    setLoading(false);
+  } catch (error) {
+    console.error("Payment Error:", error);
+    alert("Something went wrong during the payment process.");
+  }
+};
+
+// export default handleOrder
+
+// export default handlePayment;
 
 ///{
 //   minimumFractionDigits: 2,

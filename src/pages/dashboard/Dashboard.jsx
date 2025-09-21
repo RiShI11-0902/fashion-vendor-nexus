@@ -13,7 +13,7 @@ import { Button } from "../../components/ui/button";
 
 const Dashboard = () => {
   const { currentUser, checkAuth } = useAuthStore();
-  const { getUserStores, getStoreProducts, getlowStockProducts } = useStoreManager();
+  const { getStoreProducts,getUserStores, getlowStockProducts, stores } = useStoreManager();
   const { getOrderStats } = useOrdersStore();
   const [userStore, setUserStore] = useState(null);
   const [overallStats, setOverallStats] = useState(null);
@@ -21,21 +21,23 @@ const Dashboard = () => {
 
   const fetchStoreData = async () => {
     setLoading(true);
-    const stores = await getUserStores(currentUser.id);
-    const store = stores.length > 0 ? stores[0] : null;
+    const store = await getUserStores(currentUser.id);
+    // const store = stores[0]
+    
     setUserStore(store);
-
-    if (store) {
+    if (store.length > 0) {      
+      
       // Calculate stats for the single store
       const stats = getOrderStats();
-      const totalProducts = await getStoreProducts(store.id);
+      const { total } = await getStoreProducts(store[0]?.id);      
 
-      const {lowStockProducts} = getlowStockProducts(store.id)      
+      const {lowStockProducts}  = await getlowStockProducts(store[0]?.id) 
+      
 
       setOverallStats({
         ...stats,
-        totalProducts: totalProducts.length,
-        totalLowStock:  lowStockProducts.length // Will be implemented when needed
+        totalProducts: total,
+        totalLowStock: lowStockProducts?.length || 0 // Will be implemented when needed
       });
     }
     setLoading(false);
@@ -52,7 +54,7 @@ const Dashboard = () => {
     if (currentUser) {
       fetchStoreData();
     }
-  }, [currentUser, getUserStores, getOrderStats, getStoreProducts, getlowStockProducts]);
+  }, [currentUser, getOrderStats, getStoreProducts, getlowStockProducts]);
 
   if (!currentUser) {
     return (
@@ -79,7 +81,7 @@ const Dashboard = () => {
         </div>
       </DashboardLayout>
     );
-  }
+  }  
 
   return (
     <DashboardLayout>
@@ -92,9 +94,7 @@ const Dashboard = () => {
           <>
             <DashboardStats stats={overallStats} />
             <StoreAnalyticsSection
-              userStores={[userStore]}
-              selectedStore={userStore.id}
-              setSelectedStore={() => { }} // No-op since there's only one store
+              selectedStore={userStore[0]?.id}
             />
           </>
         )}

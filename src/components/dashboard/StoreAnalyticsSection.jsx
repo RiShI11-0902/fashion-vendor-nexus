@@ -13,21 +13,9 @@ const StoreAnalyticsSection = ({ userStores, selectedStore, setSelectedStore }) 
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-display font-semibold">Store Analytics</h2>
-        <Select value={selectedStore} onValueChange={setSelectedStore}>
-          <SelectTrigger className="w-64">
-            <SelectValue placeholder="Select a store" />
-          </SelectTrigger>
-          <SelectContent>
-            {userStores.map(store => (
-              <SelectItem key={store.id} value={store.id}>
-                {store.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
       
-      {selectedStore && <StoreAnalytics storeId={selectedStore} />}
+      {<StoreAnalytics storeId={selectedStore} />}
     </div>
   );
 };

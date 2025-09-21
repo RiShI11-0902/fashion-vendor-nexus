@@ -94,6 +94,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         withCredentials: true, // if using cookies for auth
       });
       localStorage.removeItem("user");
+      localStorage.removeItem("store-manager");
       set({ currentUser: null });
       toast.success("Logged out successfully");
     } catch (error) {

@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 
 const DashboardHeader = ({ userName,userStore }) => {
+  
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
@@ -11,14 +12,14 @@ const DashboardHeader = ({ userName,userStore }) => {
           Welcome back, {userName}!
         </h1>
         {
-          userStore && <p className="text-gray-600">
+          userStore.length > 0 && <p className="text-gray-600">
           Here's what's happening with your {userStore.name}.
         </p>
         }
       </div>
 
       {
-        userStore && <div className="flex flex-col sm:flex-row gap-3">
+        userStore.length > 0 && <div className="flex flex-col sm:flex-row gap-3">
         <Button asChild variant="outline">
           <Link to="/dashboard/products/create">
             <Plus className="mr-2 h-4 w-4" /> Add Product

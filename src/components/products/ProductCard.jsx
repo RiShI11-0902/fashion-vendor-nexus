@@ -4,6 +4,7 @@ import { Badge } from "../ui/badge";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { Percent, Clock, IndianRupee } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { Button } from "../../components/ui/button";
 
 const ProductCard = ({ product, storeSlug, className = "" }) => {
   const { getDiscountedPrice } = useStoreManager();
@@ -29,82 +30,73 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
     if (days > 0) return `${days}d ${hours}h left`;
     return `${hours}h left`;
   };
-
   const timeRemaining = getTimeRemaining();
   return (
     <Link
-      to={ currentUser ?`/dashboard/products/edit/${product.id}` : `/store/${storeSlug}/product/${product.id}`}
+      to={`/store/${storeSlug}/product/${product.id}`}
       className={`block group ${className}`}
     >
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-        <div className="relative">
-          <div className="w-full h-96 bg-gray-50 flex items-center justify-center overflow-hidden">
+      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group inline-block w-60">
+        {/* Image */}
+        {/* <div className="overflow-hidden bg-emerald-700 rounded-t-lg">
+          <div className="inline-block overflow-hidden rounded-xl shadow-sm group cursor-pointer transition-shadow duration-300 hover:shadow-lg">
             <img
               src={product.image}
               alt={product.name}
-              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+              className="block max-w-full max-h-[300px] object-contain transition-transform duration-500 ease-in-out hover:scale-105"
             />
           </div>
 
-
-          {/* Discount Badge */}
-          {hasDiscount && (
-            <div className="absolute top-3 left-3">
-              <Badge className="bg-red-500 text-white flex items-center gap-1">
-                <Percent className="h-3 w-3" />
-                {discount.type === 'percentage' ? `${discount.value}% OFF` : `$${discount.value} OFF`}
-              </Badge>
+        </div> */}
+        <div className="flex flex-wrap justify-center gap-6">
+          <div className="overflow-hidden rounded-t-lg">
+            <div className="inline-block overflow-hidden rounded-xl shadow-sm group cursor-pointer transition-shadow duration-300 hover:shadow-lg">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="block max-w-full max-h-[300px] object-contain transition-transform duration-500 ease-in-out hover:scale-105"
+              />
             </div>
-          )}
-
-          {/* Time remaining badge */}
-          {hasDiscount && timeRemaining && (
-            <div className="absolute top-3 right-3">
-              <Badge variant="outline" className="bg-white/90 text-gray-700 flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {timeRemaining}
-              </Badge>
-            </div>
-          )}
+          </div>
+          {/* Repeat for other products */}
         </div>
 
-        <div className="p-4">
-          <h3 className="font-semibold text-lg mb-2 group-hover:text-pink-600 transition-colors">
+
+        {/* Text */}
+        <div className="p-3">
+          <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
             {product.name}
           </h3>
 
           {product.description && (
-            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+            <p className="text-gray-600 text-xs mt-1 line-clamp-2">
               {product.description}
             </p>
           )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {hasDiscount ? (
-                <>
-                  <span className="text-xl font-bold text-pink-600">
-                    <IndianRupee />{discountedPrice.toFixed(2)}
-                  </span>
-                  <span className="text-sm text-gray-500 line-through">
-                    <IndianRupee />{product.price.toFixed(2)}
-                  </span>
-                </>
-              ) : (
-                <span className="text-xl font-bold flex flex-row text-gray-900">
-                  <IndianRupee className="w-5" />{product.price.toFixed(2)}
-                </span>
-              )}
-            </div>
+          {/* Price & Category */}
+          <div className="flex items-center justify-between mt-2">
+            <span className="font-bold text-gray-900 text-sm flex items-center gap-1">
+              <IndianRupee className="w-5" />{hasDiscount ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
+            </span>
 
             {product.category && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs px-2 py-0.5 rounded">
                 {product.category}
               </Badge>
             )}
+
+            {
+              currentUser && <Link to={`/dashboard/products/edit/${product.id}`}>
+                <Button className="s" size={'sm'}>
+                  Edit
+                </Button>
+              </Link>
+            }
           </div>
         </div>
       </div>
+
     </Link>
   );
 };

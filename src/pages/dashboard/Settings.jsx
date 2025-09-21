@@ -33,12 +33,12 @@ const Settings = () => {
     };
 
     fetchSubscriptions();
-  }, [currentUser?.id]);
+  }, [currentUser?.id]);  
 
-  const handleDeleteSubscription = async () => {
+  const handleDeleteSubscription = async (id) => {
     try {
       await axios.delete(
-        `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/subscription-cancel`, {
+        `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/subscription-cancel?id=${id}`, {
         withCredentials: true
       }
       );
@@ -129,19 +129,20 @@ const Settings = () => {
           )}
 
           {
-            <div
+           subscriptions.map((subscription,index)=>{
+            return  <div
               className="border p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center"
             >
               <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5">
                 <p>
-                  <strong>Plan:</strong> {subscriptions?.name || "Premium"}
+                  <strong>Plan:</strong> {subscription?.name || "Premium"}
                 </p>
                 <p>
-                  <strong >Status:</strong> <span className={`${subscriptions?.status === 'ACTIVE' ? 'text-green-500' : 'text-red-600'}`}>{subscriptions?.status?.toLocaleUpperCase() || "N/A"}</span>
+                  <strong >Status:</strong> <span className={`${subscription?.status === 'ACTIVE' ? 'text-green-500' : 'text-red-600'}`}>{subscription?.status?.toLocaleUpperCase() || "N/A"}</span>
                 </p>
                 <p>
                   <strong>Started:</strong>{" "}
-                  {new Date(subscriptions?.startedAt).toLocaleDateString()}
+                  {new Date(subscription?.startedAt).toLocaleDateString()}
                 </p>
                 {/* <p>
                   <strong>Expires:</strong>{" "}
@@ -156,10 +157,10 @@ const Settings = () => {
               </div>
               <div className="mt-4 md:mt-0">
                 {
-                  subscriptions.status == 'ACTIVE' ? <div>
+                  subscription.status == 'ACTIVE' ? <div>
                     <Button
                       variant="destructive"
-                      onClick={() => handleDeleteSubscription()}
+                      onClick={() => handleDeleteSubscription(subscription.id)}
                     >
                       Cancel Subscription
                     </Button>
@@ -177,6 +178,7 @@ const Settings = () => {
                 }
               </div>
             </div>
+           })
           }
         </CardContent>
       </Card>

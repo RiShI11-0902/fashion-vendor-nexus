@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import handlePayment from "../lib/utils";
+import {handlePayment,  handleOrder}  from "../lib/utils";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useState } from "react";
 
@@ -43,18 +43,13 @@ const Pricing = () => {
   ];
 
   // Optional AI Packs
-  // const aiPacks = [
-  //   {
-  //     name: "50 AI Models Pack",
-  //     price: "₹300",
-  //     description: "50 AI model generations. Can be added to any plan or purchased standalone."
-  //   },
-  //   {
-  //     name: "100 AI Models Pack",
-  //     price: "₹550",
-  //     description: "100 AI model generations. Can be added to any plan or purchased standalone."
-  //   }
-  // ];
+  const aiPacks = [
+    {
+      name: "100 AI Models Pack",
+      price: "₹550",
+      description: "100 AI model generations. Can be added to any plan or purchased standalone."
+    }
+  ];
 
   return (
     <MainLayout>
@@ -71,7 +66,7 @@ const Pricing = () => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
 
             {/* Plan Cards (Free & Premium) */}
             {plans.map((plan, index) => (
@@ -111,19 +106,19 @@ const Pricing = () => {
                     size="lg"
                     onClick={() => {
                       if (plan.name !== "Free") {
-                        handlePayment(currentUser, setLoading)
+                        handlePayment(currentUser, setLoading, false)
                         setLoading(true)
                       };
                     }}
                   >
-                    {plan.name === "Free" ? "Get Started Free" : (loading ? <Loader2 className="animate-spin"/>: "Get Premium")}
+                    {plan.name === "Free" ? "Get Started Free" : (loading ? <Loader2 className="animate-spin" /> : "Get Premium")}
                   </Button>
                 </CardFooter>
               </Card>
             ))}
 
             {/* AI Packs Card (Third Box) */}
-            {/* <Card className="w-full max-w-md mx-auto border-dashed border-2 border-gray-300">
+            <Card className="w-full max-w-md mx-auto border-dashed border-2 border-gray-300">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl font-bold">AI Packs</CardTitle>
                 <CardDescription className="text-base">
@@ -145,7 +140,8 @@ const Pricing = () => {
                         </div>
                       </li>
                       <div class="flex justify-end">
-                        <Button onClick={()=> handlePayment(currentUser)} className="flex flex-row items-end"> Get Pack </Button>
+                        <Button onClick={() => handleOrder(currentUser, setLoading, true)
+                        } className="flex flex-row items-end"> Get Pack </Button>
                       </div>
                     </div>
                   ))}
@@ -153,7 +149,7 @@ const Pricing = () => {
               </CardContent>
 
 
-            </Card> */}
+            </Card>
 
           </div>
 
