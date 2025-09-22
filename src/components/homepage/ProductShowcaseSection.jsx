@@ -1,6 +1,10 @@
 import { Badge } from "../ui/badge";
 import model1 from "../../assets/model1.png";
 import model2 from "../../assets/model2.png";
+import watch from "../../assets/watch.png";
+import bag from "../../assets/bag.png";
+
+
 
 
 
@@ -8,14 +12,14 @@ const ProductShowcaseSection = () => {
   const featuredProducts = [
     {
       id: 1,
-      name: "Elegant Dresses",
-      image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=600&fit=crop",
+      name: "Men Watch",
+      image: watch,
       price: "Starting from ₹500",
       category: "Fashion"
     },
     {
       id: 2,
-      name: "Designer Jeans",
+      name: "Designer Shirts",
       image: model1,
       price: "Starting from ₹700",
       category: "Denim"
@@ -29,10 +33,10 @@ const ProductShowcaseSection = () => {
     },
     {
       id: 4,
-      name: "Summer Collection",
-      image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=600&fit=crop",
+      name: "Women HandBag",
+      image: bag,
       price: "Starting from ₹1000",
-      category: "Summer"
+      category: "Accessories"
     }
   ];
 

@@ -10,7 +10,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Minus, Plus, Trash2, ShoppingBag, IndianRupee } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, IndianRupee, Loader } from "lucide-react";
 import { sendOrderToWhatsApp } from "../lib/utils"
 import whatssapp from '../assets/whatsapp.png'
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ const Cart = () => {
   const { currentUser } = useAuthStore();
   const navigate = useNavigate();
   const [store, setStore] = useState(null);
+  const [loading, setLoading] = useState(false)
 
   // Get store data for navbar
   useEffect(() => {
@@ -59,7 +60,7 @@ const Cart = () => {
 
   const handlePlaceOrder = async () => {
     // Validation logic here
-
+    setLoading(true)
     const isValid = Object.entries(customerInfo)
       .filter(([key]) => key !== "alternateMobileNumber") // ignore optional
       .every(([_, value]) => value.trim() !== "");
@@ -103,6 +104,7 @@ const Cart = () => {
     }
     clearCart();
     setShowCheckout(false);
+    setLoading(false)
   };
 
   // Layout component outside of render logic
@@ -222,7 +224,12 @@ const Cart = () => {
 
                     <div className="space-y-3 mt-6">
                       <Button className="w-full" size="lg" onClick={handlePlaceOrder}>
-                        Place Order <img className="w-5" src={whatssapp} />
+                        {
+                          loading ? <Loader className="animate-spin w-5" /> : <p>
+                            Place Order on <img className="w-5" src={whatssapp} />
+                          </p>
+                        }
+                        
                       </Button>
                       <Button variant="outline" className="w-full" onClick={() => setShowCheckout(false)}>
                         Back to Cart

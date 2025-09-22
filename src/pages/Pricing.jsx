@@ -141,7 +141,7 @@ const Pricing = () => {
                       </li>
                       <div class="flex justify-end">
                         <Button onClick={() => handleOrder(currentUser, setLoading, true)
-                        } className="flex flex-row items-end"> Get Pack </Button>
+                        } className="flex flex-row items-end"> {loading ? <Loader2 className="animate-spin" /> : "Get Premium"} </Button>
                       </div>
                     </div>
                   ))}
