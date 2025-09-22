@@ -87,7 +87,7 @@ const StoreForm = ({ initialData = null }) => {
       mobileNumber,
       categories,
       ownerId: currentUser?.id,
-      url: `${import.meta.env.VITE_CLIENT_URL}/store/${formData.slug}`,
+      url: `${import.meta.env.VITE_PRODUCTION_CLIENT_URL}/store/${formData.slug}`,
     };
 
     if (!storeData.name || !storeData.slug || !storeData.mobileNumber || !storeData.description || !storeData.logo || !storeData.banner) {
