@@ -90,7 +90,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       toast.success("Logged in successfully");
       return user;
     } catch (error) {
-      toast.error("Failed to log in");
+      toast.error(error?.response?.data?.error);
       throw error;
     }
   },

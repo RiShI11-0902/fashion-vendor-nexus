@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
-import { Menu, X, ShoppingBag, User, ShoppingCart, Crown } from "lucide-react";
+import { Menu, X, ShoppingBag, User, ShoppingCart, Crown, Loader } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useCartStore } from "../../stores/useCartStore";
 import google from "../../assets/google.png";
@@ -12,14 +12,21 @@ const Navbar = () => {
   const { currentUser, logout } = useAuthStore();
   const { getTotalItems } = useCartStore();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState({
+    isLogin: null,
+    state: null
+  })
   const totalItems = getTotalItems();
 
   const handleLogout = () => {
+    setLoading(true)
     logout();
+    setLoading(false)
     navigate("/");
   };
 
   const handleGoogleLogin = () => {
+    setLoading({ isLogin: true, state: true })
     window.location.href = `${import.meta.env.VITE_DEV_BACKEND_URL}/api/auth/google`;
   };
   return (
@@ -70,17 +77,37 @@ const Navbar = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
+                className="w-fit flex justify-center items-center gap-2"
+                disabled={loading.state} // disable while logging out
               >
-                Sign Out
+                {loading.state ? (
+                  <Loader className="w-5 h-5 animate-spin" />
+                ) : (
+                  "Sign Out"
+                )}
               </Button>
+
             </>
           ) : (
-            <div className="flex items-center space-x-4">
-                <Button variant="outline" size="sm" onClick={handleGoogleLogin}>
-                  Sign in with
-                  <img className="w-5" src={google} alt="" srcset="" />
-                </Button>
+            <div className="flex items-center space-x-4 w-fit">
+              <Button
+                variant="outline"
+                size="sm"
+                className="mx-auto w-fit min-w-[150px] flex justify-center"
+                onClick={handleGoogleLogin}
+                disabled={loading.isLogin && loading.state}
+              >
+                {loading.isLogin && loading.state ? (
+                  <Loader className="animate-spin w-5 h-5" />
+                ) : (
+                  <div className="flex items-center space-x-2">
+                    <span>Sign in with</span>
+                    <img className="w-5" src={google} alt="Google" />
+                  </div>
+                )}
+              </Button>
             </div>
+
           )}
         </nav>
 
@@ -150,8 +177,9 @@ const Navbar = () => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
+                  className="w-fit"
                 >
-                  Sign Out
+                  {loading.state ? <Loader className="w-5 animate-spin mx-auto" /> : "Sign Out"}
                 </Button>
               </>
             ) : (
