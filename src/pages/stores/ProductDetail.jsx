@@ -220,8 +220,7 @@ const ProductDetail = () => {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
-              size="lg"
-              className="flex-1"
+              className="flex-1 h-10"
               onClick={handleAddToCart}
               disabled={isOutOfStock || remainingStock <= 0}
             >
@@ -230,7 +229,6 @@ const ProductDetail = () => {
             </Button>
             <Button
               variant="outline"
-              size="lg"
               className="flex-1"
               onClick={() => navigate(`/store/${storeSlug}`)}
             >
