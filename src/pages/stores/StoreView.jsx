@@ -42,7 +42,7 @@ const StoreView = () => {
 
   if (error || !store) {
     return <StoreNotFound />;
-  }
+  }  
 
   // Check if feedback is enabled for this store
   const feedbackEnabled = store.settings?.enableFeedback !== false;
