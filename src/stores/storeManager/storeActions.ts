@@ -36,12 +36,11 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
         },
       });
       const newStore = res.data.newStore;
-
       set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
       toast.success(`Store "${store.name}" created successfully`);
       return newStore;
     } catch (error) {
-      toast.error(`${error.data.message}` || "Error Occurred");
+      toast.error(`${error?.response?.data?.message}` || "Error Occurred");
     }
   },
 

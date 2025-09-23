@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import {handlePayment,  handleOrder}  from "../lib/utils";
+import { handlePayment, handleOrder } from "../lib/utils";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ const Pricing = () => {
 
   const { currentUser } = useAuthStore()
   const [loading, setLoading] = useState()
+  const [isSubscription, setIsSubscription] = useState(false)
   const plans = [
     {
       name: "Free",
@@ -104,14 +105,25 @@ const Pricing = () => {
                     className="w-full"
                     variant={plan.highlighted ? "default" : "outline"}
                     size="lg"
+                    disabled={loading && isSubscription} // prevent multiple clicks
                     onClick={() => {
                       if (plan.name !== "Free") {
-                        handlePayment(currentUser, setLoading, false)
-                        setLoading(true)
-                      };
+                        setLoading(true); // ✅ set before calling payment
+                        setIsSubscription(true)
+                        handlePayment(currentUser, setLoading, setIsSubscription, false);
+                      }
                     }}
                   >
-                    {plan.name === "Free" ? "Get Started Free" : (loading ? <Loader2 className="animate-spin" /> : "Get Premium")}
+                    {plan.name === "Free" ? (
+                      "Get Started Free"
+                    ) : loading && isSubscription ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Processing...
+                      </div>
+                    ) : (
+                      "Get Premium"
+                    )}
                   </Button>
                 </CardFooter>
               </Card>
@@ -140,8 +152,21 @@ const Pricing = () => {
                         </div>
                       </li>
                       <div class="flex justify-end">
-                        <Button onClick={() => handleOrder(currentUser, setLoading, true)
-                        } className="flex flex-row items-end"> {loading ? <Loader2 className="animate-spin" /> : "Get Premium"} </Button>
+                        <Button
+                          size="sm"
+                          disabled={loading}
+                          onClick={() => handleOrder(currentUser, setLoading, true)}
+                          className="flex items-center gap-2 w-fit"
+                        >
+                          {loading && !isSubscription ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Get Pack"
+                          )}
+                        </Button>
                       </div>
                     </div>
                   ))}

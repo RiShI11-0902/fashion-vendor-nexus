@@ -49,7 +49,7 @@ export const formatNumber = (num: Number) => {
   return num.toLocaleString("en-IN");
 };
 
-export const handlePayment = async (user, setLoading, isOneTime) => {  
+export const handlePayment = async (user, setLoading, setIsSubscription) => {  
   try {
     // 1. Create Razorpay order with user email and selected plan
     const {
@@ -120,6 +120,7 @@ export const handlePayment = async (user, setLoading, isOneTime) => {
     const rzp = new window.Razorpay(options);
     rzp.open();
     setLoading(false);
+    setIsSubscription(false)
   } catch (error) {
     console.error("Payment Error:", error);
     alert("Something went wrong during the payment process.");
@@ -129,6 +130,7 @@ export const handlePayment = async (user, setLoading, isOneTime) => {
 export const handleOrder = async (user, setLoading, isOneTime) => {  
   try {
     // 1. Create Razorpay order with user email and selected plan
+    setLoading(true)
     const {
       data: { order },
     } = await axios.get(
@@ -177,6 +179,7 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
               razorpay_subscription_id: response.razorpay_subscription_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+              razorpay_order_id: response.razorpay_order_id,
               email: user.email,
             },
             {

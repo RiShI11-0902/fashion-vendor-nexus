@@ -225,9 +225,9 @@ const Cart = () => {
                     <div className="space-y-3 mt-6">
                       <Button className="w-full" size="lg" onClick={handlePlaceOrder}>
                         {
-                          loading ? <Loader className="animate-spin w-5" /> : <p>
-                            Place Order on <img className="w-5" src={whatssapp} />
-                          </p>
+                          loading ? <Loader className="animate-spin w-5" /> : <div className="flex flex-row items-center  space-x-2">
+                            <span>Place Order on </span><img className="w-5" src={whatssapp} />
+                          </div>
                         }
                         
                       </Button>
