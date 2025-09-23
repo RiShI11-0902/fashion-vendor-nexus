@@ -42,9 +42,6 @@ const HeroSection = ({ currentUser }) => {
                         Start Building Free <ArrowRight className="ml-2 h-5 w-5" />
                       </Link>
                     </Button>
-                    <Button asChild variant="outline" size="lg" className="px-8 py-3 border-2">
-                      <Link to="/stores">See Examples</Link>
-                    </Button>
                   </>
                 )}
               </div>

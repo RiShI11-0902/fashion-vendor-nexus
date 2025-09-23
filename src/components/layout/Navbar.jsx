@@ -76,12 +76,10 @@ const Navbar = () => {
             </>
           ) : (
             <div className="flex items-center space-x-4">
-              <Link to={"/login"}>
-                <Button variant="outline" size="sm">
-                  Sign in
-                  {/* <img className="w-5" src={google} alt="" srcset="" /> */}
+                <Button variant="outline" size="sm" onClick={handleGoogleLogin}>
+                  Sign in with
+                  <img className="w-5" src={google} alt="" srcset="" />
                 </Button>
-              </Link>
             </div>
           )}
         </nav>

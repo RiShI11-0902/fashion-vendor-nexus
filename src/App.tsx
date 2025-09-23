@@ -15,11 +15,10 @@ import Cart from "./pages/Cart";
 import ContactPage from "./pages/ContactPage"
 import RefundPolicyPage from "./pages/RefundPolicyPage"
 import TermsPage from "./pages/TermsPage"
-import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentSuccess from "./pages/PaymentSuccess"; 
+import PaymentFailed from "./pages/PaymentFailed";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
-
-
 
 // Auth Pages
 import Login from "./pages/auth/Login";
@@ -105,6 +104,8 @@ const App = () => {
             <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
             <Route path="/dashboard/settings" element={<Settings />} />
             <Route path='/payment-success' element={<PaymentSuccess />} />
+            <Route path='/payment-failed' element={<PaymentFailed />} />
+
 
             {/* Store Routes */}
             <Route path="/stores" element={<AllStores />} />

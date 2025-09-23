@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { XCircle } from "lucide-react";
+import MainLayout from "../components/layout/MainLayout";
 
 const PaymentFailed = () => {
   const location = useLocation();
@@ -13,7 +14,9 @@ const PaymentFailed = () => {
   }, [location]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+   <MainLayout>
+
+     <div className="mt-20 mb-20 flex items-center justify-center bg-gray-50 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 max-w-lg w-full text-center">
         <div className="flex justify-center mb-4">
           <XCircle className="w-16 h-16 text-red-500" />
@@ -23,7 +26,7 @@ const PaymentFailed = () => {
         </h1>
         <p className="text-gray-600 mb-6">
           Oops! Something went wrong while processing your payment.  
-          Please try again or contact support if the issue persists.
+          Please try again or <Link to={"/contact"} className="text-blue-700">contact</Link> support if the issue persists.
         </p>
 
         {referenceId && (
@@ -51,6 +54,7 @@ const PaymentFailed = () => {
         </div>
       </div>
     </div>
+   </MainLayout>
   );
 };
 
