@@ -36,7 +36,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
         },
       });
       const newStore = res.data.newStore;
-      set((state: StoreState) => ({ stores: [...state.stores, newStore] }));
+      await get().getUserStores(store.ownerId, true);
       toast.success(`Store "${store.name}" created successfully`);
       return newStore;
     } catch (error) {
@@ -93,7 +93,10 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
           return product?.storeId !== storeId;
         }),
       }));
-    } catch (error) {}
+
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error occurred while deleting store")
+    }
 
     toast.success("Store deleted successfully");
   },
@@ -137,9 +140,7 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
         },
       });
 
-      const stores = res.data.stores.slice(0, 1); // Limit to one store
-
-      // update Zustand state
+      const stores = res.data.stores;
       set((state: StoreState) => ({ ...state, stores }));
 
       return stores;

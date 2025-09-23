@@ -21,9 +21,7 @@ const Dashboard = () => {
 
   const fetchStoreData = async () => {
     setLoading(true);
-    const store = await getUserStores(currentUser.id);
-    console.log(store, "fetch storeeeeeeeeeeeee");
-    
+    const store = await getUserStores(currentUser.id);    
     // const store = stores[0]
     
     setUserStore(store);
@@ -56,7 +54,7 @@ const Dashboard = () => {
     if (currentUser) {
       fetchStoreData();
     }
-  }, [currentUser, getOrderStats, getStoreProducts, getlowStockProducts]);
+  }, [currentUser, getOrderStats, getStoreProducts, getlowStockProducts]);  
 
   if (!currentUser) {
     return (
@@ -90,7 +88,7 @@ const Dashboard = () => {
       <div className="space-y-6">
         <DashboardHeader userStore={userStore} userName={currentUser.name} />
 
-        {!userStore ? (
+        {userStore.length == 0 ? (
           <NoStoresState />
         ) : (
           <>

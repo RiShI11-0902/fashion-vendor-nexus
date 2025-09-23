@@ -37,6 +37,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Input } from "../../components/ui/input";
+import { toast } from "sonner";
 
 const OrdersManagement = () => {
   const { currentUser } = useAuthStore();
@@ -55,12 +56,12 @@ const OrdersManagement = () => {
           const store = await getUserStores(currentUser.id);
           setUserStores(store || []);
           // Get orders for user's stores
-          const orders = await getStoreOrders(store[0]?.id);
-          
-          setAllUserOrders(orders);
+          if(store.length > 0){
+            const orders = await getStoreOrders(store[0]?.id);
+            setAllUserOrders(orders);
+          }
         } catch (error) {
-          console.error('Failed to fetch user stores:', error);
-
+          toast.error('Failed to fetch user stores');
         }
       }
     };

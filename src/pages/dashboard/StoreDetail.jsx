@@ -68,6 +68,7 @@ const StoreDetail = () => {
       deleteStore(storeId);
     }
     setLoading(false)
+    navigate("/dashboard")
   };
 
   if (loading) {

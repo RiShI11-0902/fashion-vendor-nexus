@@ -11,7 +11,7 @@ import { Store, Settings, ExternalLink, Edit3 } from "lucide-react";
 
 const StoreManagement = () => {
   const { currentUser } = useAuthStore();
-  const { getUserStores } = useStoreManager();
+  const { getUserStores, stores } = useStoreManager();
   const [userStore, setUserStore] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +26,7 @@ const StoreManagement = () => {
     if (currentUser) {
       fetchUserStore();
     }
-  }, [currentUser, getUserStores]);
+  }, [currentUser, getUserStores, stores]);
 
   if (loading) {
     return (

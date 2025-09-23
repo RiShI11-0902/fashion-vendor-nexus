@@ -25,6 +25,7 @@ import {
 } from "recharts";
 import { TrendingUp, Package, ShoppingCart, IndianRupee } from "lucide-react";
 import { formatNumber } from "../../lib/utils";
+import NoStoresState from "../../components/dashboard/NoStoresState";
 
 const Analytics = () => {
   const { currentUser } = useAuthStore();
@@ -158,11 +159,7 @@ const Analytics = () => {
   if (!analyticsData) {
     return (
       <DashboardLayout>
-        <div className="text-center py-12">
-          <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <h2 className="text-2xl font-semibold mb-4">No stores found</h2>
-          <p className="text-gray-600 mb-6">Create your first store to see analytics</p>
-        </div>
+              <NoStoresState />
       </DashboardLayout>
     );
   }
