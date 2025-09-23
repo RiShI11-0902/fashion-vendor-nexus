@@ -37,7 +37,7 @@ const HeroSection = ({ currentUser }) => {
                   </Button>
                 ) : (
                   <>
-                    <Button asChild size="lg" className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white px-8 py-3">
+                    <Button asChild size="lg" className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white px-8 py-3 mx-auto w-fit">
                       <Link to="/signup">
                         Start Building Free <ArrowRight className="ml-2 h-5 w-5" />
                       </Link>
