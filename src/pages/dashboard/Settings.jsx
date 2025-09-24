@@ -142,7 +142,7 @@ const Settings = () => {
               >
                 <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5">
                   <p>
-                    <strong>Plan:</strong> {subscription?.plan.toUpperCase() || "Free"}
+                    <strong>Plan:</strong> {subscription?.plan?.toUpperCase() || "Free"}
                   </p>
                   <p>
                     <strong >Status:</strong> <span className={`${subscription?.status === 'ACTIVE' ? 'text-green-500' : 'text-red-600'}`}>{subscription?.status?.toLocaleUpperCase() || "N/A"}</span>
