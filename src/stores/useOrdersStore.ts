@@ -42,7 +42,7 @@ interface OrdersState {
     orderId: string,
     status: Order["status"]
   ) => Promise<void>;
-  getStoreOrders: (storeId: string) => Promise<void>;
+  getStoreOrders: (storeId: string,page: number,status: string,orderNumber: number) => Promise<void>;
   getOrderById: (orderId: string) => Order | undefined;
   getOrderStats: (storeId?: string) => {
     totalOrders: number;
@@ -120,15 +120,15 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   // Update order status
   updateOrderStatus: async (orderId, status) => {
     try {
-          const token =  localStorage.getItem("token");
+      const token = localStorage.getItem("token");
       const { data: updatedOrder } = await axios.put(
         `${API_URL}/api/order/${orderId}/status`,
         { status },
         {
           withCredentials: true,
           headers: {
-          Authorization: `Bearer ${token}`, // middleware reads this
-        },
+            Authorization: `Bearer ${token}`, // middleware reads this
+          },
         }
       );
 
@@ -147,22 +147,25 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   },
 
   // Fetch store-specific orders
-  getStoreOrders: async (storeId) => {
+  getStoreOrders: async (storeId,page,status,orderNumber) => {
     try {
-          const token =  localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
       const { data } = await axios.post(
         `${API_URL}/api/order/get`,
-        { storeId },
+        { storeId,page,status,orderNumber },
         {
           withCredentials: true,
           headers: {
-          Authorization: `Bearer ${token}`, // middleware reads this
-        },
+            Authorization: `Bearer ${token}`, // middleware reads this
+          },
         }
       );
 
-      set({ orders: data || [] });
+      console.log(data, "ordersss");
+      
+
+      set({ orders: data.orders || [] });
 
       return data;
     } catch (err) {

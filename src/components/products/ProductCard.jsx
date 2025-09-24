@@ -36,7 +36,7 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
       to={`/store/${storeSlug}/product/${product.id}`}
       className={`block group ${className}`}
     >
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group inline-block md:w-60">
+      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group inline-block md:w-60 w-[9rem]">
         {/* Image */}
         {/* <div className="overflow-hidden bg-emerald-700 rounded-t-lg">
           <div className="inline-block overflow-hidden rounded-xl shadow-sm group cursor-pointer transition-shadow duration-300 hover:shadow-lg">
@@ -54,7 +54,7 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
               <img
                 src={product.image}
                 alt={product.name}
-                className="block max-w-full  max-h-[300px] object-contain transition-transform duration-500 ease-in-out hover:scale-105"
+                className="block max-w-full max-h-[300px] object-contain transition-transform duration-500 ease-in-out hover:scale-105"
               />
             </div>
           </div>
@@ -75,9 +75,9 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
           )}
 
           {/* Price & Category */}
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex flex-col md:flex-row items-center justify-between mt-2">
             <span className="font-bold text-gray-900 text-sm flex items-center gap-1">
-              <IndianRupee className="w-5" />{hasDiscount ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
+              <IndianRupee className="w-4" />{hasDiscount ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
             </span>
 
             {product.category && (

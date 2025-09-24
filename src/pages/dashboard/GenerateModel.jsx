@@ -6,12 +6,13 @@ import axios from "axios";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import { ArrowLeft, Download } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { toast } from "sonner";
 
 // Predefined prompt templates
 const promptTemplates = {
-  model: "Generate a high-quality 1:1 ratio image of an Indian model wearing the uploaded product. The model should stand in a stylish ecommerce pose with a fashionable background with a styling pose. The product must look realistic, well-lit, and fashion-focused.",
+  model: "Generate a high-quality 1:1 ratio image of an Indian model wearing the uploaded product. The model should stand in a stylish ecommerce pose with a fashionable background with a styling pose (if it is an accessory then focus on it no model). The product must look realistic, well-lit, and fashion-focused.",
   photoshoot: "Generate a professional product photoshoot image of the uploaded item. Use a modern studio setting with soft lighting, realistic textures, and a clean background. Highlight the product clearly for ecommerce use.",
-  instagramPost: "Create a stylish Instagram post featuring the uploaded product. Use an aesthetic background, vibrant colors, and trendy composition. The focus should remain on the product while looking social-media ready also a text on a fahionable way behind the model front of background, Text - New Arrival",
+  instagramPost: "Create a stylish socail media post featuring the uploaded product. Use an aesthetic background, vibrant colors, and trendy composition. The focus should remain on the product while looking social-media ready also a text on a fahionable way behind the model front of background, Text - New Arrival",
   instagramStory: "Generate a vertical Instagram Story image featuring the uploaded product. Use a minimal but modern layout with bold highlights, clean background, and attention-grabbing framing."
 };
 
@@ -22,14 +23,14 @@ const GenerateModel = ({ field }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState()
   const { currentUser } = useAuthStore()
-const [remaining, setRemaining] = useState(currentUser?.allowedGenerate)
+  const [remaining, setRemaining] = useState(currentUser?.allowedGenerate)
 
   const [selectedType, setSelectedType] = useState("model");
 
   const generate = async () => {
     if (!image && !prompt) return;
     setIsLoading(true);
-
+    const token = localStorage.getItem('token')
     const formData = new FormData();
     formData.append("image", image);
     formData.append("prompt", prompt);
@@ -39,14 +40,19 @@ const [remaining, setRemaining] = useState(currentUser?.allowedGenerate)
         `${import.meta.env.VITE_DEV_BACKEND_URL}/api/generate-model`,
         formData,
         {
-          withCredentials: true
-        },
-        { headers: { "Content-Type": "multipart/form-data" } },
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // 👈 add your token here
+          }
+        }
       );
+
       setGeneratedImage(sendData.data.images[0]);
-      setRemaining((prev)=> prev - 1)
+      setRemaining((prev) => prev - 1)
     } catch (error) {
       setError(error.data.message || "Cannot Generate Model")
+      toast.error("Error creating model please try again later")
     } finally {
       setIsLoading(false);
     }
@@ -64,11 +70,11 @@ const [remaining, setRemaining] = useState(currentUser?.allowedGenerate)
   return (
     <DashboardLayout>
       <div className="flex flex-row space-x-2">
-          <p className="text-gray-500">Remaining Generations: </p>
-          <p className="font-medium text-gray-900">
-            {remaining}
-          </p>
-        </div>
+        <p className="text-gray-500">Remaining Generations: </p>
+        <p className="font-medium text-gray-900">
+          {remaining}
+        </p>
+      </div>
       <div className="flex flex-col items-center justify-center gap-6 p-8 max-w-2xl mx-auto">
         <h1 className="text-3xl font-semibold">AI Generator</h1>
 

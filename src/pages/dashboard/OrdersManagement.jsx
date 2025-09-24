@@ -49,6 +49,8 @@ const OrdersManagement = () => {
   const [userStores, setUserStores] = useState([]);
   const [allUserOrders, setAllUserOrders] = useState([]);
   const [orderNumber, setorderNumber] = useState()
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState()
   useEffect(() => {
     const fetchUserStores = async () => {
       if (currentUser) {
@@ -56,9 +58,10 @@ const OrdersManagement = () => {
           const store = await getUserStores(currentUser.id);
           setUserStores(store || []);
           // Get orders for user's stores
-          if(store.length > 0){
-            const orders = await getStoreOrders(store[0]?.id);
-            setAllUserOrders(orders);
+          if (store.length > 0) {
+            const orders = await getStoreOrders(store[0]?.id,page,statusFilter,orderNumber);
+            setAllUserOrders(orders.orders);
+            setTotal(orders.total)
           }
         } catch (error) {
           toast.error('Failed to fetch user stores');
@@ -67,7 +70,7 @@ const OrdersManagement = () => {
     };
 
     fetchUserStores();
-  }, [currentUser, getUserStores, getStoreOrders]);
+  }, [currentUser, getUserStores, getStoreOrders,page,statusFilter,orderNumber]);
 
   // Apply filters
   const filteredOrders = orders?.filter(order => {
@@ -105,6 +108,9 @@ const OrdersManagement = () => {
       prev ? { ...prev, newStatus } : prev
     );
   };
+
+  const totalPages = Math.ceil(total / 10);
+
 
   return (
     <DashboardLayout>
@@ -225,6 +231,17 @@ const OrdersManagement = () => {
           </Card>
         )}
       </div>
+
+      <div className="flex items-center flex-row w-full mx-auto justify-around mt-10">
+        <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
+          Prev
+        </Button>
+        <span>{page} / {totalPages}</span>
+        <Button onClick={() => setPage(page + 1)} disabled={page >= totalPages}>
+          Next
+        </Button>
+      </div>
+
 
       <div>
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>

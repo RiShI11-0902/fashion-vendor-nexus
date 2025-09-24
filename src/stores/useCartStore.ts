@@ -1,6 +1,7 @@
 
 import { create } from "zustand";
 import { toast } from "sonner";
+import axios from "axios";
 
 interface CartItem {
   id: string;
@@ -23,7 +24,10 @@ interface CartState {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  validateCart:()=>Promise<any>;
 }
+
+const API_URL = import.meta.env.VITE_DEV_BACKEND_URL; // adjust if different
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
@@ -116,6 +120,31 @@ export const useCartStore = create<CartState>((set, get) => ({
   getTotalPrice: () => {
     return get().items.reduce((total, item) => total + (item.price * item.quantity), 0);
   },
+
+  validateCart: async () => {
+    const items = get().items;
+    if (items.length === 0) return;
+
+    try {
+      const res = await axios.post(`${API_URL}/api/cart/validate`, {items})
+
+      const data = res.data;
+
+      if (!data.success) {
+        set({ items: data.updatedCart });
+        localStorage.setItem("cart", JSON.stringify(data.updatedCart));
+        toast.error(data.message || "Some items were updated due to stock changes.");
+      } else {
+        // sync items anyway in case price changed
+        set({ items: data.updatedCart });
+        localStorage.setItem("cart", JSON.stringify(data.updatedCart));
+      }
+    } catch (err) {
+      console.error("Cart validation failed", err);
+      toast.error("Failed to validate cart. Please try again.");
+    }
+  },
+
 }));
 
 // Initialize cart from localStorage

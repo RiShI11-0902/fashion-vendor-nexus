@@ -43,7 +43,7 @@ const StoreAnalytics = ({ storeId }) => {
   };
 
   const fetchUserStore = async () => {
-    const storeOrders = await getStoreOrders(storeId);
+    const {orders: storeOrders} = await getStoreOrders(storeId);
     const {products} = await getStoreProducts(storeId);
     const orderStats = await getOrderStats(storeId);  
     

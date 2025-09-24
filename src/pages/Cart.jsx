@@ -17,10 +17,9 @@ import { toast } from "sonner";
 
 const Cart = () => {
   const { slug } = useParams();
-  const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCartStore();
+  const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart, validateCart } = useCartStore();
   const { getStoreBySlug } = useStoreManager();
   const { createOrder } = useOrdersStore();
-  const { currentUser } = useAuthStore();
   const navigate = useNavigate();
   const [store, setStore] = useState(null);
   const [loading, setLoading] = useState(false)
@@ -31,6 +30,7 @@ const Cart = () => {
       if (slug) {
         const storeData = await getStoreBySlug(slug);
         setStore(storeData);
+        validateCart()
       }
     }
     getbySlug();
@@ -229,7 +229,6 @@ const Cart = () => {
                             <span>Place Order on </span><img className="w-5" src={whatssapp} />
                           </div>
                         }
-                        
                       </Button>
                       <Button variant="outline" className="w-full" onClick={() => setShowCheckout(false)}>
                         Back to Cart

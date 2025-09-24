@@ -7,7 +7,7 @@ const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, catego
   const totalPages = Math.ceil(total / 10);
     
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col md:gap-6">
 
       {/* Horizontal category pills */}
       <div className="flex flex-wrap gap-2 mb-4">
@@ -41,7 +41,7 @@ const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, catego
           </p>
         </div>
 
-        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 md:gap-4 gap-2 space-y-4">
           {filteredProducts.length > 0 ? (
             filteredProducts.map(product => (
               <ProductCard key={product.id} product={product} storeSlug={storeSlug} />

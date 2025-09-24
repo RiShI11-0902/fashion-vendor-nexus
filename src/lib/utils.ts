@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import axios from "axios";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -49,15 +50,29 @@ export const formatNumber = (num: Number) => {
   return num.toLocaleString("en-IN");
 };
 
-export const handlePayment = async (user, setLoading, setIsSubscription) => {  
+export const handlePayment = async (
+  user,
+  setLoading,
+  setIsSubscription,
+  plan
+) => {
   try {
     // 1. Create Razorpay order with user email and selected plan
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please Login First");
+      return;
+    }
     const {
       data: { subscription },
-    } = await axios.get(
+    } = await axios.post(
       `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/buy-subscription`,
+      { plan: plan },
       {
-        withCredentials: true, // if using cookies for auth
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        },
       }
     );
 
@@ -67,14 +82,19 @@ export const handlePayment = async (user, setLoading, setIsSubscription) => {
     } = await axios.get(
       `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/get-key`,
       {
-        withCredentials: true, // if using cookies for auth
+        headers: {
+          Authorization: `Bearer ${token}`, // middleware reads this
+        }, // if using cookies for auth
       }
     );
 
     // 3. Set up Razorpay options
     const options = {
       key,
-      amount: 300000,
+      amount:
+        plan == "Starter"
+          ? import.meta.env.VITE_STARTER_PLAN_AMOUNT
+          : import.meta.env.VITE_PREMIUM_PLAN_AMOUNT,
       currency: "INR",
       name: "Shop Monk",
       description: "Premium Package",
@@ -89,7 +109,8 @@ export const handlePayment = async (user, setLoading, setIsSubscription) => {
       },
       notes: {
         address: "Shop Monk Office",
-        userId: user.id
+        userId: user.id,
+        planName: plan,
       },
       handler: async function (response) {
         // 4. Verify payment
@@ -103,7 +124,9 @@ export const handlePayment = async (user, setLoading, setIsSubscription) => {
               email: user.email,
             },
             {
-              withCredentials: true, // if using cookies for auth
+              headers: {
+                Authorization: `Bearer ${token}`, // middleware reads this
+              }, // if using cookies for auth
             }
           )
           .then((res) => {
@@ -111,7 +134,9 @@ export const handlePayment = async (user, setLoading, setIsSubscription) => {
               // Redirect to payment success
               window.location.href = `${
                 import.meta.env.VITE_CLIENT_URL
-              }/payment-success?razorpay-payment-id=${res.data.razorpay_payment_id}`;
+              }/payment-success?razorpay-payment-id=${
+                res.data.razorpay_payment_id
+              }`;
             }
           });
       },
@@ -120,23 +145,27 @@ export const handlePayment = async (user, setLoading, setIsSubscription) => {
     const rzp = new window.Razorpay(options);
     rzp.open();
     setLoading(false);
-    setIsSubscription(false)
+    setIsSubscription(false);
   } catch (error) {
-    console.error("Payment Error:", error);
-    alert("Something went wrong during the payment process.");
+    toast.error(error?.response?.data?.message || "Error occurred while creating subscription")
+    setLoading(false);
   }
 };
 
-export const handleOrder = async (user, setLoading, isOneTime) => {  
+export const handleOrder = async (user, setLoading, isOneTime) => {
   try {
-    // 1. Create Razorpay order with user email and selected plan
-    setLoading(true)
+    // 1. Create Razorpay order with user email
+    const token = localStorage.getItem("token");
+    setLoading(true);
     const {
       data: { order },
     } = await axios.get(
       `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/buy-images`,
       {
-        withCredentials: true, // if using cookies for auth
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
 
@@ -146,7 +175,10 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
     } = await axios.get(
       `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/get-key`,
       {
-        withCredentials: true, // if using cookies for auth
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }, // if using cookies for auth
       }
     );
 
@@ -168,7 +200,7 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
       },
       notes: {
         address: "Shop Monk Office",
-        userId: user.id
+        userId: user.id,
       },
       handler: async function (response) {
         // 4. Verify payment
@@ -183,7 +215,10 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
               email: user.email,
             },
             {
-              withCredentials: true, // if using cookies for auth
+              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              }, // if using cookies for auth
             }
           )
           .then((res) => {
@@ -191,7 +226,9 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
               // Redirect to payment success
               window.location.href = `${
                 import.meta.env.VITE_CLIENT_URL
-              }/payment-success?razorpay-payment-id=${res.data.razorpay_payment_id}`;
+              }/payment-success?razorpay-payment-id=${
+                res.data.razorpay_payment_id
+              }`;
             }
           });
       },
@@ -201,16 +238,8 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
     rzp.open();
     setLoading(false);
   } catch (error) {
-    console.error("Payment Error:", error);
-    alert("Something went wrong during the payment process.");
+    toast.error(error?.response?.data?.message || 'Error occurred while creating the order')
+    setLoading(false)
   }
 };
 
-// export default handleOrder
-
-// export default handlePayment;
-
-///{
-//   minimumFractionDigits: 2,
-//   maximumFractionDigits: 2,
-// }

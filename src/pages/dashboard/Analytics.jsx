@@ -66,7 +66,7 @@ const Analytics = () => {
 
         // Fetch orders and stats
         const stats = getOrderStats(storeId);
-        const orders = await getStoreOrders(storeId);
+        const {orders} = await getStoreOrders(storeId);
 
         // Compute monthly data
         const monthlyData = generateMonthlyData(orders);

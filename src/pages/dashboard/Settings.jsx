@@ -16,13 +16,17 @@ import { Link } from "react-router-dom";
 const Settings = () => {
   const { currentUser } = useAuthStore();
   const [subscriptions, setSubscriptions] = useState([]);
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
     const fetchSubscriptions = async () => {
       try {
         const { data } = await axios.get(
           `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/user-subcription`, {
-          withCredentials: true
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
         );
         setSubscriptions(data.subscription || []);
@@ -33,13 +37,16 @@ const Settings = () => {
     };
 
     fetchSubscriptions();
-  }, [currentUser?.id]);  
+  }, [currentUser?.id]);
 
   const handleDeleteSubscription = async (id) => {
     try {
       await axios.delete(
         `${import.meta.env.VITE_DEV_BACKEND_URL}/api/payment/subscription-cancel?id=${id}`, {
-        withCredentials: true
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
       );
       toast.success("Subscription canceled successfully");
@@ -99,7 +106,7 @@ const Settings = () => {
                 <div>
                   <p className="text-gray-500">Plan</p>
                   <p className="font-medium text-indigo-600">
-                    {subscriptions?.status == 'ACTIVE'? 'Premium' : "Free Trial"}
+                    {subscriptions?.status == 'ACTIVE' ? 'Premium' : "Free Trial"}
                   </p>
                 </div>
                 <div className="">
@@ -129,56 +136,56 @@ const Settings = () => {
           )}
 
           {
-           subscriptions.map((subscription,index)=>{
-            return  <div
-              className="border p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center"
-            >
-              <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5">
-                <p>
-                  <strong>Plan:</strong> {subscription?.name || "Premium"}
-                </p>
-                <p>
-                  <strong >Status:</strong> <span className={`${subscription?.status === 'ACTIVE' ? 'text-green-500' : 'text-red-600'}`}>{subscription?.status?.toLocaleUpperCase() || "N/A"}</span>
-                </p>
-                <p>
-                  <strong>Started:</strong>{" "}
-                  {new Date(subscription?.startedAt).toLocaleDateString()}
-                </p>
-                {/* <p>
+            subscriptions.map((subscription, index) => {
+              return <div
+                className="border p-4 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center"
+              >
+                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <p>
+                    <strong>Plan:</strong> {subscription?.plan.toUpperCase() || "Free"}
+                  </p>
+                  <p>
+                    <strong >Status:</strong> <span className={`${subscription?.status === 'ACTIVE' ? 'text-green-500' : 'text-red-600'}`}>{subscription?.status?.toLocaleUpperCase() || "N/A"}</span>
+                  </p>
+                  <p>
+                    <strong>Started:</strong>{" "}
+                    {new Date(subscription?.startedAt).toLocaleDateString()}
+                  </p>
+                  <p>
                   <strong>Expires:</strong>{" "}
-                  {subscriptions?.expiresAt
-                    ? new Date(subscriptions.expiresAt).toLocaleDateString()
+                  {subscription?.expiresAt
+                    ? new Date(subscription?.expiresAt).toLocaleDateString()
                     : "N/A"}
                 </p>
                 <p>
                   <strong>Subscription ID:</strong>{" "}
-                  {subscriptions?.razorpaySubscriptionId}
-                </p> */}
+                  {subscription?.razorpaySubscriptionId}
+                </p>
+                </div>
+                <div className="mt-4 md:mt-0">
+                  {
+                    subscription.status == 'ACTIVE' ? <div>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleDeleteSubscription(subscription.id)}
+                      >
+                        Cancel Subscription
+                      </Button>
+                      <p className="text-sm text-muted-foreground mt-4">
+                        * Payments are not refundable upon cancellation of subscription.
+                      </p>
+                    </div> : <Link to={"/pricing"}>
+                      <Button
+                        variant="outline"
+                        className="hover:bg-green-300"
+                      >
+                        Buy Premium
+                      </Button>
+                    </Link>
+                  }
+                </div>
               </div>
-              <div className="mt-4 md:mt-0">
-                {
-                  subscription.status == 'ACTIVE' ? <div>
-                    <Button
-                      variant="destructive"
-                      onClick={() => handleDeleteSubscription(subscription.id)}
-                    >
-                      Cancel Subscription
-                    </Button>
-                    <p className="text-sm text-muted-foreground mt-4">
-                      * Payments are not refundable upon cancellation of subscription.
-                    </p>
-                  </div> : <Link to={"/pricing"}>
-                    <Button
-                      variant="outline"
-                      className="hover:bg-green-300"
-                    >
-                      Buy Premium
-                    </Button>
-                  </Link>
-                }
-              </div>
-            </div>
-           })
+            })
           }
         </CardContent>
       </Card>
