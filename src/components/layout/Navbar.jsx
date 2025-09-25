@@ -150,7 +150,7 @@ const Navbar = () => {
             </Link>
 
             {/* Mobile Cart Link - Only show if there are items */}
-            {totalItems > 0 && (
+            {/* {totalItems > 0 && (
               <Link
                 to="/cart"
                 className="flex items-center text-sm font-medium hover:text-purple-600 transition-colors"
@@ -159,7 +159,7 @@ const Navbar = () => {
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Cart ({totalItems})
               </Link>
-            )}
+            )} */}
 
             {currentUser ? (
               <>
@@ -184,18 +184,10 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex flex-col space-y-2">
-                <Link
-                  to="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button variant="outline" size="sm" className="w-full">Sign In</Button>
-                </Link>
-                <Link
-                  to="/signup"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Button size="sm" className="w-full">Sign Up</Button>
-                </Link>
+                <div className="flex items-center space-x-2">
+                  <span>Sign in with</span>
+                  <img className="w-5" src={google} alt="Google" />
+                </div>
               </div>
             )}
           </nav>
