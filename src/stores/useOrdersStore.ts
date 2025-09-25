@@ -42,7 +42,12 @@ interface OrdersState {
     orderId: string,
     status: Order["status"]
   ) => Promise<void>;
-  getStoreOrders: (storeId: string,page: number,status: string,orderNumber: number) => Promise<void>;
+  getStoreOrders: (
+    storeId: string,
+    page: number,
+    status: string,
+    orderNumber: number
+  ) => Promise<void>;
   getOrderById: (orderId: string) => Order | undefined;
   getOrderStats: (storeId?: string) => {
     totalOrders: number;
@@ -147,13 +152,13 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
   },
 
   // Fetch store-specific orders
-  getStoreOrders: async (storeId,page,status,orderNumber) => {
+  getStoreOrders: async (storeId, page, status, orderNumber) => {
     try {
       const token = localStorage.getItem("token");
 
       const { data } = await axios.post(
         `${API_URL}/api/order/get`,
-        { storeId,page,status,orderNumber },
+        { storeId, page, status, orderNumber },
         {
           withCredentials: true,
           headers: {
@@ -163,7 +168,6 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
       );
 
       console.log(data, "ordersss");
-      
 
       set({ orders: data.orders || [] });
 
@@ -184,7 +188,12 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
 
     return {
       totalOrders: orders.length,
-      totalRevenue: orders.reduce((sum, order) => sum + order.totalAmount, 0),
+      totalRevenue: orders.reduce((sum, order) => {
+        if (order.status !== "CANCELLED") {
+          return sum + order.totalAmount;
+        }
+        return sum; // important: always return the accumulator
+      }, 0),
       pendingOrders: orders.filter((order) => order.status === "PENDING")
         .length,
     };

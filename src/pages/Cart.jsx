@@ -65,10 +65,10 @@ const Cart = () => {
       .filter(([key]) => key !== "alternateMobileNumber") // ignore optional
       .every(([_, value]) => value.trim() !== "");
 
-      if(!isValid){
-        toast.error("Please enter all required fields")
-        return
-      }
+    if (!isValid) {
+      toast.error("Please enter all required fields")
+      return
+    }
 
     const storeId = items[0]?.storeId;
     if (!storeId) return;
@@ -98,10 +98,10 @@ const Cart = () => {
       storeId: storeId,
     };
 
-    const newOrder = await createOrder(orderData);
     if (store?.mobileNumber) {
       sendOrderToWhatsApp(newOrder, store.mobileNumber);
     }
+    const newOrder = await createOrder(orderData);
     clearCart();
     setShowCheckout(false);
     setLoading(false)
@@ -239,15 +239,21 @@ const Cart = () => {
               </div>
             </div>
           </div>
-          : <div className="grid lg:grid-cols-3 gap-8">
-            <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+          :
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
+            {/* Title */}
+            <h1 className="text-2xl lg:text-3xl font-bold mb-4 lg:mb-8 col-span-1 lg:col-span-3">
+              Shopping Cart
+            </h1>
 
+            {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {items.map((item) => (
                 <Card key={`${item.productId}-${item.storeSlug}`}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex items-center gap-3 lg:gap-4">
+                      {/* Image */}
+                      <div className="w-16 h-16 lg:w-20 lg:h-20 bg-muted rounded-lg flex items-center justify-center">
                         {item?.image ? (
                           <img
                             src={item.image}
@@ -255,39 +261,45 @@ const Cart = () => {
                             className="w-full h-full object-cover rounded-lg"
                           />
                         ) : (
-                          <ShoppingBag className="h-8 w-8 text-muted-foreground" />
+                          <ShoppingBag className="h-6 w-6 lg:h-8 lg:w-8 text-muted-foreground" />
                         )}
                       </div>
 
+                      {/* Product Info */}
                       <div className="flex-1">
-                        <h3 className="font-semibold">{item?.name}</h3>
-                        <p className="text-sm text-muted-foreground">{item?.storeName}</p>
-                        <p className="flex flex-row items-center space-x-2 text-lg font-semibold text-primary">
-                          <IndianRupee className="w-5" />{item?.price}
+                        <h3 className="font-semibold text-sm lg:text-base">{item?.name}</h3>
+                        <p className="text-xs lg:text-sm text-muted-foreground">{item?.storeName}</p>
+                        <p className="flex items-center gap-1 text-base lg:text-lg font-semibold text-primary">
+                          <IndianRupee className="w-4" />{item?.price}
                         </p>
                       </div>
 
+                      {/* Quantity Controls */}
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon"
+                          className="h-7 w-7 lg:h-8 lg:w-8"
                           onClick={() => updateQuantity(item.productId, item.storeSlug, Math.max(0, item.quantity - 1))}
                         >
-                          <Minus className="h-4 w-4" />
+                          <Minus className="h-3 w-3 lg:h-4 lg:w-4" />
                         </Button>
-                        <span className="w-8 text-center">{item.quantity}</span>
+                        <span className="w-6 lg:w-8 text-center">{item.quantity}</span>
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="icon"
+                          className="h-7 w-7 lg:h-8 lg:w-8"
                           onClick={() => updateQuantity(item.productId, item.storeSlug, item.quantity + 1)}
                         >
-                          <Plus className="h-4 w-4" />
+                          <Plus className="h-3 w-3 lg:h-4 lg:w-4" />
                         </Button>
                       </div>
 
+                      {/* Remove Button */}
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
+                        className="h-7 w-7 lg:h-8 lg:w-8"
                         onClick={() => removeFromCart(item.productId, item.storeSlug)}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -298,15 +310,17 @@ const Cart = () => {
               ))}
             </div>
 
-            <div className="lg:col-span-1">
+            {/* Order Summary */}
+            <div className="lg:col-span-1 mt-4 lg:mt-0">
               <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-                  <div className="space-y-2 mb-4">
+                <CardContent className="p-4 lg:p-6">
+                  <h2 className="text-lg lg:text-xl font-semibold mb-3 lg:mb-4">Order Summary</h2>
+
+                  <div className="space-y-2 mb-4 text-sm lg:text-base">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span className="flex flex-row items-center space-x-2">
-                        <IndianRupee className="w-5" />{getTotalPrice().toFixed(2)}
+                      <span className="flex items-center gap-1">
+                        <IndianRupee className="w-4 lg:w-5" />{getTotalPrice().toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -314,22 +328,20 @@ const Cart = () => {
                       <span>Free</span>
                     </div>
                     <div className="border-t pt-2">
-                      <div className="flex justify-between font-semibold text-lg">
+                      <div className="flex justify-between font-semibold text-base lg:text-lg">
                         <span>Total</span>
-                        <span className="flex flex-row items-center space-x-2">
-                          <IndianRupee className="w-5" />{getTotalPrice().toFixed(2)}
+                        <span className="flex items-center gap-1">
+                          <IndianRupee className="w-4 lg:w-5" />{getTotalPrice().toFixed(2)}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <Button className="w-full" size="lg" onClick={handleCheckout}>
+                  <div className="space-y-2">
+                    <Button className="w-full text-sm lg:text-base py-2 lg:py-3" onClick={handleCheckout}>
                       Proceed to Checkout
-                      {/* <Link to={"/checkout"}>
-                    </Link> */}
                     </Button>
-                    <Button variant="outline" className="w-full" asChild>
+                    <Button variant="outline" className="w-full text-sm lg:text-base py-2 lg:py-3" asChild>
                       <Link to={slug ? `/store/${slug}` : "/stores"}>Continue Shopping</Link>
                     </Button>
                   </div>
@@ -338,11 +350,7 @@ const Cart = () => {
             </div>
           </div>
       }
-
-
     </div>
-    // <Layout>
-    // </Layout>
   );
 };
 

@@ -106,7 +106,7 @@ const Settings = () => {
                 <div>
                   <p className="text-gray-500">Plan</p>
                   <p className="font-medium text-indigo-600">
-                    {subscriptions?.status == 'ACTIVE' ? 'Premium' : "Free Trial"}
+                    {subscription?.status == 'ACTIVE' ? 'Premium' : "Free Trial"}
                   </p>
                 </div>
                 <div className="">

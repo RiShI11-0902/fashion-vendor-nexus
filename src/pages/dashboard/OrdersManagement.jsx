@@ -249,7 +249,7 @@ const OrdersManagement = () => {
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold">Order Details</DialogTitle>
               <DialogDescription className="text-gray-500">
-                Complete information for order #{selectedOrder?.id}
+                Complete information for order #{selectedOrder?.orderNumber}
               </DialogDescription>
             </DialogHeader>
 

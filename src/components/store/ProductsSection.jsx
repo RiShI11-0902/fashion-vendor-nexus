@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button";
 const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, categories, handleCategorySelect, page, setPage, total }) => {
 
   const totalPages = Math.ceil(total / 10);
-    
+
   return (
     <div className="flex flex-col md:gap-6">
 
@@ -41,7 +41,7 @@ const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, catego
           </p>
         </div>
 
-        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 md:gap-4 gap-2 space-y-4">
+        <div className="columns-2 sm:columns-2 lg:columns-4 gap-4  p-4">
           {filteredProducts.length > 0 ? (
             filteredProducts.map(product => (
               <ProductCard key={product.id} product={product} storeSlug={storeSlug} />
@@ -62,15 +62,15 @@ const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, catego
         </div>
 
       </div>
-        <div className="flex items-center flex-row w-full mx-auto justify-around">
-          <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
-            Prev
-          </Button>
-          <span>{page} / {totalPages}</span>
-          <Button onClick={() => setPage(page + 1)} disabled={page >= totalPages}>
-            Next
-          </Button>
-        </div>
+      <div className="flex items-center flex-row w-full mx-auto justify-around">
+        <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
+          Prev
+        </Button>
+        <span>{page} / {totalPages}</span>
+        <Button onClick={() => setPage(page + 1)} disabled={page >= totalPages}>
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

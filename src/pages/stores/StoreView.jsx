@@ -52,7 +52,7 @@ const StoreView = () => {
       <StoreNavbar store={store} />
       <StoreHeader store={store} />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
 
         {/* Products Section */}
         <div className="mb-8">
@@ -65,6 +65,7 @@ const StoreView = () => {
             page={page}
             total={total}
             setPage={setPage}
+            loading={loading}
           />
         </div>
 
