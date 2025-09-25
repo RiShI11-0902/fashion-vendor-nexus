@@ -139,7 +139,7 @@ const StoreForm = ({ initialData = null }) => {
             <FormItem>
               <FormLabel>Store Name <span className="text-red-600">*</span></FormLabel>
               <FormControl>
-                <Input placeholder="My Fashion Store" {...field}  autoComplete="off" />
+                <Input placeholder="My Fashion Store" {...field} autoComplete="off" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -153,7 +153,7 @@ const StoreForm = ({ initialData = null }) => {
             <FormItem>
               <FormLabel>Store URL <span className="text-red-600">*</span></FormLabel>
               <FormControl>
-                <Input placeholder="my-fashion-store" {...field}  autoComplete="off" />
+                <Input placeholder="my-fashion-store" {...field} autoComplete="off" />
               </FormControl>
               <FormDescription>
                 This will be used for your store link: shopmonk.shop/store/{field.value || 'your-store-url'}
@@ -189,9 +189,9 @@ const StoreForm = ({ initialData = null }) => {
               <FormItem className="flex-1 flex-row items-center justify-center">
                 <FormLabel>Store Whatss App Number <span className="text-red-600">*</span></FormLabel>
                 <div className="flex-row flex items-center space-x-2 justify-center">
-                  <Input placeholder="+91" className="w-14" value="+91" disabled/>
+                  <Input placeholder="+91" className="w-14" value="+91" disabled />
                   <FormControl>
-                    <Input placeholder="Enter WhatsApp Number" {...field}  autoComplete="off" />
+                    <Input placeholder="Enter WhatsApp Number" {...field} autoComplete="off" />
                   </FormControl>
                 </div>
                 <FormMessage />
@@ -206,6 +206,7 @@ const StoreForm = ({ initialData = null }) => {
           name="banner"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Store Banner </FormLabel>
               <FormControl>
                 <ImageUpload
                   value={field.value}

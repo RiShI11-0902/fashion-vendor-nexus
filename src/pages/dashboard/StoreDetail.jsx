@@ -60,16 +60,16 @@ const StoreDetail = () => {
     }
   }, [currentUser, storeId, getUserStores, getStoreProducts, navigate]);
 
-  const handleDelete = (id, isProduct) => {
-    setLoading(true)
-    if (isProduct) {
-      deleteProduct(id)
-    } else {
-      deleteStore(storeId);
-    }
+  const handleDeleteProduct = (id) => {
+    setLoading(true)    
+    deleteProduct(id)
+  };
+
+  const handleDeleteStore = ()=>{
+    deleteStore(storeId);
     setLoading(false)
     navigate("/dashboard")
-  };
+  }
 
   if (loading) {
     return (
@@ -142,7 +142,7 @@ const StoreDetail = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleDelete(null, false)}>
+                <AlertDialogAction onClick={handleDeleteStore}>
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -263,7 +263,7 @@ const StoreDetail = () => {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(product.id, true)}>
+                          <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>
                             Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>

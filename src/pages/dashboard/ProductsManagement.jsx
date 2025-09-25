@@ -146,7 +146,7 @@ const ProductsManagement = () => {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
           {filteredProducts.map(product => {
             const store = userStores.find(store => store.id === product.storeId);
             return (
