@@ -41,27 +41,25 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
           )}
 
           {/* Price & Category */}
-          <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row xl:flex-row 2xl:flex-row items-center justify-between mt-2 gap-2">
-            <div className="flex-row flex items-center space-x-5">
+          <div className="flex flex-col sm:flex-col md:flex-row items-start md:items-center justify-between mt-2 gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-5">
               <p className="font-bold text-gray-900 text-sm flex items-center gap-1">
                 <IndianRupee className="w-4" />
                 {hasDiscount ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
               </p>
 
-              <p>
-                {product.category && (
-                  <Badge variant="outline" className="text-xs px-2 py-0.5 rounded">
-                    {product.category}
-                  </Badge>
-                )}
-              </p>
+              {product.category && (
+                <Badge variant="outline" className="text-xs px-2 py-0.5 rounded">
+                  {product.category}
+                </Badge>
+              )}
             </div>
 
-            <p>{currentUser && (
+            {currentUser && (
               <Link to={`/dashboard/products/edit/${product.id}`}>
                 <Button size="sm">Edit</Button>
               </Link>
-            )}</p>
+            )}
           </div>
         </div>
       </div>
