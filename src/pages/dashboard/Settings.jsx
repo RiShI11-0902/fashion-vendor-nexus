@@ -103,12 +103,6 @@ const Settings = () => {
                   <p className="text-gray-500">Email</p>
                   <p className="font-medium text-gray-900">{currentUser?.email}</p>
                 </div>
-                <div>
-                  <p className="text-gray-500">Plan</p>
-                  <p className="font-medium text-indigo-600">
-                    {subscription?.status == 'ACTIVE' ? 'Premium' : "Free Trial"}
-                  </p>
-                </div>
                 <div className="">
                   <p className="text-gray-500">Joined On</p>
                   <p className="font-medium text-gray-900">
