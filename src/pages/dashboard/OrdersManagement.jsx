@@ -121,7 +121,7 @@ const OrdersManagement = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <Input placeholder='Search by order Number' onChange={(e) => setorderNumber(e.target.value)} />
+          <Input placeholder='Search by order Number' onChange={(e) => setorderNumber(e.target.value)}  autoComplete="off" />
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-[200px]">

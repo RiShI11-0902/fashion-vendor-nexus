@@ -14,7 +14,7 @@ const BasicProductDetails = ({ form }) => {
           <FormItem>
             <FormLabel>Product Name</FormLabel>
             <FormControl>
-              <Input placeholder="Stylish Shirt" {...field} />
+              <Input placeholder="Stylish Shirt" {...field}  autoComplete="off"/>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -35,6 +35,7 @@ const BasicProductDetails = ({ form }) => {
                   step="0.01" 
                   placeholder="29.99" 
                   {...field} 
+                   autoComplete="off"
                 />
               </FormControl>
               <FormMessage />
@@ -55,6 +56,7 @@ const BasicProductDetails = ({ form }) => {
                   step="0.01" 
                   placeholder="0" 
                   {...field} 
+                   autoComplete="off"
                 />
               </FormControl>
               <FormMessage />
@@ -75,6 +77,7 @@ const BasicProductDetails = ({ form }) => {
                   step="1" 
                   placeholder="100" 
                   {...field} 
+                   autoComplete="off"
                 />
               </FormControl>
               <FormMessage />

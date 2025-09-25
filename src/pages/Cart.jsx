@@ -151,7 +151,6 @@ const Cart = () => {
                   <CardContent className="p-6">
                     <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
                     <div className="space-y-4">
-                      {/* <input type="text" name="customerName" value={customerInfo.customerName || ""} onChange={(e)=> handleInputChange(e)} /> */}
                       <div>
                         <Label htmlFor="customerName">Full Name *</Label>
                         <Input

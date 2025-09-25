@@ -90,7 +90,7 @@ const StoreForm = ({ initialData = null }) => {
       url: `${import.meta.env.VITE_PRODUCTION_CLIENT_URL}/store/${formData.slug}`,
     };
 
-    if (!storeData.name || !storeData.slug || !storeData.mobileNumber || !storeData.description || !storeData.logo || !storeData.banner) {
+    if (!storeData.name || !storeData.slug || !storeData.mobileNumber || !storeData.description || !storeData.logo) {
       toast.error("Please enter all field and upload banner and logo")
       return;
     }
@@ -139,7 +139,7 @@ const StoreForm = ({ initialData = null }) => {
             <FormItem>
               <FormLabel>Store Name <span className="text-red-600">*</span></FormLabel>
               <FormControl>
-                <Input placeholder="My Fashion Store" {...field} />
+                <Input placeholder="My Fashion Store" {...field}  autoComplete="off" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -153,10 +153,10 @@ const StoreForm = ({ initialData = null }) => {
             <FormItem>
               <FormLabel>Store URL <span className="text-red-600">*</span></FormLabel>
               <FormControl>
-                <Input placeholder="my-fashion-store" {...field} />
+                <Input placeholder="my-fashion-store" {...field}  autoComplete="off" />
               </FormControl>
               <FormDescription>
-                This will be used for your store link: fashionvendor.com/store/{field.value || 'your-store-url'}
+                This will be used for your store link: shopmonk.shop/store/{field.value || 'your-store-url'}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -189,9 +189,9 @@ const StoreForm = ({ initialData = null }) => {
               <FormItem className="flex-1 flex-row items-center justify-center">
                 <FormLabel>Store Whatss App Number <span className="text-red-600">*</span></FormLabel>
                 <div className="flex-row flex items-center space-x-2 justify-center">
-                  <Input placeholder="+91" className="w-14" value="+91" disabled />
+                  <Input placeholder="+91" className="w-14" value="+91" disabled/>
                   <FormControl>
-                    <Input placeholder="Enter WhatsApp Number" {...field} />
+                    <Input placeholder="Enter WhatsApp Number" {...field}  autoComplete="off" />
                   </FormControl>
                 </div>
                 <FormMessage />
@@ -206,7 +206,6 @@ const StoreForm = ({ initialData = null }) => {
           name="banner"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store Banner <span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <ImageUpload
                   value={field.value}
