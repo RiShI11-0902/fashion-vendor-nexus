@@ -46,7 +46,7 @@ const HeroSection = ({ currentUser }) => {
                 )}
               </div>
 
-              <div className="flex items-center mx-auto gap-6 text-sm text-gray-600 justify-center lg:justify-start">
+              <div className="flex items-center mx-auto gap-6 text-sm text-gray-600 justify-center">
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 text-yellow-500 fill-current" />
                   <span>No coding required</span>
