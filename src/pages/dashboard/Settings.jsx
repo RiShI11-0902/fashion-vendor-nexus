@@ -126,7 +126,17 @@ const Settings = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           {subscriptions.length === 0 && (
-            <p className="text-gray-600 text-sm">No subscriptions found</p>
+            <div className="w-fit flex flex-row space-x-5 items-center">
+              <p className="text-gray-600 text-sm">No subscriptions found</p>
+              <Link to={"/pricing"}>
+                <Button
+                  variant="outline"
+                  className="hover:bg-green-300"
+                >
+                  Buy Premium
+                </Button>
+              </Link>
+            </div>
           )}
 
           {
@@ -146,15 +156,15 @@ const Settings = () => {
                     {new Date(subscription?.startedAt).toLocaleDateString()}
                   </p>
                   <p>
-                  <strong>Expires:</strong>{" "}
-                  {subscription?.expiresAt
-                    ? new Date(subscription?.expiresAt).toLocaleDateString()
-                    : "N/A"}
-                </p>
-                <p>
-                  <strong>Subscription ID:</strong>{" "}
-                  {subscription?.razorpaySubscriptionId}
-                </p>
+                    <strong>Expires:</strong>{" "}
+                    {subscription?.expiresAt
+                      ? new Date(subscription?.expiresAt).toLocaleDateString()
+                      : "N/A"}
+                  </p>
+                  <p>
+                    <strong>Subscription ID:</strong>{" "}
+                    {subscription?.razorpaySubscriptionId}
+                  </p>
                 </div>
                 <div className="mt-4 md:mt-0">
                   {

@@ -23,7 +23,8 @@ const GenerateModel = ({ field }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState()
   const { currentUser } = useAuthStore()
-  const [remaining, setRemaining] = useState(currentUser?.allowedGenerate)
+  
+  const [remaining, setRemaining] = useState(currentUser?.oneTimeCredits + currentUser?.subscriptionCredits)
 
   const [selectedType, setSelectedType] = useState("model");
 

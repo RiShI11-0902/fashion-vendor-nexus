@@ -50,17 +50,16 @@ export const formatNumber = (num: Number) => {
   return num.toLocaleString("en-IN");
 };
 
-export const handlePayment = async (
-  user,
-  setLoading,
-  setIsSubscription,
-  plan
-) => {
+export const handlePayment = async (user, onComplete, plan) => {
   try {
     // 1. Create Razorpay order with user email and selected plan
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("Please Login First");
+      return;
+    }
+    if(user.plan){
+      toast.error("You already have one current subscription active");
       return;
     }
     const {
@@ -144,11 +143,18 @@ export const handlePayment = async (
 
     const rzp = new window.Razorpay(options);
     rzp.open();
-    setLoading(false);
-    setIsSubscription(false);
   } catch (error) {
-    toast.error(error?.response?.data?.message || "Error occurred while creating subscription")
-    setLoading(false);
+    toast.error(
+      error?.response?.data?.message ||
+        "Error occurred while creating subscription"
+    );
+    throw error;
+  } finally {
+    try {
+      if (typeof onComplete === "function") onComplete();
+    } catch (cbErr) {
+      console.error("onComplete callback error:", cbErr);
+    }
   }
 };
 
@@ -201,6 +207,7 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
       notes: {
         address: "Shop Monk Office",
         userId: user.id,
+        planName: "AI_PACK",
       },
       handler: async function (response) {
         // 4. Verify payment
@@ -238,8 +245,10 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
     rzp.open();
     setLoading(false);
   } catch (error) {
-    toast.error(error?.response?.data?.message || 'Error occurred while creating the order')
-    setLoading(false)
+    toast.error(
+      error?.response?.data?.message ||
+        "Error occurred while creating the order"
+    );
+    setLoading(false);
   }
 };
-

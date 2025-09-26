@@ -12,7 +12,7 @@ const HeroSection = ({ currentUser }) => {
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           <div className="space-y-8">
-            <div className="text-center lg:text-left">
+            <div className="text-center">
               <div className="flex items-center gap-2 mb-6 justify-center lg:justify-start">
                 <Globe className="h-6 w-6 text-pink-600" />
                 <span className="text-sm font-medium text-gray-600">For All Entrepreneurs</span>
