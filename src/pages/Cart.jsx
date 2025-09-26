@@ -322,10 +322,6 @@ const Cart = () => {
                         <IndianRupee className="w-4 lg:w-5" />{getTotalPrice().toFixed(2)}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Shipping</span>
-                      <span>Free</span>
-                    </div>
                     <div className="border-t pt-2">
                       <div className="flex justify-between font-semibold text-base lg:text-lg">
                         <span>Total</span>
