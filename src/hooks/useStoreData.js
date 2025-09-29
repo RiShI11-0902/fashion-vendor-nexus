@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useStoreManager } from "../stores/useStoreManager";
 
 export const useStoreData = (storeSlug) => {
-  const { getStoreBySlug, getStoreProducts } = useStoreManager();
+  const { getStoreBySlug, getStoreProducts, getStoreFeedback } =
+    useStoreManager();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -11,6 +12,7 @@ export const useStoreData = (storeSlug) => {
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [feedbacks, setFeedbacks] = useState([]);
 
   const fetchStoreProducts = async (storeId, page, category) => {
     setLoading(true);
@@ -40,12 +42,23 @@ export const useStoreData = (storeSlug) => {
         return;
       }
 
+      
       setStore(foundStore);
+      await fetchFeedback(foundStore?.id);
       await fetchStoreProducts(foundStore.id, page, selectedCategory);
     } catch (err) {
       setError("Failed to fetch store");
       setLoading(false);
       console.error(err);
+    }
+  };
+
+  const fetchFeedback = async (storeId) => {
+    try {
+      const feedbacks = await getStoreFeedback(storeId);
+      setFeedbacks(feedbacks);
+    } catch (error) {
+      setError(error?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -78,6 +91,7 @@ export const useStoreData = (storeSlug) => {
     filteredProducts,
     selectedCategory,
     categories,
+    feedbacks,
     loading,
     error,
     page,

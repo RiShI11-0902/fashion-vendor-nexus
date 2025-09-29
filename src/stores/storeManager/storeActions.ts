@@ -10,6 +10,8 @@ export interface StoreActions {
   getUserStores: (userId: string) => Promise<Store[]>;
   updateStoreSettings: (storeId: string, settings: any) => void;
   updateStorePolicies: (storeId: string, policies: any) => void;
+  createStoreFeedback: (storeId: string, feedback: any) => void;
+  getStoreFeedback: (storeId: string) => void;
 }
 
 const API_URL = import.meta.env.VITE_DEV_BACKEND_URL;
@@ -93,9 +95,10 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
           return product?.storeId !== storeId;
         }),
       }));
-
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Error occurred while deleting store")
+      toast.error(
+        error?.response?.data?.message || "Error occurred while deleting store"
+      );
     }
 
     toast.success("Store deleted successfully");
@@ -170,5 +173,22 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
       ),
     }));
     toast.success("Store policies updated successfully");
+  },
+
+  createStoreFeedback: async (storeId, feedback) => {
+    try {
+      await axios.post(`${API_URL}/api/store/feedback`, { storeId, feedback });
+    } catch (error) {
+      toast.error(error?.data?.response?.message || "Error Sending feedback");
+    }
+  },
+  getStoreFeedback: async (storeId) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/store/feedback/${storeId}`);
+      const feedback = res.data;
+      return feedback;
+    } catch (error) {
+      toast.error(error?.data?.response?.message || "Error Sending feedback");
+    }
   },
 });

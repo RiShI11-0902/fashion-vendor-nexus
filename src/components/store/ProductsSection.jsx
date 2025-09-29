@@ -47,12 +47,8 @@ const ProductsSection = ({ filteredProducts, selectedCategory, storeSlug, catego
               <ProductCard key={product.id} product={product} storeSlug={storeSlug} />
             ))
           ) : (
-            <div className="text-center py-8 col-span-full">
-              <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                {selectedCategory === "All" ? "No Products Available" : `No ${selectedCategory} Products`}
-              </h3>
-              <p className="text-gray-600">
+            <div className="mx-auto w-full justify-center items-center flex">
+              <p className="text-gray-600 ">
                 {selectedCategory === "All"
                   ? "This store doesn't have any products yet. Check back later!"
                   : `No products found in the ${selectedCategory} category.`}

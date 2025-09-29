@@ -8,7 +8,7 @@ import StoreFAQ from "../../components/faq/StoreFAQ";
 import StoreStories from "../../components/stores/StoreStories";
 import { useStoreData } from "../../hooks/useStoreData";
 import { Button } from "../../components/ui/button";
-import { ArrowLeft, Instagram, Search } from "lucide-react";
+import { ArrowLeft, Instagram, InstagramIcon, MapPinPlus, Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { useAuthStore } from "../../stores/useAuthStore";
 import StoreNavbar from "../../components/layout/StoreNavbar";
@@ -22,6 +22,7 @@ const StoreView = () => {
     filteredProducts,
     selectedCategory,
     categories,
+    feedbacks,
     loading,
     error,
     page,
@@ -70,11 +71,9 @@ const StoreView = () => {
         </div>
 
         {/* Customer Feedback */}
-        {feedbackEnabled && (
             <div className="mb-8">
-              <CustomerFeedback storeId={store.id} />
+              <CustomerFeedback storeId={store.id} feedbacks={feedbacks} />
             </div>
-          )}
 
         {/* Store FAQ */}
         {/* <div className="mb-8">
@@ -82,12 +81,16 @@ const StoreView = () => {
           </div> */}
 
         {/* Social Media Section */}
-        {/* <div className="text-center">
+        <div className="text-center space-x-5">
             <Button variant="outline" className="inline-flex items-center rounded-full px-8 border-2 hover:bg-gray-50">
-              <Instagram className="h-5 w-5 mr-2" />
+              <InstagramIcon className="h-5 w-5 mr-2" />
               Follow us on Instagram
             </Button>
-          </div> */}
+             <Button variant="outline" className="inline-flex items-center rounded-full px-8 border-2 hover:bg-gray-50">
+              <MapPinPlus className="h-5 w-5 mr-2" />
+              Find us on Maps
+            </Button>
+          </div>
       </div>
     </div>
     // <MainLayout>

@@ -1,30 +1,17 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Star, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
+import { useStoreManager } from "../../stores/storeManager";
 
-const CustomerFeedback = ({ storeId, storeName, isEnabled = true }) => {
-  const [feedback, setFeedback] = useState([
-    {
-      id: 1,
-      customerName: "Sarah M.",
-      rating: 5,
-      comment: "Amazing quality and fast shipping! Love the style.",
-      date: "2024-06-08",
-      productName: "Summer Dress"
-    },
-    {
-      id: 2,
-      customerName: "Jessica L.",
-      rating: 4,
-      comment: "Great fit and beautiful design. Will definitely order again!",
-      date: "2024-06-07",
-      productName: "Casual Top"
-    }
-  ]);
+const CustomerFeedback = ({ storeId, feedbacks }) => {
+  const [feedback, setFeedback] = useState(feedbacks);
+
+  const { createStoreFeedback } = useStoreManager()
+
 
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [newFeedback, setNewFeedback] = useState({
@@ -34,7 +21,7 @@ const CustomerFeedback = ({ storeId, storeName, isEnabled = true }) => {
     productName: ""
   });
 
-  const handleSubmitFeedback = (e) => {
+  const handleSubmitFeedback = async (e) => {
     e.preventDefault();
     if (!newFeedback.customerName || !newFeedback.comment) {
       toast.error("Please fill in all required fields");
@@ -47,6 +34,7 @@ const CustomerFeedback = ({ storeId, storeName, isEnabled = true }) => {
       date: new Date().toISOString().split('T')[0]
     };
 
+    await createStoreFeedback(storeId,newFeedback)
     setFeedback([feedbackEntry, ...feedback]);
     setNewFeedback({ customerName: "", rating: 5, comment: "", productName: "" });
     setShowFeedbackForm(false);
@@ -62,7 +50,7 @@ const CustomerFeedback = ({ storeId, storeName, isEnabled = true }) => {
     ));
   };
 
-  if (!isEnabled) {
+  if (feedback?.length == 0) {
     return null;
   }
 
@@ -96,7 +84,7 @@ const CustomerFeedback = ({ storeId, storeName, isEnabled = true }) => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Product (Optional)</label>
                 <input
@@ -147,7 +135,7 @@ const CustomerFeedback = ({ storeId, storeName, isEnabled = true }) => {
       )}
 
       <div className="space-y-4">
-        {feedback.map((item) => (
+        {feedback?.map((item) => (
           <Card key={item.id}>
             <CardContent className="pt-6">
               <div className="flex items-start justify-between mb-2">
