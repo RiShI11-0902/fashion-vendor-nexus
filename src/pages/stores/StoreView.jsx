@@ -70,11 +70,11 @@ const StoreView = () => {
         </div>
 
         {/* Customer Feedback */}
-        {/* {feedbackEnabled && (
+        {feedbackEnabled && (
             <div className="mb-8">
               <CustomerFeedback storeId={store.id} />
             </div>
-          )} */}
+          )}
 
         {/* Store FAQ */}
         {/* <div className="mb-8">
