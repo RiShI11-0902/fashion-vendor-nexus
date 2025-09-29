@@ -50,9 +50,6 @@ const CustomerFeedback = ({ storeId, feedbacks }) => {
     ));
   };
 
-  if (feedback?.length == 0) {
-    return null;
-  }
 
   return (
     <div className="space-y-6">
