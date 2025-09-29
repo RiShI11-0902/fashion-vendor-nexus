@@ -33,11 +33,14 @@ const storeSchema = z.object({
   banner: z.string().optional(),
   logo: z.string().optional(),
   mobileNumber: z.string(),
+  instaHandle: z.string().optional(),
+  fbHandle: z.string().optional(),
+  location: z.string().optional(),
 });
 
 const StoreForm = ({ initialData = null }) => {
   const navigate = useNavigate();
-  const { createStore, updateStore } = useStoreManager();
+  const { createStore, updateStore , getUserStores} = useStoreManager();
   const { currentUser } = useAuthStore();
   const [categories, setCategories] = useState(initialData?.categories || []);
   const [newCategory, setNewCategory] = useState("");
@@ -52,6 +55,9 @@ const StoreForm = ({ initialData = null }) => {
       banner: initialData?.banner || "",
       logo: initialData?.logo || "",
       mobileNumber: initialData?.mobileNumber.slice(3) || "",
+      instaHandle: initialData?.instaHandle || "",
+      fbHandle: initialData?.fbHandle || "",
+      location: initialData?.location || "",
     },
   });
 
@@ -97,6 +103,7 @@ const StoreForm = ({ initialData = null }) => {
 
     if (initialData) {
       updateStore(initialData.id, storeData);
+      getUserStores(currentUser.id, true)
       navigate("/dashboard/store");
     } else {
       createStore(storeData);
@@ -289,6 +296,51 @@ const StoreForm = ({ initialData = null }) => {
             </div>
           )}
         </div>
+
+        <FormField
+          control={form.control}
+          name="instaHandle"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Instagram URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://www.instagram.com/your-insta-username" {...field} autoComplete="off" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="fbHandle"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Facebook URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://www.facebook.com/your-fb-username" {...field} autoComplete="off" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Location URL</FormLabel>
+              <FormControl>
+                <Input placeholder="https://maps.app.goo.gl/..." {...field} autoComplete="off" />
+              </FormControl>
+              <FormDescription>
+                Paste your google map location here
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="flex justify-end space-x-4 pt-4">
           <Button

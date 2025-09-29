@@ -8,7 +8,7 @@ import StoreFAQ from "../../components/faq/StoreFAQ";
 import StoreStories from "../../components/stores/StoreStories";
 import { useStoreData } from "../../hooks/useStoreData";
 import { Button } from "../../components/ui/button";
-import { ArrowLeft, Instagram, InstagramIcon, MapPinPlus, Search } from "lucide-react";
+import { ArrowLeft, Facebook, Instagram, InstagramIcon, MapPinPlus, Search } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { useAuthStore } from "../../stores/useAuthStore";
 import StoreNavbar from "../../components/layout/StoreNavbar";
@@ -31,7 +31,7 @@ const StoreView = () => {
     handleCategorySelect
   } = useStoreData(storeSlug);
 
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -43,7 +43,7 @@ const StoreView = () => {
 
   if (error || !store) {
     return <StoreNotFound />;
-  }  
+  }
 
   // Check if feedback is enabled for this store
   const feedbackEnabled = store.settings?.enableFeedback !== false;
@@ -71,9 +71,9 @@ const StoreView = () => {
         </div>
 
         {/* Customer Feedback */}
-            <div className="mb-8">
-              <CustomerFeedback storeId={store.id} feedbacks={feedbacks} />
-            </div>
+        <div className="mb-8">
+          <CustomerFeedback storeId={store.id} feedbacks={feedbacks} />
+        </div>
 
         {/* Store FAQ */}
         {/* <div className="mb-8">
@@ -81,20 +81,46 @@ const StoreView = () => {
           </div> */}
 
         {/* Social Media Section */}
-        <div className="text-center space-x-5">
-            <Button variant="outline" className="inline-flex items-center rounded-full px-8 border-2 hover:bg-gray-50">
+        <div className="text-center flex flex-wrap justify-center gap-4">
+          {store.instaHandle && (
+            <a
+              href={store.instaHandle}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-full px-6 py-2 font-medium text-white bg-gradient-to-r from-pink-500 via-purple-500 to-yellow-400 hover:from-pink-600 hover:via-purple-600 hover:to-yellow-500 transition-colors duration-200"
+            >
               <InstagramIcon className="h-5 w-5 mr-2" />
               Follow us on Instagram
-            </Button>
-             <Button variant="outline" className="inline-flex items-center rounded-full px-8 border-2 hover:bg-gray-50">
+            </a>
+          )}
+
+          {store.location && (
+            <a
+              href={store.location}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-full px-6 py-2 font-medium text-white bg-green-500 hover:bg-green-600 transition-colors duration-200"
+            >
               <MapPinPlus className="h-5 w-5 mr-2" />
               Find us on Maps
-            </Button>
-          </div>
+            </a>
+          )}
+
+          {store.fbHandle && (
+            <a
+              href={store.fbHandle}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-full px-6 py-2 font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+            >
+              <Facebook className="h-5 w-5 mr-2" />
+              Follow us on Facebook
+            </a>
+          )}
+        </div>
+
       </div>
     </div>
-    // <MainLayout>
-    // </MainLayout>
 
   );
 };
