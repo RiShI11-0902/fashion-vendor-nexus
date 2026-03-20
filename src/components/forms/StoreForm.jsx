@@ -211,6 +211,7 @@ const StoreForm = ({ initialData = null }) => {
                       {...field}
                       autoComplete="off"
                       className="flex-1"
+                       maxLength={10}
                     />
                   </FormControl>
                 </div>

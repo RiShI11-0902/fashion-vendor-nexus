@@ -10,9 +10,10 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
   const { getDiscountedPrice } = useStoreManager();
   const { price: discountedPrice, discount } = getDiscountedPrice(product.id, product.price);
   const { currentUser } = useAuthStore();
+  const { getUserStores } = useStoreManager()
 
   const hasDiscount = discount && discountedPrice < product.price;
-
+  const store = getUserStores(currentUser.id)
   return (
     <Link
       to={`/store/${storeSlug}/product/${product.id}`}
@@ -55,7 +56,7 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
               )}
             </div>
 
-            {currentUser && (
+            {store.id == product.storeId && (
               <Link to={`/dashboard/products/edit/${product.id}`}>
                 <Button size="sm">Edit</Button>
               </Link>
