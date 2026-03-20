@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
-import { Menu, X, ShoppingBag, User, ShoppingCart, Crown, Loader } from "lucide-react";
+import { Menu, X, Crown, Loader } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useCartStore } from "../../stores/useCartStore";
 import google from "../../assets/google.png";
@@ -12,64 +12,61 @@ const Navbar = () => {
   const { currentUser, logout } = useAuthStore();
   const { getTotalItems } = useCartStore();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState({
-    isLogin: null,
-    state: null
-  })
+  const [loading, setLoading] = useState({ isLogin: null, state: null });
   const totalItems = getTotalItems();
 
   const handleLogout = () => {
-    setLoading(true)
+    setLoading(true);
     logout();
-    setLoading(false)
+    setLoading(false);
     navigate("/");
   };
 
   const handleGoogleLogin = () => {
-    setLoading({ isLogin: true, state: true })
+    setLoading({ isLogin: true, state: true });
     window.location.href = `${import.meta.env.VITE_DEV_BACKEND_URL}/api/auth/google`;
   };
+
+  const navLinks = [
+    { to: "/", label: "Home" },
+    { to: "/about", label: "About" },
+    { to: "/pricing", label: "Pricing" },
+  ];
+
   return (
-    <header className="bg-white border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+    <header className="bg-[#0a0a0f]/95 backdrop-blur border-b border-white/[0.08] sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center">
           <img
             src="/full_logo.png"
             alt="logo"
-            className="w-28 sm:w-36 md:w-48 lg:w-48 h-auto max-w-full"
+            className="w-28 sm:w-36 md:w-40 h-auto max-w-full brightness-200"
           />
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-sm font-medium hover:text-purple-600 transition-colors">
-            Home
-          </Link>
-          <Link to="/about" className="text-sm font-medium hover:text-purple-600 transition-colors">
-            About
-          </Link>
-          <Link to="/ai-video" className="text-sm flex flex-row font-medium items-center hover:text-purple-600 transition-colors">
-            AI Model <Crown className="w-3 -mt-3 text-yellow-500" />
-          </Link>
-          <Link to="/pricing" className="text-sm font-medium hover:text-purple-600 transition-colors">
-            Pricing
-          </Link>
-
-          {/* Cart Icon - Only show if there are items */}
-          {/* {totalItems > 0 && (
-            <Link to="/cart" className="relative">
-              <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-purple-600 transition-colors" />
-              <span className="absolute -top-2 -right-2 bg-gold text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {totalItems}
-              </span>
+          {navLinks.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
+            >
+              {label}
             </Link>
-          )} */}
+          ))}
+          <Link
+            to="/ai-video"
+            className="text-sm flex flex-row font-medium items-center text-gray-400 hover:text-white transition-colors"
+          >
+            AI Model <Crown className="w-3 -mt-3 text-yellow-500 ml-0.5" />
+          </Link>
 
           {currentUser ? (
             <>
               <Link
                 to="/dashboard"
-                className="text-sm font-medium hover:text-purple-600 transition-colors"
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
               >
                 Dashboard
               </Link>
@@ -77,43 +74,34 @@ const Navbar = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
-                className="w-fit flex justify-center items-center gap-2"
-                disabled={loading.state} // disable while logging out
+                className="border-white/10 text-gray-300 hover:text-white hover:bg-white/5 bg-transparent"
+                disabled={loading.state}
               >
-                {loading.state ? (
-                  <Loader className="w-5 h-5 animate-spin" />
-                ) : (
-                  "Sign Out"
-                )}
+                {loading.state ? <Loader className="w-4 h-4 animate-spin" /> : "Sign Out"}
               </Button>
-
             </>
           ) : (
-            <div className="flex items-center space-x-4 w-fit">
-              <Button
-                variant="outline"
-                size="sm"
-                className="mx-auto w-fit min-w-[150px] flex justify-center"
-                onClick={handleGoogleLogin}
-                disabled={loading.isLogin && loading.state}
-              >
-                {loading.isLogin && loading.state ? (
-                  <Loader className="animate-spin w-5 h-5" />
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <span>Sign in with</span>
-                    <img className="w-5" src={google} alt="Google" />
-                  </div>
-                )}
-              </Button>
-            </div>
-
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-white/10 text-gray-300 hover:text-white hover:bg-white/5 bg-transparent min-w-[140px]"
+              onClick={handleGoogleLogin}
+              disabled={loading.isLogin && loading.state}
+            >
+              {loading.isLogin && loading.state ? (
+                <Loader className="animate-spin w-4 h-4" />
+              ) : (
+                <span className="flex items-center gap-2">
+                  Sign in with <img className="w-4" src={google} alt="Google" />
+                </span>
+              )}
+            </Button>
           )}
         </nav>
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden"
+          className="md:hidden text-gray-400 hover:text-white transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X /> : <Menu />}
@@ -122,50 +110,31 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden py-4 px-4 bg-white border-t">
+        <div className="md:hidden py-4 px-4 bg-[#0d0d14] border-t border-white/[0.08]">
           <nav className="flex flex-col space-y-4">
-            <Link
-              to="/"
-              className="text-sm font-medium hover:text-purple-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              to="/about"
-              className="text-sm font-medium hover:text-purple-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About
-            </Link>
-            <Link to="/ai-video" className="text-sm flex flex-row font-medium items-center hover:text-purple-600 transition-colors">
-              Ai Model <Crown className="w-3 -mt-3 text-yellow-500" />
-            </Link>
-            <Link
-              to="/pricing"
-              className="text-sm font-medium hover:text-purple-600 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Pricing
-            </Link>
-
-            {/* Mobile Cart Link - Only show if there are items */}
-            {/* {totalItems > 0 && (
+            {navLinks.map(({ to, label }) => (
               <Link
-                to="/cart"
-                className="flex items-center text-sm font-medium hover:text-purple-600 transition-colors"
+                key={to}
+                to={to}
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Cart ({totalItems})
+                {label}
               </Link>
-            )} */}
+            ))}
+            <Link
+              to="/ai-video"
+              className="text-sm flex flex-row font-medium items-center text-gray-400 hover:text-white transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              AI Model <Crown className="w-3 -mt-3 text-yellow-500 ml-0.5" />
+            </Link>
 
             {currentUser ? (
               <>
                 <Link
                   to="/dashboard"
-                  className="text-sm font-medium hover:text-purple-600 transition-colors"
+                  className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
@@ -173,22 +142,19 @@ const Navbar = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-fit"
+                  onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                  className="border-white/10 text-gray-300 bg-transparent w-fit"
                 >
-                  {loading.state ? <Loader className="w-5 animate-spin mx-auto" /> : "Sign Out"}
+                  {loading.state ? <Loader className="w-4 animate-spin mx-auto" /> : "Sign Out"}
                 </Button>
               </>
             ) : (
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center space-x-2">
-                  <span>Sign in with</span>
-                  <img className="w-5" src={google} alt="Google" />
-                </div>
-              </div>
+              <button
+                onClick={handleGoogleLogin}
+                className="flex items-center gap-2 text-sm text-gray-400"
+              >
+                Sign in with <img className="w-4" src={google} alt="Google" />
+              </button>
             )}
           </nav>
         </div>

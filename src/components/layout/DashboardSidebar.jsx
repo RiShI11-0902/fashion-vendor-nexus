@@ -119,21 +119,21 @@ const DashboardSidebar = () => {
                       isActive={item.active}
                       className="w-full justify-start"
                     >
-                      <Link
+                       <Link
                         to={item.path}
-                        className="flex items-center text-black mt-2 gap-2"
+                        className="flex items-center text-foreground mt-2 gap-2"
                       >
                         <item.icon className="h-4 w-4 flex-shrink-0" />
-                        <span className="truncate text-black">{item.title}</span>
+                        <span className="truncate text-foreground">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   ) : (
                     <SidebarMenuButton
                       onClick={handleLogout}
-                      className="w-full justify-start mt-2 text-black hover:bg-accent hover:text-accent-foreground"
+                      className="w-full justify-start mt-2 text-foreground hover:bg-accent hover:text-accent-foreground"
                     >
                       <item.icon className="h-4 w-4 flex-shrink-0" />
-                      <span className="truncate text-black">{item.title}</span>
+                      <span className="truncate text-foreground">{item.title}</span>
                     </SidebarMenuButton>
                   )}
                 </SidebarMenuItem>
