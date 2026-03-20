@@ -5,8 +5,13 @@ import img5 from "../../assets/img5.png";
 import img2 from "../../assets/img2.png";
 import img3 from "../../assets/img3.png";
 import img4 from "../../assets/img4.png";
+import google from "../../assets/google.png";
 
 const HeroSection = ({ currentUser }) => {
+    const handleGoogleLogin = () => {
+    // setLoading({ isLogin: true, state: true });
+    window.location.href = `${import.meta.env.VITE_DEV_BACKEND_URL}/api/auth/google`;
+  };
   return (
     <section className="relative bg-[#0a0a0f] overflow-hidden min-h-screen flex items-center">
       {/* Gradient orbs */}
@@ -59,17 +64,9 @@ const HeroSection = ({ currentUser }) => {
                 size="lg"
                 className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold px-8 rounded-xl shadow-lg shadow-pink-900/30 transition-all"
               >
-                <Link to={currentUser ? "/dashboard" : "/signup"}>
+                <Button onClick={handleGoogleLogin}>
                   Start for free <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="ghost"
-                className="text-gray-300 hover:text-white border border-white/10 hover:bg-white/5 rounded-xl"
-              >
-                <Link to="/login">Sign in</Link>
+                </Button>
               </Button>
             </div>
           </div>

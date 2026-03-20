@@ -29,13 +29,13 @@ const features = [
     title: "Mobile First",
     description: "Your catalog is perfectly optimised for mobile — the way most customers browse and buy.",
   },
-  {
-    icon: Palette,
-    color: "from-orange-500/20 to-amber-500/10",
-    iconColor: "text-orange-400",
-    title: "Custom Branding",
-    description: "Add your logo, banner and brand colors to make the store unmistakably yours.",
-  },
+  // {
+  //   icon: Palette,
+  //   color: "from-orange-500/20 to-amber-500/10",
+  //   iconColor: "text-orange-400",
+  //   title: "Custom Branding",
+  //   description: "Add your logo, banner and brand colors to make the store unmistakably yours.",
+  // },
   {
     icon: Zap,
     color: "from-yellow-500/20 to-lime-500/10",
