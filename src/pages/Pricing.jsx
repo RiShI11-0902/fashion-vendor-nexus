@@ -31,7 +31,7 @@ const Pricing = () => {
         "Up to 10 products",
         "Unlimited orders",
         "Basic analytics (orders & revenue)",
-        "1 AI model generation",
+        "1 AI model generation (Currently unavailable due to some technical issues)",
       ],
       highlighted: false,
     },
@@ -45,7 +45,7 @@ const Pricing = () => {
         "Up to 30 products",
         "Unlimited orders",
         "Basic analytics dashboard",
-        "40 AI model generations/month",
+        "40 AI model generations/month (Currently unavailable due to some technical issues)",
       ],
       highlighted: false,
     },
@@ -59,7 +59,7 @@ const Pricing = () => {
         "Unlimited products",
         "Unlimited orders",
         "Full analytics dashboard",
-        "200 AI model generations/month",
+        "200 AI model generations/month (Currently unavailable due to some technical issues)",
         "Access to new Features (extra charges may apply)",
         "Priority support",
       ],
@@ -73,7 +73,7 @@ const Pricing = () => {
       name: "100 AI Models Pack",
       price: "₹550",
       description:
-        "100 AI model generations. Can be added to any plan or purchased standalone.",
+        "100 AI model generations. Can be added to any plan or purchased standalone. ( We are currently not providing AI generations due to some technical issues )",
     },
   ];
 
@@ -88,6 +88,8 @@ const Pricing = () => {
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Start free, upgrade when you need more. No hidden fees, no surprises.
+              <br />
+              <p className="text-red-500 font-semibold">(Currently AI Model Generations is not available unavailable due to some technical issues we are trying our best to fix it.)</p>
             </p>
           </div>
 
@@ -189,7 +191,7 @@ const Pricing = () => {
                       <div className="flex justify-end">
                         <Button
                           size="sm"
-                          disabled={loading}
+                          disabled
                           onClick={() => handleOrder(currentUser, setLoading, true)}
                           className="flex items-center gap-2 w-fit"
                         >
