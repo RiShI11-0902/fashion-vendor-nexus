@@ -11,7 +11,7 @@ const DashboardLayout = ({ children }) => {
   
   useEffect(() => {
     if (!loading && !currentUser) {
-      navigate("/login");
+      navigate("/");
     }
   }, [currentUser, loading, navigate]);
   

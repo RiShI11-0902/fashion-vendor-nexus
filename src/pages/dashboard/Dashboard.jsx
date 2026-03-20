@@ -65,7 +65,7 @@ const Dashboard = () => {
               Please log in to access your dashboard
             </h2>
             <Button asChild>
-              <Link to="/login">Login</Link>
+              <Link to="/">Go to Homepage</Link>
             </Button>
           </div>
         </div>
