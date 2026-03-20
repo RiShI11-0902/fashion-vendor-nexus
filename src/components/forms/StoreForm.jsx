@@ -36,11 +36,12 @@ const storeSchema = z.object({
   instaHandle: z.string().optional(),
   fbHandle: z.string().optional(),
   location: z.string().optional(),
+  shippingPrice: z.string().optional()
 });
 
 const StoreForm = ({ initialData = null }) => {
   const navigate = useNavigate();
-  const { createStore, updateStore , getUserStores} = useStoreManager();
+  const { createStore, updateStore, getUserStores } = useStoreManager();
   const { currentUser } = useAuthStore();
   const [categories, setCategories] = useState(initialData?.categories || []);
   const [newCategory, setNewCategory] = useState("");
@@ -58,6 +59,7 @@ const StoreForm = ({ initialData = null }) => {
       instaHandle: initialData?.instaHandle || "",
       fbHandle: initialData?.fbHandle || "",
       location: initialData?.location || "",
+      shippingPrice: initialData?.shippingPrice || 0
     },
   });
 
@@ -88,9 +90,12 @@ const StoreForm = ({ initialData = null }) => {
       ? `+91${formData.mobileNumber}`
       : null;
 
+    let shippingPrice = Number(formData.shippingPrice)
+
     const storeData = {
       ...formData,
       mobileNumber,
+      shippingPrice,
       categories,
       ownerId: currentUser?.id,
       url: `${import.meta.env.VITE_PRODUCTION_CLIENT_URL}/store/${formData.slug}`,
@@ -188,25 +193,53 @@ const StoreForm = ({ initialData = null }) => {
           )}
         />
 
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-6 w-full">
+          {/* WhatsApp Number */}
           <FormField
             control={form.control}
             name="mobileNumber"
             render={({ field }) => (
-              <FormItem className="flex-1 flex-row items-center justify-center">
-                <FormLabel>Store Whatss App Number <span className="text-red-600">*</span></FormLabel>
-                <div className="flex-row flex items-center space-x-2 justify-center">
+              <FormItem>
+                <FormLabel>
+                  Store WhatsApp Number <span className="text-red-600">*</span>
+                </FormLabel>
+                <div className="flex items-center gap-2">
                   <Input placeholder="+91" className="w-14" value="+91" disabled />
                   <FormControl>
-                    <Input placeholder="Enter WhatsApp Number" {...field} autoComplete="off" />
+                    <Input
+                      placeholder="Enter WhatsApp Number"
+                      {...field}
+                      autoComplete="off"
+                      className="flex-1"
+                    />
                   </FormControl>
                 </div>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
 
+          {/* Shipping Price */}
+          <FormField
+            control={form.control}
+            name="shippingPrice"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Shipping Price <span className="text-red-600">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter Shipping Price"
+                    {...field}
+                    autoComplete="off"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}

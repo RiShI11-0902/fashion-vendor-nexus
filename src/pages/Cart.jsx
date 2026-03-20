@@ -210,14 +210,18 @@ const Cart = () => {
                       {items.map((item) => (
                         <div key={`${item.productId}-${item.storeSlug}`} className="flex justify-between">
                           <span>{item.name} x{item.quantity}</span>
-                          <span className="flex flow-row space-x-1"><IndianRupee className="w-5" /><p>{(item.price * item.quantity).toFixed(2)}</p></span>
+                          <span className="flex flow-row space-x-1"><IndianRupee className="w-4" /><p>{(item.price * item.quantity).toFixed(2)}</p></span>
                         </div>
                       ))}
                     </div>
+                     <div className="flex justify-between">
+                        <span>Shippping Price</span>
+                        <span className="flex flex-row items-center space-x-2"><IndianRupee className="w-4" />{store?.shippingPrice}</span>
+                      </div>
                     <div className="border-t pt-4">
                       <div className="flex justify-between font-semibold text-lg">
                         <span>Total</span>
-                        <span className="flex flex-row items-center space-x-2"><IndianRupee className="w-5" />{getTotalPrice().toFixed(2)}</span>
+                        <span className="flex flex-row items-center space-x-2"><IndianRupee className="w-4" />{Number(getTotalPrice().toFixed(2)) + Number(store?.shippingPrice)}</span>
                       </div>
                     </div>
 
@@ -322,11 +326,17 @@ const Cart = () => {
                         <IndianRupee className="w-4 lg:w-5" />{getTotalPrice().toFixed(2)}
                       </span>
                     </div>
+                    <div className="flex justify-between">
+                      <span>Shipping Charges</span>
+                      <span className="flex items-center gap-1">
+                        <IndianRupee className="w-4 lg:w-5" />{store?.shippingPrice}
+                      </span>
+                    </div>
                     <div className="border-t pt-2">
                       <div className="flex justify-between font-semibold text-base lg:text-lg">
                         <span>Total</span>
                         <span className="flex items-center gap-1">
-                          <IndianRupee className="w-4 lg:w-5" />{getTotalPrice().toFixed(2)}
+                          <IndianRupee className="w-4 lg:w-5" />{Number(getTotalPrice().toFixed(2)) + Number(store?.shippingPrice)}
                         </span>
                       </div>
                     </div>
