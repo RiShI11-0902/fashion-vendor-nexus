@@ -1,4 +1,10 @@
 import { clsx, type ClassValue } from "clsx";
+
+declare global {
+  interface Window {
+    Razorpay: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
 import { twMerge } from "tailwind-merge";
 import axios from "axios";
 import { toast } from "sonner";
