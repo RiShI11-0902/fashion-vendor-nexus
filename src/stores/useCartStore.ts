@@ -1,4 +1,3 @@
-
 import { create } from "zustand";
 import { toast } from "sonner";
 import axios from "axios";
@@ -13,18 +12,22 @@ interface CartItem {
   storeName: string;
   storeSlug: string;
   quantity: number;
-  size: string
+  size: string;
 }
 
 interface CartState {
   items: CartItem[];
   addToCart: (product: any, store: any) => void;
   removeFromCart: (productId: string, storeSlug: string) => void;
-  updateQuantity: (productId: string, storeSlug: string, quantity: number) => void;
+  updateQuantity: (
+    productId: string,
+    storeSlug: string,
+    quantity: number,
+  ) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
-  validateCart:()=>Promise<any>;
+  validateCart: () => Promise<any>;
 }
 
 const API_URL = import.meta.env.VITE_DEV_BACKEND_URL; // adjust if different
@@ -39,23 +42,23 @@ export const useCartStore = create<CartState>((set, get) => ({
       return;
     }
 
-    const existingItem = get().items.find(item => 
-      item.productId === product.id && item.storeSlug === store.slug
+    const existingItem = get().items.find(
+      (item) => item.productId === product.id && item.storeSlug === store.slug,
     );
-    
+
     if (existingItem) {
       // Check if adding one more would exceed inventory
       if (existingItem.quantity >= product.inventory) {
         toast.error(`Only ${product.inventory} items available in stock`);
         return;
       }
-      
-      set(state => ({
-        items: state.items.map(item =>
+
+      set((state) => ({
+        items: state.items.map((item) =>
           item.productId === product.id && item.storeSlug === store.slug
             ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
+            : item,
+        ),
       }));
       toast.success(`${product.name} quantity updated in cart`);
     } else {
@@ -69,23 +72,24 @@ export const useCartStore = create<CartState>((set, get) => ({
         storeName: store.name,
         storeSlug: store.slug,
         quantity: 1,
-        size:product.size
+        size: product.size,
       };
-      
-      set(state => ({
-        items: [...state.items, newItem]
+
+      set((state) => ({
+        items: [...state.items, newItem],
       }));
       toast.success(`${product.name} added to cart`);
     }
-    
-    localStorage.setItem("cart", JSON.stringify(get().items));
+    const key = `cart_${store.slug}`;
+    localStorage.setItem(key, JSON.stringify(get().items));
   },
 
   removeFromCart: (productId, storeSlug) => {
-    set(state => ({
-      items: state.items.filter(item => 
-        !(item.productId === productId && item.storeSlug === storeSlug)
-      )
+    set((state) => ({
+      items: state.items.filter(
+        (item) =>
+          !(item.productId === productId && item.storeSlug === storeSlug),
+      ),
     }));
     localStorage.setItem("cart", JSON.stringify(get().items));
     toast.success("Item removed from cart");
@@ -96,13 +100,13 @@ export const useCartStore = create<CartState>((set, get) => ({
       get().removeFromCart(productId, storeSlug);
       return;
     }
-    
-    set(state => ({
-      items: state.items.map(item =>
+
+    set((state) => ({
+      items: state.items.map((item) =>
         item.productId === productId && item.storeSlug === storeSlug
           ? { ...item, quantity }
-          : item
-      )
+          : item,
+      ),
     }));
     localStorage.setItem("cart", JSON.stringify(get().items));
   },
@@ -118,7 +122,10 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
 
   getTotalPrice: () => {
-    return get().items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return get().items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0,
+    );
   },
 
   validateCart: async () => {
@@ -126,14 +133,16 @@ export const useCartStore = create<CartState>((set, get) => ({
     if (items.length === 0) return;
 
     try {
-      const res = await axios.post(`${API_URL}/api/cart/validate`, {items})
+      const res = await axios.post(`${API_URL}/api/cart/validate`, { items });
 
       const data = res.data;
 
       if (!data.success) {
         set({ items: data.updatedCart });
         localStorage.setItem("cart", JSON.stringify(data.updatedCart));
-        toast.error(data.message || "Some items were updated due to stock changes.");
+        toast.error(
+          data.message || "Some items were updated due to stock changes.",
+        );
       } else {
         // sync items anyway in case price changed
         set({ items: data.updatedCart });
@@ -145,16 +154,19 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
+  initializeCart: (slug) => {
+    if (!slug) return;
+
+    const storedCart = localStorage.getItem(`cart_${slug}`);
+
+    if (storedCart) {
+      useCartStore.setState({
+        items: JSON.parse(storedCart),
+      });
+    } else {
+      useCartStore.setState({ items: [] });
+    }
+  },
 }));
 
 // Initialize cart from localStorage
-const initializeCart = () => {
-  const storedCart = localStorage.getItem("cart");
-  if (storedCart) {
-    useCartStore.setState({
-      items: JSON.parse(storedCart)
-    });
-  }
-};
-
-initializeCart();

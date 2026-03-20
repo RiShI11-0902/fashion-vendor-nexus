@@ -56,7 +56,7 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
               )}
             </div>
 
-            {store?.id == product?.storeId && (
+            {currentUser && store?.id == product?.storeId && (
               <Link to={`/dashboard/products/edit/${product.id}`}>
                 <Button size="sm">Edit</Button>
               </Link>

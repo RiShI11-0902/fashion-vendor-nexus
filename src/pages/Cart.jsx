@@ -17,7 +17,7 @@ import { toast } from "sonner";
 
 const Cart = () => {
   const { slug } = useParams();
-  const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart, validateCart } = useCartStore();
+  const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart, validateCart, initializeCart } = useCartStore();
   const { getStoreBySlug } = useStoreManager();
   const { createOrder } = useOrdersStore();
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ const Cart = () => {
   useEffect(() => {
     const getbySlug = async () => {
       if (slug) {
+        initializeCart(slug)
         const storeData = await getStoreBySlug(slug);
         setStore(storeData);
         validateCart()
@@ -60,7 +61,7 @@ const Cart = () => {
 
   const handlePlaceOrder = async () => {
     // Validation logic here
-    setLoading(true)
+
     const isValid = Object.entries(customerInfo)
       .filter(([key]) => key !== "alternateMobileNumber") // ignore optional
       .every(([_, value]) => value.trim() !== "");
@@ -74,6 +75,8 @@ const Cart = () => {
     if (!storeId) return;
 
     // Create order with cart items
+    setLoading(true)
+
     const orderItems = items.map(item => ({
       id: item.id,
       productId: item.productId,
@@ -214,10 +217,15 @@ const Cart = () => {
                         </div>
                       ))}
                     </div>
-                     <div className="flex justify-between">
-                        <span>Shippping Price</span>
-                        <span className="flex flex-row items-center space-x-2"><IndianRupee className="w-4" />{store?.shippingPrice}</span>
-                      </div>
+                    <div className="flex justify-between">
+                      {
+                        store?.shippingPrice > 0 &&  <div>
+                          <span>Shippping Price</span>
+                      <span className="flex flex-row items-center space-x-2"><IndianRupee className="w-4" />{store?.shippingPrice}</span>
+                        </div>
+                      }
+                     
+                    </div>
                     <div className="border-t pt-4">
                       <div className="flex justify-between font-semibold text-lg">
                         <span>Total</span>
