@@ -11,9 +11,9 @@ const ProductCard = ({ product, storeSlug, className = "" }) => {
   const { price: discountedPrice, discount } = getDiscountedPrice(product.id, product.price);
   const { currentUser } = useAuthStore();
   const { getUserStores } = useStoreManager()
+  const store = getUserStores(currentUser?.id)
 
   const hasDiscount = discount && discountedPrice < product.price;
-  const store = getUserStores(currentUser.id)
   return (
     <Link
       to={`/store/${storeSlug}/product/${product.id}`}
