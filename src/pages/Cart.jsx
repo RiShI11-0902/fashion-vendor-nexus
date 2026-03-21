@@ -101,10 +101,10 @@ const Cart = () => {
       storeId: storeId,
     };
 
+    const newOrder = await createOrder(orderData);
     if (store?.mobileNumber) {
       sendOrderToWhatsApp(newOrder, store.mobileNumber);
     }
-    const newOrder = await createOrder(orderData);
     clearCart();
     setShowCheckout(false);
     setLoading(false)
