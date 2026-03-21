@@ -155,6 +155,7 @@ const ProductForm = ({ initialData = null }) => {
         }}
         product={qrProduct}
         storeSlug={qrStoreSlug}
+        storeLogo={qrStoreLogo}
       />
     </>
   );
