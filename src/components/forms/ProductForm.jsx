@@ -39,6 +39,10 @@ const ProductForm = ({ initialData = null }) => {
   const { currentUser } = useAuthStore();
   const { getUserStores, createProduct, updateProduct } = useStoreManager();
   const [userStores, setUserStores] = useState([]);
+  const [qrProduct, setQrProduct] = useState(null);
+  const [qrStoreSlug, setQrStoreSlug] = useState("");
+  const [showQR, setShowQR] = useState(false);
+
 
   const fetchStores = async () => {
     const storesData = await getUserStores(currentUser.id);
