@@ -8,7 +8,7 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { Button } from "../../components/ui/button";
 import QRCodeModal from "./QRCodeModal";
 
-const ProductCard = ({ product, storeSlug, className = "" }) => {
+const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
   const { getDiscountedPrice } = useStoreManager();
   const { price: discountedPrice, discount } = getDiscountedPrice(product.id, product.price);
   const { currentUser } = useAuthStore();
