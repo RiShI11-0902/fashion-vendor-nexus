@@ -103,6 +103,7 @@ const ProductForm = ({ initialData = null }) => {
       // Show QR modal after successful creation
       setQrProduct(created || productData);
       setQrStoreSlug(selectedStore?.slug || "");
+      setQrStoreLogo(selectedStore?.logo || selectedStore?.imageUrl || "");
       setShowQR(true);
     }
   };
