@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreManager } from "../../stores/useStoreManager";
@@ -12,6 +11,7 @@ import StoreSelector from "./product/StoreSelector";
 import BasicProductDetails from "./product/BasicProductDetails";
 import AdditionalDetails from "./product/AdditionalDetails";
 import { toast } from "sonner";
+import QRCodeModal from "../products/QRCodeModal";
 
 const productSchema = z.object({
   name: z.string().min(2, "Product name must be at least 2 characters"),
