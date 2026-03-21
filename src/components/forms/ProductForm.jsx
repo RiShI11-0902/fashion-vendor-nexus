@@ -42,6 +42,7 @@ const ProductForm = ({ initialData = null }) => {
   const [userStores, setUserStores] = useState([]);
   const [qrProduct, setQrProduct] = useState(null);
   const [qrStoreSlug, setQrStoreSlug] = useState("");
+  const [qrStoreLogo, setQrStoreLogo] = useState("");
   const [showQR, setShowQR] = useState(false);
 
   const fetchStores = async () => {
