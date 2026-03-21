@@ -65,10 +65,10 @@ const EditProduct = () => {
     <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-display font-bold mb-2">Edit Product</h1>
-        <p className="text-gray-600">Update your product details</p>
+        <p className="text-muted-foreground">Update your product details</p>
       </div>
 
-      <div className="bg-white p-6 rounded-lg border">
+      <div className="bg-card p-6 rounded-lg border border-border">
         <ProductForm initialData={product} />
       </div>
     </DashboardLayout>
