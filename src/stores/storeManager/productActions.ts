@@ -33,18 +33,20 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
       const res = await axios.post(`${API_URL}/api/products`, product, {
         withCredentials: true,
         headers: {
-          Authorization: `Bearer ${token}`, // middleware reads this
+          Authorization: `Bearer ${token}`,
         },
       });
       set((state: StoreState) => ({
         products: [...state.products, res.data],
       }));
       toast.success(`Product "${product.name}" created successfully`);
+      return res.data; // return created product for QR generation
     } catch (error: any) {
       console.error("Error creating product:", error);
       toast.error(error.response?.data?.error || "Failed to create product");
     }
   },
+
 
   updateProduct: async (productId, updates) => {
     try {
