@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStoreManager } from "../../stores/useStoreManager";
@@ -27,11 +28,11 @@ const productSchema = z.object({
       message: "Inventory must be a valid number",
     }),
   discount: z.string()
-    .transform(val => (val === "" ? "0" : val)) // handle empty string
+    .transform(val => (val === "" ? "0" : val))
     .refine(val => !isNaN(Number(val)) && Number(val) >= 0, {
       message: "Discount must be a valid number",
     }),
-  sizes: z.array(z.string()).optional(),  // 👈 array of sizes
+  sizes: z.array(z.string()).optional(),
 });
 
 const ProductForm = ({ initialData = null }) => {
@@ -43,15 +44,14 @@ const ProductForm = ({ initialData = null }) => {
   const [qrStoreSlug, setQrStoreSlug] = useState("");
   const [showQR, setShowQR] = useState(false);
 
-
   const fetchStores = async () => {
     const storesData = await getUserStores(currentUser.id);
     setUserStores(storesData);
-  }
+  };
 
   useEffect(() => {
     if (currentUser) {
-      fetchStores()
+      fetchStores();
     }
   }, [currentUser, getUserStores]);
 
@@ -66,7 +66,7 @@ const ProductForm = ({ initialData = null }) => {
       storeId: initialData?.storeId || "",
       inventory: initialData?.inventory?.toString() || "1",
       discount: initialData?.discount?.toString() || "0",
-      sizes: initialData?.sizes || [],  // 👈 default empty array
+      sizes: initialData?.sizes || [],
     },
   });
 
@@ -74,36 +74,43 @@ const ProductForm = ({ initialData = null }) => {
     if (!initialData && userStores.length > 0 && !form.getValues("storeId")) {
       form.setValue("storeId", userStores[0].id);
     }
-
   }, [userStores, form, initialData]);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const productData = {
       ...data,
       price: Number(data.price),
       inventory: Number(data.inventory),
       discount: Number(data.discount) || 0,
-      sizes: data.sizes || [],   // ensure array exists
+      sizes: data.sizes || [],
     };
 
-    const requiredFields = ["name", "price", "inventory", "description", "image", "category"
-    ];
+    const requiredFields = ["name", "price", "inventory", "description", "image", "category"];
 
     for (let field of requiredFields) {
       if (!productData[field] || productData[field].toString().trim() === "") {
-        toast.error(`Please enter ${field}`)
+        toast.error(`Please enter ${field}`);
         return;
       }
     }
 
     if (initialData) {
-      updateProduct(initialData.id, productData);
+      await updateProduct(initialData.id, productData);
       navigate("/dashboard/products");
     } else {
-      createProduct(productData);
-      navigate("/dashboard/products");
+      const selectedStore = userStores.find(s => s.id === productData.storeId);
+      const created = await createProduct(productData);
+      // Show QR modal after successful creation
+      setQrProduct(created || productData);
+      setQrStoreSlug(selectedStore?.slug || "");
+      setShowQR(true);
     }
   };
+
+  const onError = (errors) => {
+    console.error("Form submission errors:", errors);
+  };
+
   if (userStores.length === 0) {
     return (
       <div className="text-center py-12">
@@ -115,32 +122,39 @@ const ProductForm = ({ initialData = null }) => {
     );
   }
 
- const onError = (errors) => {
-    console.error("Form submission errors:", errors);
-    // You can iterate through errors to display them in your UI
-    // For example, errors.email?.message will give you the error message for the email field
-  };
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit,onError)} className="space-y-6">
-        <StoreSelector form={form} stores={userStores} />
-        <BasicProductDetails form={form} />
-        <AdditionalDetails form={form} catgories={userStores[0].categories} />
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-6">
+          <StoreSelector form={form} stores={userStores} />
+          <BasicProductDetails form={form} />
+          <AdditionalDetails form={form} catgories={userStores[0].categories} />
 
-        <div className="flex justify-end space-x-4 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate("/dashboard/products")}
-          >
-            Cancel
-          </Button>
-          <Button type="submit">
-            {initialData ? "Update Product" : "Add Product"}
-          </Button>
-        </div>
-      </form>
-    </Form>
+          <div className="flex justify-end space-x-4 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/dashboard/products")}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">
+              {initialData ? "Update Product" : "Add Product"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+
+      <QRCodeModal
+        open={showQR}
+        onClose={() => {
+          setShowQR(false);
+          navigate("/dashboard/products");
+        }}
+        product={qrProduct}
+        storeSlug={qrStoreSlug}
+      />
+    </>
   );
 };
 
