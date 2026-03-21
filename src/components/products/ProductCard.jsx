@@ -96,6 +96,7 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
         onClose={() => setShowQR(false)}
         product={product}
         storeSlug={storeSlug}
+        storeLogo={storeLogo}
       />
     </>
   );
