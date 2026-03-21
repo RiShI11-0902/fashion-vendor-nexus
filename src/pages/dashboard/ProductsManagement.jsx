@@ -155,6 +155,7 @@ const ProductsManagement = () => {
                 product={product}
                 isAdmin={true}
                 storeSlug={store?.slug || ""}
+                storeLogo={store?.logo || store?.imageUrl || ""}
               />
             );
           })}
