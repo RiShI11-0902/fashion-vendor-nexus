@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { Download, X, QrCode, ExternalLink } from "lucide-react";
+import { Download, QrCode, ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 
-const QRCodeModal = ({ open, onClose, product, storeSlug }) => {
+const QRCodeModal = ({ open, onClose, product, storeSlug, storeLogo }) => {
   const canvasRef = useRef(null);
 
   const productUrl = `${window.location.origin}/store/${storeSlug}/product/${product?.id}`;
@@ -18,8 +18,8 @@ const QRCodeModal = ({ open, onClose, product, storeSlug }) => {
     const canvas = canvasRef.current?.querySelector("canvas");
     if (!canvas) return;
 
-    const paddedCanvas = document.createElement("canvas");
     const padding = 24;
+    const paddedCanvas = document.createElement("canvas");
     paddedCanvas.width = canvas.width + padding * 2;
     paddedCanvas.height = canvas.height + padding * 2;
 
@@ -52,10 +52,7 @@ const QRCodeModal = ({ open, onClose, product, storeSlug }) => {
           </p>
 
           {/* QR Code */}
-          <div
-            ref={canvasRef}
-            className="p-4 bg-white rounded-xl shadow-lg"
-          >
+          <div ref={canvasRef} className="p-4 bg-white rounded-xl shadow-lg">
             <QRCodeCanvas
               value={productUrl}
               size={200}
@@ -63,12 +60,26 @@ const QRCodeModal = ({ open, onClose, product, storeSlug }) => {
               fgColor="#0a0a0f"
               level="H"
               includeMargin={false}
-              imageSettings={{
-                src: "",
-                excavate: false,
-              }}
+              imageSettings={
+                storeLogo
+                  ? {
+                      src: storeLogo,
+                      height: 40,
+                      width: 40,
+                      excavate: true,
+                    }
+                  : undefined
+              }
             />
           </div>
+
+          {/* Logo attribution */}
+          {storeLogo && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+              Store logo embedded in QR
+            </p>
+          )}
 
           {/* URL preview */}
           <a

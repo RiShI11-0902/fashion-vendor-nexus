@@ -42,6 +42,7 @@ const ProductForm = ({ initialData = null }) => {
   const [userStores, setUserStores] = useState([]);
   const [qrProduct, setQrProduct] = useState(null);
   const [qrStoreSlug, setQrStoreSlug] = useState("");
+  const [qrStoreLogo, setQrStoreLogo] = useState("");
   const [showQR, setShowQR] = useState(false);
 
   const fetchStores = async () => {
@@ -103,6 +104,7 @@ const ProductForm = ({ initialData = null }) => {
       // Show QR modal after successful creation
       setQrProduct(created || productData);
       setQrStoreSlug(selectedStore?.slug || "");
+      setQrStoreLogo(selectedStore?.logo || selectedStore?.imageUrl || "");
       setShowQR(true);
     }
   };
@@ -153,6 +155,7 @@ const ProductForm = ({ initialData = null }) => {
         }}
         product={qrProduct}
         storeSlug={qrStoreSlug}
+        storeLogo={qrStoreLogo}
       />
     </>
   );
