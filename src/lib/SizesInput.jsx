@@ -21,20 +21,20 @@ export const SizesInput = ({ form }) => {
 
   return (
     <div>
-      <label className="block font-medium mb-2">Sizes</label>
+      <label className="block text-sm font-medium text-foreground mb-2">Sizes</label>
       {sizes.map((size, index) => (
         <div key={index} className="flex items-center mb-2">
           <Input
             type="text"
             value={size}
             onChange={(e) => updateSize(index, e.target.value)}
-            className="border rounded p-2 flex-1"
+            className="flex-1"
             placeholder="Enter size (e.g., S, M, L, 28, 29)"
           />
           <button
             type="button"
             onClick={() => removeSize(index)}
-            className="ml-2 text-red-500"
+            className="ml-2 text-destructive hover:text-destructive/80 transition-colors"
           >
             ✕
           </button>
@@ -43,7 +43,7 @@ export const SizesInput = ({ form }) => {
       <button
         type="button"
         onClick={addSize}
-        className="text-blue-500 mt-2"
+        className="text-primary hover:text-primary/80 text-sm mt-2 transition-colors"
       >
         + Add Size
       </button>
