@@ -10,7 +10,7 @@ const CreateProduct = () => {
         <p className="text-gray-600">Add a new fashion product to your store</p>
       </div>
       
-      <div className="bg-white p-6 rounded-lg border">
+      <div className="bg-card p-6 rounded-lg border border-border">
         <ProductForm />
       </div>
     </DashboardLayout>
