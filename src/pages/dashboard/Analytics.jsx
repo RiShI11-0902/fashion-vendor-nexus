@@ -171,7 +171,7 @@ const Analytics = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold">Analytics Dashboard</h1>
-            <p className="text-gray-600">Detailed insights into your store performance</p>
+            <p className="text-muted-foreground">Detailed insights into your store performance</p>
           </div>
         </div>
 
