@@ -322,7 +322,7 @@ const OrdersManagement = () => {
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">Total</p>
+                    <p className="text-sm text-muted-foreground">Total</p>
                     <p className="flex flex-row space-x-2 items-center text-lg">
                       <IndianRupee className="w-4" />
                       {selectedOrder.totalAmount.toFixed(2)}
