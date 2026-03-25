@@ -248,7 +248,7 @@ const OrdersManagement = () => {
           <DialogContent className="max-w-2xl p-6">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold">Order Details</DialogTitle>
-              <DialogDescription className="text-gray-500">
+              <DialogDescription className="text-muted-foreground">
                 Complete information for order #{selectedOrder?.orderNumber}
               </DialogDescription>
             </DialogHeader>

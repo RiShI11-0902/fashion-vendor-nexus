@@ -207,7 +207,7 @@ const Analytics = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatNumber(analyticsData.totalProducts)}</div>
-              <p className="text-xs text-red-700 ">
+              <p className="text-xs text-destructive">
                 {formatNumber(analyticsData.lowStockCount)} low stock
               </p>
             </CardContent>
