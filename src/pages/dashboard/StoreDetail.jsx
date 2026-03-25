@@ -153,8 +153,8 @@ const StoreDetail = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div>
-          <div className="bg-white rounded-lg border overflow-hidden">
-            <div className="h-64 bg-gray-100">
+          <div className=" rounded-lg border overflow-hidden">
+            <div className="h-64 ">
               {store?.banner ? (
                 <img
                   src={store?.banner}
@@ -173,7 +173,7 @@ const StoreDetail = () => {
                 <div>
                   <p className="text-sm text-gray-500">Store URL</p>
                   <div className="flex items-center">
-                    <code className="bg-gray-100 px-2 py-1 rounded text-sm flex-grow">
+                    <code className=" px-2 py-1 rounded text-sm flex-grow">
                       {store?.url}
                     </code>
                     <Button
@@ -212,8 +212,8 @@ const StoreDetail = () => {
           </div>
 
           {products.length === 0 ? (
-            <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed">
-              <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+            <div className="text-center py-8  rounded-lg border border-dashed">
+              <Package className="h-12 w-12 mx-auto text-gray-900 mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Products Yet</h3>
               <p className="text-gray-600 mb-6 max-w-xs mx-auto">
                 Start adding products to your store to showcase your fashion items.
@@ -227,9 +227,9 @@ const StoreDetail = () => {
           ) : (
             <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
               {products?.map(product => (
-                <div key={product.id} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                <div key={product.id} className="flex items-center justify-between  p-4 rounded-lg">
                   <div className="flex items-center">
-                    <div className="h-16 w-16 bg-gray-100 rounded mr-4 overflow-hidden">
+                    <div className="h-16 w-16  rounded mr-4 overflow-hidden">
                       {product.image ? (
                         <img
                           src={product.image}
@@ -237,14 +237,14 @@ const StoreDetail = () => {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="flex items-center justify-center h-full text-gray-400">
+                        <div className="flex items-center justify-center h-full text-gray-100">
                           <Package className="h-8 w-8" />
                         </div>
                       )}
                     </div>
                     <div>
                       <h4 className="font-semibold">{product.name}</h4>
-                      <p className="text-sm text-gray-600 flex flex-row space-x-2 items-center"><IndianRupee className="w-[0.9rem]" />{product.price}</p>
+                      <p className="text-sm text-gray-100 flex flex-row space-x-2 items-center"><IndianRupee className="w-[0.9rem]" />{product.price}</p>
                     </div>
                   </div>
                   <div className="flex space-x-2">

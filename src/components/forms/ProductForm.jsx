@@ -44,6 +44,7 @@ const ProductForm = ({ initialData = null }) => {
   const [qrStoreSlug, setQrStoreSlug] = useState("");
   const [qrStoreLogo, setQrStoreLogo] = useState("");
   const [showQR, setShowQR] = useState(false);
+  
 
   const fetchStores = async () => {
     const storesData = await getUserStores(currentUser.id);
@@ -103,7 +104,7 @@ const ProductForm = ({ initialData = null }) => {
       const created = await createProduct(productData);
       // Show QR modal after successful creation
       setQrProduct(created || productData);
-      setQrStoreSlug(selectedStore?.slug || "");
+      setQrStoreSlug(selectedStore?.slug || "");      
       setQrStoreLogo(selectedStore?.logo || selectedStore?.imageUrl || "");
       setShowQR(true);
     }

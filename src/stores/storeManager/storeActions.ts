@@ -76,7 +76,6 @@ export const createStoreActions = (set: any, get: any): StoreActions => ({
   deleteStore: async (storeId) => {
     try {
       const token = localStorage.getItem("token");
-
       await axios.delete(`${API_URL}/api/store/${storeId}`, {
         withCredentials: true,
         headers: {

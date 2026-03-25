@@ -6,12 +6,9 @@ import img2 from "../../assets/img2.png";
 import img3 from "../../assets/img3.png";
 import img4 from "../../assets/img4.png";
 import google from "../../assets/google.png";
+import { handleGoogleLogin } from "../../lib/utils";
 
 const HeroSection = ({ currentUser }) => {
-    const handleGoogleLogin = () => {
-    // setLoading({ isLogin: true, state: true });
-    window.location.href = `${import.meta.env.VITE_DEV_BACKEND_URL}/api/auth/google`;
-  };
   return (
     <section className="relative bg-[#0a0a0f] overflow-hidden min-h-screen flex items-center">
       {/* Gradient orbs */}
@@ -39,7 +36,7 @@ const HeroSection = ({ currentUser }) => {
             </h1>
 
             <p className="text-lg text-gray-400 max-w-xl leading-relaxed">
-              Create a beautiful online catalog in minutes, share it with customers, 
+              Create a beautiful online catalog in minutes, share it with customers,
               receive orders directly on <span className="text-green-400 font-semibold">WhatsApp</span> — then track and analyze everything from your dashboard.
             </p>
 

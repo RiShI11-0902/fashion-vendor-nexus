@@ -67,7 +67,7 @@ const EditStore = () => {
         <p className="text-gray-600">Update your store details</p>
       </div>
 
-      <div className="bg-white p-6 rounded-lg border">
+      <div className=" p-6 rounded-lg border">
         <StoreForm initialData={store} />
       </div>
     </DashboardLayout>

@@ -59,7 +59,7 @@ const StoreForm = ({ initialData = null }) => {
       instaHandle: initialData?.instaHandle || "",
       fbHandle: initialData?.fbHandle || "",
       location: initialData?.location || "",
-      shippingPrice: initialData?.shippingPrice || 0
+      shippingPrice: initialData?.shippingPrice || "0"
     },
   });
 

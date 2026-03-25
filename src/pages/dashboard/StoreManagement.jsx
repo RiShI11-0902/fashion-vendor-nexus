@@ -20,7 +20,6 @@ const StoreManagement = () => {
     const stores = await getUserStores(currentUser.id, true);    
     setUserStore(stores.length > 0 ? stores[0] : null);
     setLoading(false);
-    console.log("Calling");
   };
 
   useEffect(() => {

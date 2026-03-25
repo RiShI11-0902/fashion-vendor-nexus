@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import { toast } from "sonner";
 
 const QRCodeModal = ({ open, onClose, product, storeSlug, storeLogo }) => {
   const canvasRef = useRef(null);
@@ -15,23 +16,17 @@ const QRCodeModal = ({ open, onClose, product, storeSlug, storeLogo }) => {
   const productUrl = `${window.location.origin}/store/${storeSlug}/product/${product?.id}`;
 
   const handleDownload = () => {
-    const canvas = canvasRef.current?.querySelector("canvas");
-    if (!canvas) return;
+    const canvas = canvasRef.current?.querySelector("canvas"); // 👈 IMPORTANT
+    if (!canvas) {
+      toast.error("Something went wrong! Please try again later")
+      return;
+    }
 
-    const padding = 24;
-    const paddedCanvas = document.createElement("canvas");
-    paddedCanvas.width = canvas.width + padding * 2;
-    paddedCanvas.height = canvas.height + padding * 2;
+    const url = canvas.toDataURL("image/png");
 
-    const ctx = paddedCanvas.getContext("2d");
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
-    ctx.drawImage(canvas, padding, padding);
-
-    const url = paddedCanvas.toDataURL("image/png");
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${product?.name?.replace(/\s+/g, "-").toLowerCase() || "product"}-qr.png`;
+    a.download = `${product.name}-qr.png`;
     a.click();
   };
 
@@ -54,6 +49,7 @@ const QRCodeModal = ({ open, onClose, product, storeSlug, storeLogo }) => {
           {/* QR Code */}
           <div ref={canvasRef} className="p-4 bg-white rounded-xl shadow-lg">
             <QRCodeCanvas
+              id="canvas"
               value={productUrl}
               size={200}
               bgColor="#ffffff"
@@ -63,11 +59,12 @@ const QRCodeModal = ({ open, onClose, product, storeSlug, storeLogo }) => {
               imageSettings={
                 storeLogo
                   ? {
-                      src: storeLogo,
-                      height: 40,
-                      width: 40,
-                      excavate: true,
-                    }
+                    src: storeLogo,
+                    height: 40,
+                    width: 40,
+                    excavate: true,
+                    crossOrigin: "anonymous"
+                  }
                   : undefined
               }
             />

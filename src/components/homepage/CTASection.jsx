@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ArrowRight, MessageCircle } from "lucide-react";
+import { handleGoogleLogin } from "../../lib/utils";
 
 const CTASection = ({ currentUser }) => {
   return (
@@ -33,9 +34,9 @@ const CTASection = ({ currentUser }) => {
               size="lg"
               className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold px-10 rounded-xl shadow-2xl shadow-pink-900/30 transition-all text-base"
             >
-              <Link to={currentUser ? "/dashboard/store" : "/signup"}>
+              <Button onClick={handleGoogleLogin}>
                 Create your catalog free <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
+              </Button>
             </Button>
           </div>
 

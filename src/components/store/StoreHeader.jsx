@@ -1,6 +1,4 @@
 const StoreHeader = ({ store }) => {
-  console.log(store.logo);
-
   return (
     <div className="relative h-96 w-full overflow-hidden">
       {/* Background image */}

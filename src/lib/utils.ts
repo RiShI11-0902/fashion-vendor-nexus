@@ -13,6 +13,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const handleGoogleLogin = () => {
+  // setLoading({ isLogin: true, state: true });
+  window.location.href = `${import.meta.env.VITE_DEV_BACKEND_URL}/api/auth/google`;
+};
+
 // utils/whatsapp.ts
 export function sendOrderToWhatsApp(orderData: any, storeNumber: string) {
   // Build order message
@@ -21,7 +26,7 @@ export function sendOrderToWhatsApp(orderData: any, storeNumber: string) {
       (item: any, idx: number) =>
         `${idx + 1}. ${item.name} (x${item.quantity}) - ₹${
           item.price * item.quantity
-        }`
+        }`,
     )
     .join("\n");
 
@@ -64,7 +69,7 @@ export const handlePayment = async (user, onComplete, plan) => {
       toast.error("Please Login First");
       return;
     }
-    if(user.plan){
+    if (user.plan) {
       toast.error("You already have one current subscription active");
       return;
     }
@@ -78,7 +83,7 @@ export const handlePayment = async (user, onComplete, plan) => {
         headers: {
           Authorization: `Bearer ${token}`, // middleware reads this
         },
-      }
+      },
     );
 
     // 2. Get Razorpay key
@@ -90,7 +95,7 @@ export const handlePayment = async (user, onComplete, plan) => {
         headers: {
           Authorization: `Bearer ${token}`, // middleware reads this
         }, // if using cookies for auth
-      }
+      },
     );
 
     // 3. Set up Razorpay options
@@ -132,7 +137,7 @@ export const handlePayment = async (user, onComplete, plan) => {
               headers: {
                 Authorization: `Bearer ${token}`, // middleware reads this
               }, // if using cookies for auth
-            }
+            },
           )
           .then((res) => {
             if (res.data.success) {
@@ -152,7 +157,7 @@ export const handlePayment = async (user, onComplete, plan) => {
   } catch (error) {
     toast.error(
       error?.response?.data?.message ||
-        "Error occurred while creating subscription"
+        "Error occurred while creating subscription",
     );
     throw error;
   } finally {
@@ -178,7 +183,7 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     // 2. Get Razorpay key
@@ -191,7 +196,7 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
         headers: {
           Authorization: `Bearer ${token}`,
         }, // if using cookies for auth
-      }
+      },
     );
 
     // 3. Set up Razorpay options
@@ -232,7 +237,7 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
               headers: {
                 Authorization: `Bearer ${token}`,
               }, // if using cookies for auth
-            }
+            },
           )
           .then((res) => {
             if (res.data.success) {
@@ -253,7 +258,7 @@ export const handleOrder = async (user, setLoading, isOneTime) => {
   } catch (error) {
     toast.error(
       error?.response?.data?.message ||
-        "Error occurred while creating the order"
+        "Error occurred while creating the order",
     );
     setLoading(false);
   }

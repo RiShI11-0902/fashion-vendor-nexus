@@ -166,9 +166,6 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
           },
         }
       );
-
-      console.log(data, "ordersss");
-
       set({ orders: data.orders || [] });
 
       return data;
