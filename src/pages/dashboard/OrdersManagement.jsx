@@ -332,7 +332,7 @@ const OrdersManagement = () => {
 
                 {/* Date */}
                 <div className="flex justify-between items-center">
-                  <p className="text-sm text-gray-500">Placed On</p>
+                  <p className="text-sm text-muted-foreground">Placed On</p>
                   <p className="font-medium">
                     {new Date(selectedOrder.createdAt).toLocaleString()}
                   </p>
