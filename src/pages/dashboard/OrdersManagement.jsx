@@ -177,7 +177,7 @@ const OrdersManagement = () => {
                       <TableCell>
                         <div>
                           <div className="font-medium">{order.customerName}</div>
-                          <div className="text-sm text-gray-600">{order.customerEmail}</div>
+                          <div className="text-sm text-muted-foreground">{order.customerEmail}</div>
                         </div>
                       </TableCell>
                       <TableCell>
