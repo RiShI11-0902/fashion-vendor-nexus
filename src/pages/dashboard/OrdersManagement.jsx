@@ -117,7 +117,7 @@ const OrdersManagement = () => {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-display font-bold">Orders Management</h1>
-          <p className="text-gray-600">Manage orders from your stores</p>
+          <p className="text-muted-foreground">Manage orders from your stores</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
