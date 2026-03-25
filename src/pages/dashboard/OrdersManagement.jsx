@@ -299,9 +299,9 @@ const OrdersManagement = () => {
                 </div>
 
                 {/* Order Status & Total */}
-                <div className="grid grid-cols-2 gap-6 border-b pb-4">
+                <div className="grid grid-cols-2 gap-6 pb-4">
                   <div>
-                    <p className="text-sm text-black mb-1">Update Status</p>
+                    <p className="text-sm text-muted-foreground mb-1">Update Status</p>
                     <Select
                       value={selectedOrder.status}
                       onValueChange={(value) =>
