@@ -151,7 +151,7 @@ const Analytics = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="text-center py-12 text-gray-500">Loading analytics...</div>
+        <div className="text-center py-12 text-muted-foreground">Loading analytics...</div>
       </DashboardLayout>
     );
   }
