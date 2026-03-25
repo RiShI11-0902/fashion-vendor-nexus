@@ -12,7 +12,7 @@ const DashboardHeader = ({ userName,userStore }) => {
           Welcome back, {userName}!
         </h1>
         {
-          userStore.length > 0 && <p className="text-gray-600">
+          userStore.length > 0 && <p className="text-muted-foreground">
           Here's what's happening with your {userStore.name}.
         </p>
         }

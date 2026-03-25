@@ -93,12 +93,12 @@ const OrdersManagement = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "PENDING": return "bg-yellow-100 text-yellow-800";
-      case "CONFIRMED": return "bg-blue-100 text-blue-800";
-      case "SHIPPED": return "bg-purple-100 text-purple-800";
-      case "DELIVERED": return "bg-green-100 text-green-800";
-      case "CANCELLED": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "PENDING": return "bg-yellow-500/20 text-yellow-400";
+      case "CONFIRMED": return "bg-blue-500/20 text-blue-400";
+      case "SHIPPED": return "bg-purple-500/20 text-purple-400";
+      case "DELIVERED": return "bg-green-500/20 text-green-400";
+      case "CANCELLED": return "bg-destructive/20 text-destructive";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
@@ -117,7 +117,7 @@ const OrdersManagement = () => {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-display font-bold">Orders Management</h1>
-          <p className="text-gray-600">Manage orders from your stores</p>
+          <p className="text-muted-foreground">Manage orders from your stores</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -177,7 +177,7 @@ const OrdersManagement = () => {
                       <TableCell>
                         <div>
                           <div className="font-medium">{order.customerName}</div>
-                          <div className="text-sm text-gray-600">{order.customerEmail}</div>
+                          <div className="text-sm text-muted-foreground">{order.customerEmail}</div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -209,7 +209,7 @@ const OrdersManagement = () => {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="p-2 rounded-md hover:bg-gray-100">
+                            <button className="p-2 rounded-md hover:bg-accent">
                               <EllipsisVertical className="h-5 w-5" />
                             </button>
                           </DropdownMenuTrigger>
@@ -248,7 +248,7 @@ const OrdersManagement = () => {
           <DialogContent className="max-w-2xl p-6">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold">Order Details</DialogTitle>
-              <DialogDescription className="text-gray-500">
+              <DialogDescription className="text-muted-foreground">
                 Complete information for order #{selectedOrder?.orderNumber}
               </DialogDescription>
             </DialogHeader>
@@ -256,33 +256,33 @@ const OrdersManagement = () => {
             {selectedOrder && (
               <div className="space-y-6">
                 {/* Customer Info */}
-                <div className="grid grid-cols-2 gap-4 border-b pb-4">
+                <div className="grid grid-cols-2 gap-4 pb-4">
                   <div>
-                    <p className="text-sm text-gray-500">Customer</p>
+                    <p className="text-sm text-muted-foreground">Customer</p>
                     <p className="font-medium">{selectedOrder.customerName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Email</p>
+                    <p className="text-sm text-muted-foreground">Email</p>
                     <p className="font-medium">{selectedOrder.customerEmail}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Mobile Number</p>
+                    <p className="text-sm text-muted-foreground">Mobile Number</p>
                     <p className="font-medium">{selectedOrder.customerMobileNumber}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Address</p>
+                    <p className="text-sm text-muted-foreground">Address</p>
                     <p className="font-medium">{selectedOrder.customerAddress}</p>
                   </div>
                 </div>
 
                 {/* Items */}
-                <div className="border-b pb-4">
-                  <p className="text-sm text-gray-500 mb-2">Items</p>
+                <div className="pb-4">
+                  <p className="text-sm text-muted-foreground mb-2">Items</p>
                   <ul className="space-y-1 text-sm">
                     {selectedOrder?.items?.map((item, idx) => (
                       <li
                         key={idx}
-                        className="flex justify-between rounded-md bg-gray-50 px-3 py-2"
+                        className="flex justify-between rounded-md bg-accent px-3 py-2"
                       >
                         <span>
                           {item.name} × {item.quantity}
@@ -299,9 +299,9 @@ const OrdersManagement = () => {
                 </div>
 
                 {/* Order Status & Total */}
-                <div className="grid grid-cols-2 gap-6 border-b pb-4">
+                <div className="grid grid-cols-2 gap-6 pb-4">
                   <div>
-                    <p className="text-sm text-black mb-1">Update Status</p>
+                    <p className="text-sm text-muted-foreground mb-1">Update Status</p>
                     <Select
                       value={selectedOrder.status}
                       onValueChange={(value) =>
@@ -322,7 +322,7 @@ const OrdersManagement = () => {
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">Total</p>
+                    <p className="text-sm text-muted-foreground">Total</p>
                     <p className="flex flex-row space-x-2 items-center text-lg">
                       <IndianRupee className="w-4" />
                       {selectedOrder.totalAmount.toFixed(2)}
@@ -332,7 +332,7 @@ const OrdersManagement = () => {
 
                 {/* Date */}
                 <div className="flex justify-between items-center">
-                  <p className="text-sm text-gray-500">Placed On</p>
+                  <p className="text-sm text-muted-foreground">Placed On</p>
                   <p className="font-medium">
                     {new Date(selectedOrder.createdAt).toLocaleString()}
                   </p>

@@ -79,7 +79,7 @@ const StoreManagement = () => {
                     <img
                       src={userStore.logo}
                       alt={userStore.name}
-                      className="w-16 h-16 rounded-lg object-cover border"
+                      className="w-16 h-16 rounded-lg object-cover"
                     />
                   )}
                   <div>

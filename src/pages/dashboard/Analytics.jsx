@@ -151,7 +151,7 @@ const Analytics = () => {
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="text-center py-12 text-gray-500">Loading analytics...</div>
+        <div className="text-center py-12 text-muted-foreground">Loading analytics...</div>
       </DashboardLayout>
     );
   }
@@ -171,7 +171,7 @@ const Analytics = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold">Analytics Dashboard</h1>
-            <p className="text-gray-600">Detailed insights into your store performance</p>
+            <p className="text-muted-foreground">Detailed insights into your store performance</p>
           </div>
         </div>
 
@@ -207,7 +207,7 @@ const Analytics = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatNumber(analyticsData.totalProducts)}</div>
-              <p className="text-xs text-red-700 ">
+              <p className="text-xs text-destructive">
                 {formatNumber(analyticsData.lowStockCount)} low stock
               </p>
             </CardContent>
