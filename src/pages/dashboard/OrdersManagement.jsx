@@ -256,7 +256,7 @@ const OrdersManagement = () => {
             {selectedOrder && (
               <div className="space-y-6">
                 {/* Customer Info */}
-                <div className="grid grid-cols-2 gap-4 border-b pb-4">
+                <div className="grid grid-cols-2 gap-4 pb-4">
                   <div>
                     <p className="text-sm text-gray-500">Customer</p>
                     <p className="font-medium">{selectedOrder.customerName}</p>
