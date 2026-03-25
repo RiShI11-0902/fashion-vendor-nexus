@@ -276,13 +276,13 @@ const OrdersManagement = () => {
                 </div>
 
                 {/* Items */}
-                <div className="border-b pb-4">
-                  <p className="text-sm text-gray-500 mb-2">Items</p>
+                <div className="pb-4">
+                  <p className="text-sm text-muted-foreground mb-2">Items</p>
                   <ul className="space-y-1 text-sm">
                     {selectedOrder?.items?.map((item, idx) => (
                       <li
                         key={idx}
-                        className="flex justify-between rounded-md bg-gray-50 px-3 py-2"
+                        className="flex justify-between rounded-md bg-accent px-3 py-2"
                       >
                         <span>
                           {item.name} × {item.quantity}
