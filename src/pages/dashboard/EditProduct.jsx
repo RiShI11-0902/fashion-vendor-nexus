@@ -68,7 +68,7 @@ const EditProduct = () => {
         <p className="text-muted-foreground">Update your product details</p>
       </div>
 
-      <div className="bg-card p-6 rounded-lg border border-border">
+      <div className="bg-card p-6 rounded-lg">
         <ProductForm initialData={product} />
       </div>
     </DashboardLayout>

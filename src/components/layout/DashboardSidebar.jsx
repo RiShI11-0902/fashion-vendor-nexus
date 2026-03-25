@@ -101,7 +101,7 @@ const DashboardSidebar = () => {
   return (
     <Sidebar
       variant="sidebar"
-      className="border-r bg-background"
+      className="border-0 bg-background"
       collapsible="icon"
     >
       <SidebarContent className="bg-background">
