@@ -59,7 +59,7 @@ const ProductsManagement = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-display font-bold mb-2">Your Products</h1>
-          <p className="text-gray-600">Manage your fashion products across all stores</p>
+          <p className="text-muted-foreground">Manage your fashion products across all stores</p>
         </div>
         <Button asChild>
           <Link to="/dashboard/products/create">
