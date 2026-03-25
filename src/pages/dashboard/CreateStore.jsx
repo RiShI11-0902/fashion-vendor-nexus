@@ -10,7 +10,7 @@ const CreateStore = () => {
         <p className="text-gray-600">Set up your fashion brand's online store</p>
       </div>
       
-      <div className="bg-white p-6 rounded-lg border">
+      <div className="bg-card p-6 rounded-lg">
         <StoreForm />
       </div>
     </DashboardLayout>
