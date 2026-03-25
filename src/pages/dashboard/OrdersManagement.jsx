@@ -209,7 +209,7 @@ const OrdersManagement = () => {
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="p-2 rounded-md hover:bg-gray-100">
+                            <button className="p-2 rounded-md hover:bg-accent">
                               <EllipsisVertical className="h-5 w-5" />
                             </button>
                           </DropdownMenuTrigger>
