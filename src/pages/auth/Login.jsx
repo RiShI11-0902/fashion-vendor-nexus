@@ -105,9 +105,9 @@ const Login = () => {
             </form>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-gold hover:underline font-medium">
+              <Link to="/signup" className="text-primary hover:underline font-medium">
                 Sign up
               </Link>
             </div>

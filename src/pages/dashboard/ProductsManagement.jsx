@@ -98,9 +98,9 @@ const ProductsManagement = () => {
       </div>
       
       {userStores.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-center py-12 bg-card rounded-lg">
           <h2 className="text-xl font-display font-semibold mb-2">Create a Store First</h2>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             You need to create a store before you can add products.
           </p>
           <Button asChild>
@@ -110,11 +110,11 @@ const ProductsManagement = () => {
           </Button>
         </div>
       ) : filteredProducts.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-center py-12 bg-card rounded-lg">
           {searchTerm || selectedStore !== "all" ? (
             <>
               <h2 className="text-xl font-semibold mb-2">No products found</h2>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Try adjusting your search or filters
               </p>
               <div className="flex justify-center space-x-4">
@@ -132,9 +132,9 @@ const ProductsManagement = () => {
             </>
           ) : (
             <>
-              <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+              <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h2 className="text-xl font-display font-semibold mb-2">No Products Yet</h2>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                 Start adding products to your stores to showcase your fashion items.
               </p>
               <Button asChild>

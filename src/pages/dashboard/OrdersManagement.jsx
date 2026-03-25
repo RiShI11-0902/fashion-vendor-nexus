@@ -258,19 +258,19 @@ const OrdersManagement = () => {
                 {/* Customer Info */}
                 <div className="grid grid-cols-2 gap-4 pb-4">
                   <div>
-                    <p className="text-sm text-gray-500">Customer</p>
+                    <p className="text-sm text-muted-foreground">Customer</p>
                     <p className="font-medium">{selectedOrder.customerName}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Email</p>
+                    <p className="text-sm text-muted-foreground">Email</p>
                     <p className="font-medium">{selectedOrder.customerEmail}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Mobile Number</p>
+                    <p className="text-sm text-muted-foreground">Mobile Number</p>
                     <p className="font-medium">{selectedOrder.customerMobileNumber}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Address</p>
+                    <p className="text-sm text-muted-foreground">Address</p>
                     <p className="font-medium">{selectedOrder.customerAddress}</p>
                   </div>
                 </div>
