@@ -25,9 +25,9 @@ const ProductDetail = () => {
 
   const fetchStoreAndProduct = async () => {
     // Both already cached — skip all network requests
-    if (storeSlugCache.has(storeSlug) && productCache.has(productId)) {
-      setStore(storeSlugCache.get(storeSlug));
-      setProduct(productCache.get(productId));
+    if (storeSlugCache.has(storeSlug) && productDetailCache.has(productId)) {
+      setStore(storeSlugCache.get(storeSlug)?.store);
+      setProduct(productDetailCache.get(productId));
       setLoading(false);
       return;
     }
@@ -36,15 +36,17 @@ const ProductDetail = () => {
     try {
       const [foundStore, foundProduct] = await Promise.all([
         storeSlugCache.has(storeSlug)
-          ? Promise.resolve(storeSlugCache.get(storeSlug))
+          ? Promise.resolve(storeSlugCache.get(storeSlug)?.store)
           : getStoreBySlug(storeSlug),
-        productCache.has(productId)
-          ? Promise.resolve(productCache.get(productId))
+        productDetailCache.has(productId)
+          ? Promise.resolve(productDetailCache.get(productId))
           : getProductById(productId),
       ]);
 
       if (foundStore) {
-        storeSlugCache.set(storeSlug, foundStore);
+        if (!storeSlugCache.has(storeSlug)) {
+          storeSlugCache.set(storeSlug, { store: foundStore, feedbacks: [] });
+        }
         setStore(foundStore);
       } else {
         setError("Store not found");
@@ -53,7 +55,7 @@ const ProductDetail = () => {
       }
 
       if (foundProduct) {
-        productCache.set(productId, foundProduct);
+        productDetailCache.set(productId, foundProduct);
         setProduct(foundProduct);
       } else {
         setError("Product not found");
