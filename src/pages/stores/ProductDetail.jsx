@@ -6,18 +6,15 @@ import { useCartStore } from "../../stores/useCartStore";
 import { Button } from "../../components/ui/button";
 import { ArrowLeft, ShoppingBag, Package, Plus, Minus, IndianRupee } from "lucide-react";
 import { toast } from "sonner";
-
-// Module-level caches: persist across SPA navigation, clear on page refresh
-const productCache = new Map(); // productId -> product
-const storeSlugCache = new Map(); // storeSlug -> store
+import { productDetailCache, storeSlugCache } from "../../lib/storeCache";
 
 const ProductDetail = () => {
   const { storeSlug, productId } = useParams();
   const { getStoreBySlug, getProductById } = useStoreManager();
   const { addToCart, items } = useCartStore();
-  const [product, setProduct] = useState(() => productCache.get(productId) || null);
-  const [store, setStore] = useState(() => storeSlugCache.get(storeSlug) || null);
-  const [loading, setLoading] = useState(!(productCache.has(productId) && storeSlugCache.has(storeSlug)));
+  const [product, setProduct] = useState(() => productDetailCache.get(productId) || null);
+  const [store, setStore] = useState(() => storeSlugCache.get(storeSlug)?.store || null);
+  const [loading, setLoading] = useState(!(productDetailCache.has(productId) && storeSlugCache.has(storeSlug)));
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectSize, setselectSize] = useState(null);
@@ -28,9 +25,9 @@ const ProductDetail = () => {
 
   const fetchStoreAndProduct = async () => {
     // Both already cached — skip all network requests
-    if (storeSlugCache.has(storeSlug) && productCache.has(productId)) {
-      setStore(storeSlugCache.get(storeSlug));
-      setProduct(productCache.get(productId));
+    if (storeSlugCache.has(storeSlug) && productDetailCache.has(productId)) {
+      setStore(storeSlugCache.get(storeSlug)?.store);
+      setProduct(productDetailCache.get(productId));
       setLoading(false);
       return;
     }
@@ -39,15 +36,17 @@ const ProductDetail = () => {
     try {
       const [foundStore, foundProduct] = await Promise.all([
         storeSlugCache.has(storeSlug)
-          ? Promise.resolve(storeSlugCache.get(storeSlug))
+          ? Promise.resolve(storeSlugCache.get(storeSlug)?.store)
           : getStoreBySlug(storeSlug),
-        productCache.has(productId)
-          ? Promise.resolve(productCache.get(productId))
+        productDetailCache.has(productId)
+          ? Promise.resolve(productDetailCache.get(productId))
           : getProductById(productId),
       ]);
 
       if (foundStore) {
-        storeSlugCache.set(storeSlug, foundStore);
+        if (!storeSlugCache.has(storeSlug)) {
+          storeSlugCache.set(storeSlug, { store: foundStore, feedbacks: [] });
+        }
         setStore(foundStore);
       } else {
         setError("Store not found");
@@ -56,7 +55,7 @@ const ProductDetail = () => {
       }
 
       if (foundProduct) {
-        productCache.set(productId, foundProduct);
+        productDetailCache.set(productId, foundProduct);
         setProduct(foundProduct);
       } else {
         setError("Product not found");

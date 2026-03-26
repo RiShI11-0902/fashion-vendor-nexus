@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "sonner";
 import { Product, StoreState } from "../types/storeTypes";
+import { invalidateProductCache } from "../../lib/storeCache";
 
 export interface ProductActions {
   createProduct: (product: Omit<Product, "id" | "createdAt">) => Promise<void>;
@@ -67,6 +68,7 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
           product.id === productId ? res.data : product
         ),
       }));
+      invalidateProductCache(productId);
       toast.success("Product updated successfully");
     } catch (error: any) {
       console.error("Error updating product:", error);
@@ -90,6 +92,7 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
           (discount) => discount.productId !== productId
         ),
       }));
+      invalidateProductCache(productId);
       toast.success("Product deleted successfully");
     } catch (error: any) {
       console.error("Error deleting product:", error);
