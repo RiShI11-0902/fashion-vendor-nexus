@@ -68,6 +68,7 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
           product.id === productId ? res.data : product
         ),
       }));
+      invalidateProductCache(productId);
       toast.success("Product updated successfully");
     } catch (error: any) {
       console.error("Error updating product:", error);
