@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../ui/badge";
@@ -24,49 +23,58 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
         to={`/store/${storeSlug}/product/${product.id}`}
         className={`block group break-inside-avoid mb-4 ${className}`}
       >
-        <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="bg-card rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
           {/* Image */}
-          <div className="overflow-hidden">
+          <div className="overflow-hidden relative">
             <img
               src={product.image}
               alt={product.name}
-              className="w-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
+              className="w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
             />
+            {hasDiscount && (
+              <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
+                SALE
+              </span>
+            )}
           </div>
 
           {/* Text */}
           <div className="p-3">
-            <h3 className="font-semibold text-foreground text-sm line-clamp-2">
+            <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug">
               {product.name}
             </h3>
 
             {product.description && (
-              <p className="text-muted-foreground text-xs mt-1 line-clamp-2">
+              <p className="text-muted-foreground text-xs mt-1 line-clamp-2 leading-relaxed">
                 {product.description}
               </p>
             )}
 
-            {/* Price & Category */}
-            <div className="flex flex-col sm:flex-col md:flex-row items-start md:items-center justify-between mt-2 gap-2">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-5">
-                <p className="font-bold text-foreground text-sm flex items-center gap-1">
-                  <IndianRupee className="w-4" />
+            {/* Price row */}
+            <div className="flex items-center justify-between mt-3 gap-1">
+              <div className="flex items-baseline gap-1.5 flex-wrap">
+                <span className="font-bold text-foreground text-sm flex items-center gap-0.5">
+                  <IndianRupee className="w-3 h-3" />
                   {hasDiscount ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
-                </p>
-
-                {product.category && (
-                  <Badge variant="outline" className="text-xs px-2 py-0.5 rounded">
-                    {product.category}
-                  </Badge>
+                </span>
+                {hasDiscount && (
+                  <span className="text-muted-foreground text-xs line-through flex items-center gap-0.5">
+                    <IndianRupee className="w-2.5 h-2.5" />
+                    {product.price.toFixed(2)}
+                  </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                {product.category && (
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal hidden sm:flex">
+                    {product.category}
+                  </Badge>
+                )}
+
                 {/* QR Code button */}
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-7 w-7 p-0 text-muted-foreground hover:text-primary"
+                <button
+                  className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground hover:text-primary hover:bg-accent transition-colors"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -74,15 +82,17 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
                   }}
                   title="Generate QR Code"
                 >
-                  <QrCode className="w-4 h-4" />
-                </Button>
+                  <QrCode className="w-3.5 h-3.5" />
+                </button>
 
-                {currentUser && store?.id == product?.storeId && (
+                {currentUser && store?.id === product?.storeId && (
                   <Link
                     to={`/dashboard/products/edit/${product.id}`}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Button size="sm">Edit</Button>
+                    <Button size="sm" variant="ghost" className="h-6 px-2 text-xs">
+                      Edit
+                    </Button>
                   </Link>
                 )}
               </div>
