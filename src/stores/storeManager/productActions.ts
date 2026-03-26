@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "sonner";
 import { Product, StoreState } from "../types/storeTypes";
+import { invalidateProductCache } from "../../lib/storeCache";
 
 export interface ProductActions {
   createProduct: (product: Omit<Product, "id" | "createdAt">) => Promise<void>;
