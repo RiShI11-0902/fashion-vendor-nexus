@@ -6,18 +6,15 @@ import { useCartStore } from "../../stores/useCartStore";
 import { Button } from "../../components/ui/button";
 import { ArrowLeft, ShoppingBag, Package, Plus, Minus, IndianRupee } from "lucide-react";
 import { toast } from "sonner";
-
-// Module-level caches: persist across SPA navigation, clear on page refresh
-const productCache = new Map(); // productId -> product
-const storeSlugCache = new Map(); // storeSlug -> store
+import { productDetailCache, storeSlugCache } from "../../lib/storeCache";
 
 const ProductDetail = () => {
   const { storeSlug, productId } = useParams();
   const { getStoreBySlug, getProductById } = useStoreManager();
   const { addToCart, items } = useCartStore();
-  const [product, setProduct] = useState(() => productCache.get(productId) || null);
-  const [store, setStore] = useState(() => storeSlugCache.get(storeSlug) || null);
-  const [loading, setLoading] = useState(!(productCache.has(productId) && storeSlugCache.has(storeSlug)));
+  const [product, setProduct] = useState(() => productDetailCache.get(productId) || null);
+  const [store, setStore] = useState(() => storeSlugCache.get(storeSlug)?.store || null);
+  const [loading, setLoading] = useState(!(productDetailCache.has(productId) && storeSlugCache.has(storeSlug)));
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectSize, setselectSize] = useState(null);
