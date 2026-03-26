@@ -1,9 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useStoreManager } from "../stores/useStoreManager";
-
-// Module-level cache: persists across SPA navigation, clears on page refresh
-const storeCache = new Map(); // slug -> { store, feedbacks }
-const productsCache = new Map(); // `${storeId}-${page}-${category}` -> { products, total }
+import { storeSlugCache as storeCache, productsCache } from "../lib/storeCache";
 
 export const useStoreData = (storeSlug) => {
   const { getStoreBySlug, getStoreProducts, getStoreFeedback } =
