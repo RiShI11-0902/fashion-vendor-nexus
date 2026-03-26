@@ -92,6 +92,7 @@ export const createProductActions = (set: any, get: any): ProductActions => ({
           (discount) => discount.productId !== productId
         ),
       }));
+      invalidateProductCache(productId);
       toast.success("Product deleted successfully");
     } catch (error: any) {
       console.error("Error deleting product:", error);
