@@ -3,52 +3,77 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { useCartStore } from "../../stores/useCartStore";
-import MainLayout from "../../components/layout/MainLayout";
 import { Button } from "../../components/ui/button";
 import { ArrowLeft, ShoppingBag, Package, Plus, Minus, IndianRupee } from "lucide-react";
 import { toast } from "sonner";
-// import { useStoreManager } from "../../stores/useStoreManager";
+
+// Module-level caches: persist across SPA navigation, clear on page refresh
+const productCache = new Map(); // productId -> product
+const storeSlugCache = new Map(); // storeSlug -> store
 
 const ProductDetail = () => {
   const { storeSlug, productId } = useParams();
-  const { getStoreBySlug, products, getProductById } = useStoreManager();
-  const { addToCart, items, updateQuantity } = useCartStore();
-  const [product, setProduct] = useState(null);
-  const [store, setStore] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { getStoreBySlug, getProductById } = useStoreManager();
+  const { addToCart, items } = useCartStore();
+  const [product, setProduct] = useState(() => productCache.get(productId) || null);
+  const [store, setStore] = useState(() => storeSlugCache.get(storeSlug) || null);
+  const [loading, setLoading] = useState(!(productCache.has(productId) && storeSlugCache.has(storeSlug)));
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [selectSize, setselectSize] = useState(null)
+  const [selectSize, setselectSize] = useState(null);
   const navigate = useNavigate();
 
   // Get existing cart item for this product
   const existingCartItem = items.find(item => item.productId === productId);
 
-  const fetchStoreProducts = async () => {
-    const foundStore = await getStoreBySlug(storeSlug);
-    const foundProduct = await getProductById(productId)
+  const fetchStoreAndProduct = async () => {
+    // Both already cached — skip all network requests
+    if (storeSlugCache.has(storeSlug) && productCache.has(productId)) {
+      setStore(storeSlugCache.get(storeSlug));
+      setProduct(productCache.get(productId));
+      setLoading(false);
+      return;
+    }
 
+    setLoading(true);
+    try {
+      const [foundStore, foundProduct] = await Promise.all([
+        storeSlugCache.has(storeSlug)
+          ? Promise.resolve(storeSlugCache.get(storeSlug))
+          : getStoreBySlug(storeSlug),
+        productCache.has(productId)
+          ? Promise.resolve(productCache.get(productId))
+          : getProductById(productId),
+      ]);
 
-    if (foundStore) {
-      setStore(foundStore);
+      if (foundStore) {
+        storeSlugCache.set(storeSlug, foundStore);
+        setStore(foundStore);
+      } else {
+        setError("Store not found");
+        setLoading(false);
+        return;
+      }
 
       if (foundProduct) {
+        productCache.set(productId, foundProduct);
         setProduct(foundProduct);
       } else {
         setError("Product not found");
       }
-    } else {
-      setError("Store not found");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load product");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-  }
+  };
 
   useEffect(() => {
     if (storeSlug && productId) {
-      fetchStoreProducts()
+      fetchStoreAndProduct();
     }
-  }, [storeSlug, productId, getStoreBySlug, products]);
+  }, [storeSlug, productId]);
 
 
   const handleAddToCart = () => {
