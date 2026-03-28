@@ -1,7 +1,8 @@
+import { useState, useMemo } from "react";
 import ProductCard from "../products/ProductCard";
 import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 
 const ProductCardSkeleton = () => (
   <div className="break-inside-avoid mb-4">
@@ -27,10 +28,40 @@ const ProductsSection = ({
   total,
   loading,
 }) => {
+  const [searchQuery, setSearchQuery] = useState("");
   const totalPages = Math.ceil(total / 10);
+
+  const displayedProducts = useMemo(() => {
+    if (!searchQuery.trim()) return filteredProducts;
+    const q = searchQuery.toLowerCase();
+    return filteredProducts.filter(
+      (p) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q)
+    );
+  }, [filteredProducts, searchQuery]);
 
   return (
     <div className="flex flex-col gap-6">
+
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-10 py-2.5 rounded-full bg-muted/50 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
 
       {/* Category Pills */}
       <div className="flex flex-wrap gap-2">
