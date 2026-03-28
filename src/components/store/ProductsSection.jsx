@@ -62,6 +62,7 @@ const ProductsSection = ({
             <X className="h-4 w-4" />
           </button>
         )}
+      </div>
 
       {/* Category Pills */}
       <div className="flex flex-wrap gap-2">
@@ -106,8 +107,8 @@ const ProductsSection = ({
       <div className="columns-2 sm:columns-2 lg:columns-4 gap-4">
         {loading ? (
           Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
-        ) : filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
+        ) : displayedProducts.length > 0 ? (
+          displayedProducts.map((product) => (
             <ProductCard key={product.id} product={product} storeSlug={storeSlug} />
           ))
         ) : (
