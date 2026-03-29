@@ -23,6 +23,7 @@ import {
   BarChart3,
   Store,
   Sparkles,
+  Megaphone,
   LogOut
 } from "lucide-react";
 import { Button } from "../ui/button";
@@ -80,6 +81,12 @@ const DashboardSidebar = () => {
       icon: Sparkles,
       path: "/dashboard/generate-model",
       active: isActive("/dashboard/generate-model")
+    },
+    {
+      title: "AI Ads",
+      icon: Megaphone,
+      path: "/dashboard/create-ad",
+      active: isActive("/dashboard/create-ad")
     },
     {
       title: "Settings",
