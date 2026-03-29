@@ -153,13 +153,13 @@ const StoreAnalytics = ({ storeId }) => {
           <CardContent>
             {chartData.topProducts.length > 0 ? (
               <div className="space-y-4">
-                <ChartContainer config={chartConfig} className="h-[200px]">
-                  <BarChart data={chartData.topProducts}>
+              <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                  <BarChart data={chartData.topProducts} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} />
-                    <YAxis />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} fontSize={12} />
+                    <YAxis width={30} fontSize={12} />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="sales" fill="var(--color-sales)" />
+                    <Bar dataKey="sales" fill="var(--color-sales)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ChartContainer>
 
@@ -195,15 +195,17 @@ const StoreAnalytics = ({ storeId }) => {
           </CardHeader>
           <CardContent>
             {chartData.orderStatus.length > 0 ? (
-              <ChartContainer config={chartConfig} className="h-[200px]">
+              <ChartContainer config={chartConfig} className="h-[200px] w-full">
                 <PieChart>
                   <Pie
                     data={chartData.orderStatus}
                     cx="50%"
                     cy="50%"
                     outerRadius={60}
+                    innerRadius={30}
                     dataKey="value"
                     label={({ name, value }) => `${name}: ${value}`}
+                    fontSize={11}
                   >
                     {chartData.orderStatus.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
