@@ -40,6 +40,7 @@ import StoreDetail from "./pages/dashboard/StoreDetail";
 import Settings from "./pages/dashboard/Settings";
 import StorefrontCustomization from "./pages/dashboard/StorefrontCustomization";
 import GenerateModel from "./pages/dashboard/GenerateModel";
+import CreateAd from "./pages/dashboard/CreateAd";
 
 
 
@@ -100,6 +101,7 @@ const App = () => {
               element={<StorefrontCustomization />}
             />
             <Route path="/dashboard/generate-model" element={<GenerateModel />} />
+            <Route path="/dashboard/create-ad" element={<CreateAd />} />
             <Route path="/dashboard/products/create" element={<CreateProduct />} />
             <Route path="/dashboard/products/edit/:productId" element={<EditProduct />} />
             <Route path="/dashboard/settings" element={<Settings />} />

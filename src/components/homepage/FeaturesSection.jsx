@@ -1,4 +1,4 @@
-import { BookOpen, MessageCircle, BarChart3, Smartphone, Palette, Zap } from "lucide-react";
+import { BookOpen, MessageCircle, BarChart3, Smartphone, Palette, Zap, Megaphone } from "lucide-react";
 
 const features = [
   {
@@ -43,6 +43,14 @@ const features = [
     title: "Launch in Minutes",
     description: "No coding, no complicated setup. Fill in a form, add products and you're live — seriously.",
   },
+  {
+    icon: Megaphone,
+    color: "from-cyan-500/20 to-teal-500/10",
+    iconColor: "text-cyan-400",
+    title: "AI Ad Creator",
+    description: "Generate scroll-stopping image & video ads for your clothing brand — powered by AI.",
+    comingSoon: true,
+  },
 ];
 
 const FeaturesSection = () => {
@@ -72,7 +80,14 @@ const FeaturesSection = () => {
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-5`}>
                 <feature.icon className={`h-6 w-6 ${feature.iconColor}`} />
               </div>
-              <h3 className="text-white font-semibold text-lg mb-2">{feature.title}</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-white font-semibold text-lg">{feature.title}</h3>
+                {feature.comingSoon && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan-500/20 text-cyan-400 ring-1 ring-cyan-500/30 uppercase tracking-wider">
+                    Coming Soon
+                  </span>
+                )}
+              </div>
               <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
             </div>
           ))}
