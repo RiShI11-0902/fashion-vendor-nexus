@@ -125,9 +125,12 @@ const CreateAd = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-              AI Ad Creator
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                AI Ad Creator
+              </h1>
+              <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">Coming Soon</span>
+            </div>
             <p className="text-muted-foreground mt-1">
               Create stunning image & video ads for your clothing store
             </p>

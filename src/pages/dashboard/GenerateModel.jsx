@@ -77,7 +77,10 @@ const GenerateModel = ({ field }) => {
         </p>
       </div>
       <div className="flex flex-col items-center justify-center gap-6 p-8 max-w-2xl mx-auto">
-        <h1 className="text-3xl font-semibold">AI Generator</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-semibold">AI Generator</h1>
+          <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">Coming Soon</span>
+        </div>
 
         {generatedImage && (
           <Button onClick={() => setGeneratedImage(null)} className="flex flex-row space-x-2">
