@@ -50,7 +50,7 @@ const GenerateModel = ({ field }) => {
       );
 
       setGeneratedImage(sendData.data.images[0]);
-      setRemaining((prev) => prev - 1)
+      setRemaining((prev) => prev - 5)
     } catch (error) {
       setError(error.data.message || "Cannot Generate Model")
       toast.error("Error creating model please try again later")
@@ -75,6 +75,7 @@ const GenerateModel = ({ field }) => {
         <p className="font-medium text-gray-900">
           {remaining}
         </p>
+        <p>5 credits for each image genrations</p>
       </div>
       <div className="flex flex-col items-center justify-center gap-6 p-8 max-w-2xl mx-auto">
         <div className="flex items-center gap-3">
