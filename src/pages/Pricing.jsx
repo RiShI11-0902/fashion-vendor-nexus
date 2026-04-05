@@ -31,7 +31,7 @@ const Pricing = () => {
         "Up to 10 products",
         "Unlimited orders",
         "Basic analytics (orders & revenue)",
-        "1 AI model generation (Currently unavailable due to some technical issues)",
+        "5 credits AI Credits (Currently unavailable due to some technical issues)",
       ],
       highlighted: false,
     },
@@ -45,7 +45,7 @@ const Pricing = () => {
         "Up to 30 products",
         "Unlimited orders",
         "Basic analytics dashboard",
-        "40 AI model generations/month (Currently unavailable due to some technical issues)",
+        "200 AI credits/month (Currently unavailable due to some technical issues)",
       ],
       highlighted: false,
     },
@@ -59,7 +59,7 @@ const Pricing = () => {
         "Unlimited products",
         "Unlimited orders",
         "Full analytics dashboard",
-        "200 AI model generations/month (Currently unavailable due to some technical issues)",
+        "500 AI credits/month (Currently unavailable due to some technical issues)",
         "Access to new Features (extra charges may apply)",
         "Priority support",
       ],
@@ -70,10 +70,10 @@ const Pricing = () => {
   // Optional AI Packs
   const aiPacks = [
     {
-      name: "100 AI Models Pack",
+      name: "250 AI credits pack",
       price: "₹550",
       description:
-        "100 AI model generations. Can be added to any plan or purchased standalone. ( We are currently not providing AI generations due to some technical issues )",
+        "250 AI credits. Can be added to any plan or purchased standalone. ( We are currently not providing AI generations due to some technical issues )",
     },
   ];
 
