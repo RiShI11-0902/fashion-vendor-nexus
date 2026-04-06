@@ -1,9 +1,10 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { useOrdersStore } from "../../stores/useOrdersStore";
+import { dashboardCache } from "../../lib/storeCache";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import DashboardHeader from "../../components/dashboard/DashboardHeader";
 import DashboardStats from "../../components/dashboard/DashboardStats";
@@ -13,48 +14,55 @@ import { Button } from "../../components/ui/button";
 
 const Dashboard = () => {
   const { currentUser, checkAuth } = useAuthStore();
-  const { getStoreProducts,getUserStores, getlowStockProducts, stores } = useStoreManager();
+  const { getStoreProducts, getUserStores, getlowStockProducts } = useStoreManager();
   const { getOrderStats } = useOrdersStore();
-  const [userStore, setUserStore] = useState(null);
-  const [overallStats, setOverallStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [userStore, setUserStore] = useState(() => dashboardCache.userStores);
+  const [overallStats, setOverallStats] = useState(() => dashboardCache.overallStats);
+  const [loading, setLoading] = useState(!dashboardCache.userStores);
+  const fetched = useRef(false);
 
   const fetchStoreData = async () => {
+    // Use cache if available
+    if (dashboardCache.userStores && dashboardCache.overallStats) {
+      setUserStore(dashboardCache.userStores);
+      setOverallStats(dashboardCache.overallStats);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    const store = await getUserStores(currentUser.id);    
-    // const store = stores[0]
-    
+    const store = await getUserStores(currentUser.id);
+    dashboardCache.userStores = store;
     setUserStore(store);
-    if (store.length > 0) {      
-      
-      // Calculate stats for the single store
+
+    if (store.length > 0) {
       const stats = getOrderStats();
-      const { total } = await getStoreProducts(store[0]?.id);      
+      const { total } = await getStoreProducts(store[0]?.id);
+      const { lowStockProducts } = await getlowStockProducts(store[0]?.id);
 
-      const {lowStockProducts}  = await getlowStockProducts(store[0]?.id) 
-      
-
-      setOverallStats({
+      const computedStats = {
         ...stats,
         totalProducts: total,
-        totalLowStock: lowStockProducts?.length || 0 // Will be implemented when needed
-      });
+        totalLowStock: lowStockProducts?.length || 0,
+      };
+      dashboardCache.overallStats = computedStats;
+      setOverallStats(computedStats);
     }
     setLoading(false);
   };
 
   useEffect(() => {
     (async () => {
-      await checkAuth();  // ensures Zustand updates
+      await checkAuth();
     })();
   }, []);
 
-
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && !fetched.current) {
+      fetched.current = true;
       fetchStoreData();
     }
-  }, [currentUser, getOrderStats, getStoreProducts, getlowStockProducts]);  
+  }, [currentUser]);
 
   if (!currentUser) {
     return (
@@ -81,7 +89,7 @@ const Dashboard = () => {
         </div>
       </DashboardLayout>
     );
-  }  
+  }
 
   return (
     <DashboardLayout>
@@ -93,9 +101,7 @@ const Dashboard = () => {
         ) : (
           <>
             <DashboardStats stats={overallStats} />
-            <StoreAnalyticsSection
-              selectedStore={userStore[0]?.id}
-            />
+            <StoreAnalyticsSection selectedStore={userStore[0]?.id} />
           </>
         )}
       </div>

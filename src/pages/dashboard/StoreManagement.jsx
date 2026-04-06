@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useStoreManager } from "../../stores/useStoreManager";
+import { dashboardCache } from "../../lib/storeCache";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
@@ -11,19 +12,32 @@ import { Store, Settings, ExternalLink, Edit3 } from "lucide-react";
 
 const StoreManagement = () => {
   const { currentUser } = useAuthStore();
-  const { getUserStores, stores } = useStoreManager();
-  const [userStore, setUserStore] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { getUserStores } = useStoreManager();
+  const [userStore, setUserStore] = useState(() => {
+    const cached = dashboardCache.userStores;
+    return cached && cached.length > 0 ? cached[0] : undefined;
+  });
+  const [loading, setLoading] = useState(userStore === undefined);
+  const fetched = useRef(false);
 
   const fetchUserStore = async () => {
+    if (dashboardCache.userStores) {
+      const stores = dashboardCache.userStores;
+      setUserStore(stores.length > 0 ? stores[0] : null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    const stores = await getUserStores(currentUser.id, true);    
+    const stores = await getUserStores(currentUser.id, true);
+    dashboardCache.userStores = stores;
     setUserStore(stores.length > 0 ? stores[0] : null);
     setLoading(false);
   };
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && !fetched.current) {
+      fetched.current = true;
       fetchUserStore();
     }
   }, [currentUser]);
