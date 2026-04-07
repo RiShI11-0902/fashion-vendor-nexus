@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useOrdersStore } from "../../stores/useOrdersStore";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { dashboardCache } from "../../lib/storeCache";
@@ -22,6 +22,7 @@ import {
 } from "recharts";
 import { TrendingUp, Package, AlertTriangle, DollarSign } from "lucide-react";
 import { formatNumber } from "../../lib/utils";
+import DateRangeFilter from "./DateRangeFilter";
 
 const StoreAnalytics = ({ storeId }) => {
   const { getOrderStats, getStoreOrders } = useOrdersStore();
@@ -29,10 +30,10 @@ const StoreAnalytics = ({ storeId }) => {
 
   const cached = storeId ? dashboardCache._analyticsStore.get(storeId) : null;
 
-  const [stats, setStats] = useState(cached?.stats || null);
-  const [topProducts, setTopProducts] = useState(cached?.topProducts || []);
+  const [allOrders, setAllOrders] = useState(cached?.allOrders || []);
+  const [allProducts, setAllProducts] = useState(cached?.allProducts || []);
   const [lowStockProducts, setLowStockProducts] = useState(cached?.lowStockProducts || []);
-  const [chartData, setChartData] = useState(cached?.chartData || { topProducts: [], orderStatus: [] });
+  const [dateRange, setDateRange] = useState({ from: null, to: null });
   const fetched = useRef(false);
 
   const chartConfig = {
@@ -41,26 +42,55 @@ const StoreAnalytics = ({ storeId }) => {
   };
 
   const fetchUserStore = async () => {
-    // Use cache if available
     if (dashboardCache._analyticsStore.has(storeId)) {
       const c = dashboardCache._analyticsStore.get(storeId);
-      setStats(c.stats);
-      setTopProducts(c.topProducts);
-      setLowStockProducts(c.lowStockProducts);
-      setChartData(c.chartData);
+      setAllOrders(c.allOrders || []);
+      setAllProducts(c.allProducts || []);
+      setLowStockProducts(c.lowStockProducts || []);
       return;
     }
 
     const { orders: storeOrders } = await getStoreOrders(storeId);
     const { products } = await getStoreProducts(storeId);
-    const orderStats = await getOrderStats(storeId);
-
-    setStats(orderStats);
     const { lowStockProducts: lsp } = getlowStockProducts(storeId);
 
+    dashboardCache._analyticsStore.set(storeId, {
+      allOrders: storeOrders || [],
+      allProducts: products || [],
+      lowStockProducts: lsp || [],
+    });
+
+    setAllOrders(storeOrders || []);
+    setAllProducts(products || []);
+    setLowStockProducts(lsp || []);
+  };
+
+  useEffect(() => {
+    if (storeId && !fetched.current) {
+      fetched.current = true;
+      fetchUserStore();
+    }
+  }, [storeId]);
+
+  // Derive all analytics from orders + date range
+  const { stats, topProducts, chartData } = useMemo(() => {
+    const filtered = dateRange.from
+      ? allOrders.filter((o) => {
+          const d = new Date(o.createdAt);
+          return d >= dateRange.from && (!dateRange.to || d <= dateRange.to);
+        })
+      : allOrders;
+
+    const totalOrders = filtered.length;
+    const totalRevenue = filtered.reduce(
+      (sum, o) => (o.status !== "CANCELLED" ? sum + o.totalAmount : sum),
+      0
+    );
+    const pendingOrders = filtered.filter((o) => o.status === "PENDING").length;
+
     const productSales = {};
-    storeOrders.forEach((order) => {
-      order.items.forEach((item) => {
+    filtered.forEach((order) => {
+      order.items?.forEach((item) => {
         if (item.storeId === storeId) {
           productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
         }
@@ -71,53 +101,41 @@ const StoreAnalytics = ({ storeId }) => {
       .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([productId, quantity]) => {
-        const product = products?.find((p) => p.id === productId);
+        const product = allProducts?.find((p) => p.id === productId);
         return { product, quantity, name: product?.name || "Unknown", sales: quantity };
       })
       .filter((item) => item.product);
 
     const statusData = [
-      { name: "PENDING", value: storeOrders.filter((o) => o.status === "PENDING").length, color: "#f59e0b" },
-      { name: "CONFIRMED", value: storeOrders.filter((o) => o.status === "CONFIRMED").length, color: "#10b981" },
-      { name: "SHIPPED", value: storeOrders.filter((o) => o.status === "SHIPPED").length, color: "#06b6d4" },
-      { name: "DELIVERED", value: storeOrders.filter((o) => o.status === "DELIVERED").length, color: "#8b5cf6" },
-      { name: "CANCELLED", value: storeOrders.filter((o) => o.status === "CANCELLED").length, color: "#ef4444" },
+      { name: "PENDING", value: filtered.filter((o) => o.status === "PENDING").length, color: "#f59e0b" },
+      { name: "CONFIRMED", value: filtered.filter((o) => o.status === "CONFIRMED").length, color: "#10b981" },
+      { name: "SHIPPED", value: filtered.filter((o) => o.status === "SHIPPED").length, color: "#06b6d4" },
+      { name: "DELIVERED", value: filtered.filter((o) => o.status === "DELIVERED").length, color: "#8b5cf6" },
+      { name: "CANCELLED", value: filtered.filter((o) => o.status === "CANCELLED").length, color: "#ef4444" },
     ].filter((item) => item.value > 0);
 
-    const newChartData = { topProducts: topSellingProducts, orderStatus: statusData };
-
-    // Cache the results
-    dashboardCache._analyticsStore.set(storeId, {
-      stats: orderStats,
+    return {
+      stats: { totalOrders, totalRevenue, pendingOrders },
       topProducts: topSellingProducts,
-      lowStockProducts: lsp,
-      chartData: newChartData,
-    });
-
-    setTopProducts(topSellingProducts);
-    setLowStockProducts(lsp);
-    setChartData(newChartData);
-  };
-
-  useEffect(() => {
-    if (storeId && !fetched.current) {
-      fetched.current = true;
-      fetchUserStore();
-    }
-  }, [storeId]);
+      chartData: { topProducts: topSellingProducts, orderStatus: statusData },
+    };
+  }, [allOrders, allProducts, dateRange, storeId]);
 
   if (!storeId) {
     return (
       <div className="text-center py-12">
-        <Package className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+        <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
         <h2 className="text-2xl font-semibold mb-4">No stores found</h2>
-        <p className="text-gray-600 mb-6">Create your first store to see analytics</p>
+        <p className="text-muted-foreground mb-6">Create your first store to see analytics</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {/* Date Range Filter */}
+      <DateRangeFilter dateRange={dateRange} onDateRangeChange={setDateRange} />
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
