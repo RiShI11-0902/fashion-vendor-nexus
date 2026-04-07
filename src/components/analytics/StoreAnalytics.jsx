@@ -118,7 +118,7 @@ const StoreAnalytics = ({ storeId }) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
@@ -151,23 +151,25 @@ const StoreAnalytics = ({ storeId }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <TrendingUp className="mr-2 h-5 w-5" />
+            <CardTitle className="flex items-center text-sm sm:text-base">
+              <TrendingUp className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Top Selling Products
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-2 sm:px-6">
             {chartData.topProducts.length > 0 ? (
               <div className="space-y-4">
-                <ChartContainer config={chartConfig} className="h-[200px] w-full">
-                  <BarChart data={chartData.topProducts} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={60} fontSize={12} />
-                    <YAxis width={30} fontSize={12} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="sales" fill="var(--color-sales)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ChartContainer>
+                <div className="h-[220px] sm:h-[250px] w-full">
+                  <ChartContainer config={chartConfig} className="!aspect-auto h-full w-full">
+                    <BarChart data={chartData.topProducts} margin={{ top: 5, right: 5, left: -15, bottom: 40 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-35} textAnchor="end" height={60} fontSize={10} interval={0} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                      <YAxis width={30} fontSize={10} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="sales" fill="var(--color-sales)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
                 <div className="space-y-2">
                   {topProducts.slice(0, 3).map(({ product, quantity }, index) => (
                     <div key={product.id} className="flex items-center justify-between">
@@ -196,27 +198,29 @@ const StoreAnalytics = ({ storeId }) => {
               Order Status Distribution
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-2 sm:px-6">
             {chartData.orderStatus.length > 0 ? (
-              <ChartContainer config={chartConfig} className="h-[200px] w-full">
-                <PieChart>
-                  <Pie
-                    data={chartData.orderStatus}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={60}
-                    innerRadius={30}
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}`}
-                    fontSize={11}
-                  >
-                    {chartData.orderStatus.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip />
-                </PieChart>
-              </ChartContainer>
+              <div className="h-[220px] sm:h-[250px] w-full">
+                <ChartContainer config={chartConfig} className="!aspect-auto h-full w-full">
+                  <PieChart>
+                    <Pie
+                      data={chartData.orderStatus}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={55}
+                      innerRadius={25}
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: ${value}`}
+                      fontSize={9}
+                    >
+                      {chartData.orderStatus.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip />
+                  </PieChart>
+                </ChartContainer>
+              </div>
             ) : (
               <p className="text-muted-foreground">No order data available</p>
             )}
