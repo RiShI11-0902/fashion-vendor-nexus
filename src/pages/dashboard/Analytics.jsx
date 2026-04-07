@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useStoreManager } from "../../stores/useStoreManager";
 import { useOrdersStore } from "../../stores/useOrdersStore";
@@ -26,15 +26,19 @@ import {
 import { TrendingUp, Package, ShoppingCart, IndianRupee } from "lucide-react";
 import { formatNumber } from "../../lib/utils";
 import NoStoresState from "../../components/dashboard/NoStoresState";
+import DateRangeFilter from "../../components/analytics/DateRangeFilter";
 
 const Analytics = () => {
   const { currentUser } = useAuthStore();
   const { getUserStores, getStoreProducts, getlowStockProducts } = useStoreManager();
   const { getOrderStats, getStoreOrders } = useOrdersStore();
 
-  const [analyticsData, setAnalyticsData] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [rawOrders, setRawOrders] = useState([]);
+  const [rawProducts, setRawProducts] = useState([]);
+  const [lowStockCount, setLowStockCount] = useState(0);
+  const [storeId, setStoreId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dateRange, setDateRange] = useState({ from: null, to: null });
 
   const chartConfig = {
     orders: { label: "Orders", color: "#8b5cf6" },
@@ -50,85 +54,55 @@ const Analytics = () => {
       try {
         const stores = await getUserStores(currentUser.id);
         if (!stores || stores.length === 0) {
-          setAnalyticsData(null);
           setLoading(false);
           return;
         }
 
-        const storeId = stores[0].id;
+        const sid = stores[0].id;
+        setStoreId(sid);
 
-        // Fetch products
-        const { products: fetchedProducts } = await getStoreProducts(storeId);
-        setProducts(fetchedProducts);
+        const { products: fetchedProducts } = await getStoreProducts(sid);
+        setRawProducts(fetchedProducts || []);
 
-        // Fetch low stock products
-        const { lowStockProducts } = await getlowStockProducts(storeId);
+        const { lowStockProducts } = await getlowStockProducts(sid);
+        setLowStockCount(lowStockProducts?.length || 0);
 
-        // Fetch orders and stats
-        const stats = getOrderStats(storeId);
-        const {orders} = await getStoreOrders(storeId);
-
-        // Compute monthly data
-        const monthlyData = generateMonthlyData(orders);
-
-        // Compute top products
-        const productSales = {};
-        orders.forEach(order => {
-          order.items.forEach(item => {
-            if (item.storeId === storeId) {
-              productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
-            }
-          });
-        });
-
-        const topProductsData = Object.entries(productSales)
-          .sort(([, a], [, b]) => b - a)
-          .slice(0, 5)
-          .map(([productId, quantity]) => {
-            const product = fetchedProducts.find(p => p.id === productId);
-            return {
-              name: product?.name || "Unknown Product",
-              sales: quantity,
-              revenue: quantity * (product?.price || 0),
-            };
-          });
-
-        // Compute order status
-        const statusData = [
-          { name: "PENDING", value: orders.filter(o => o.status === "PENDING").length, color: "#f59e0b" },
-          { name: "CONFIRMED", value: orders.filter(o => o.status === "CONFIRMED").length, color: "#10b981" },
-          { name: "SHIPPED", value: orders.filter(o => o.status === "SHIPPED").length, color: "#06b6d4" },
-          { name: "DELIVERED", value: orders.filter(o => o.status === "DELIVERED").length, color: "#8b5cf6" },
-          { name: "CANCELLED", value: orders.filter(o => o.status === "CANCELLED").length, color: "#ef4444" },
-        ].filter(item => item.value > 0);
-
-        setAnalyticsData({
-          stats,
-          monthlyData,
-          topProductsData,
-          statusData,
-          lowStockCount: lowStockProducts?.length || 0,
-          totalProducts: fetchedProducts?.length || 0,
-        });
+        const { orders } = await getStoreOrders(sid);
+        setRawOrders(orders || []);
       } catch (err) {
         console.error("Failed to fetch analytics data:", err);
-        setAnalyticsData(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchAnalytics();
-  }, [currentUser, getUserStores, getStoreProducts, getlowStockProducts, getOrderStats, getStoreOrders]);
+  }, [currentUser, getUserStores, getStoreProducts, getlowStockProducts, getStoreOrders]);
 
-  const generateMonthlyData = (orders) => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return months.map(month => {
-      const monthOrders = orders?.filter(order => {
+  const analyticsData = useMemo(() => {
+    if (!storeId || rawOrders.length === 0 && rawProducts.length === 0) return null;
+
+    const filtered = dateRange.from
+      ? rawOrders.filter((o) => {
+          const d = new Date(o.createdAt);
+          return d >= dateRange.from && (!dateRange.to || d <= dateRange.to);
+        })
+      : rawOrders;
+
+    const totalOrders = filtered.length;
+    const totalRevenue = filtered.reduce(
+      (sum, o) => (o.status !== "CANCELLED" ? sum + o.totalAmount : sum),
+      0
+    );
+    const pendingOrders = filtered.filter((o) => o.status === "PENDING").length;
+
+    // Monthly data
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlyData = months.map(month => {
+      const monthOrders = filtered.filter(order => {
         const orderMonth = new Date(order.createdAt).toLocaleDateString('en', { month: 'short' });
         return orderMonth === month;
       });
-
       return {
         month,
         orders: monthOrders.length,
@@ -136,7 +110,47 @@ const Analytics = () => {
         customers: new Set(monthOrders.map(order => order.customerId)).size
       };
     });
-  };
+
+    // Top products
+    const productSales = {};
+    filtered.forEach(order => {
+      order.items?.forEach(item => {
+        if (item.storeId === storeId) {
+          productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
+        }
+      });
+    });
+
+    const topProductsData = Object.entries(productSales)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([productId, quantity]) => {
+        const product = rawProducts.find(p => p.id === productId);
+        return {
+          name: product?.name || "Unknown Product",
+          sales: quantity,
+          revenue: quantity * (product?.price || 0),
+        };
+      });
+
+    // Order status
+    const statusData = [
+      { name: "PENDING", value: filtered.filter(o => o.status === "PENDING").length, color: "#f59e0b" },
+      { name: "CONFIRMED", value: filtered.filter(o => o.status === "CONFIRMED").length, color: "#10b981" },
+      { name: "SHIPPED", value: filtered.filter(o => o.status === "SHIPPED").length, color: "#06b6d4" },
+      { name: "DELIVERED", value: filtered.filter(o => o.status === "DELIVERED").length, color: "#8b5cf6" },
+      { name: "CANCELLED", value: filtered.filter(o => o.status === "CANCELLED").length, color: "#ef4444" },
+    ].filter(item => item.value > 0);
+
+    return {
+      stats: { totalOrders, totalRevenue, pendingOrders },
+      monthlyData,
+      topProductsData,
+      statusData,
+      lowStockCount,
+      totalProducts: rawProducts.length,
+    };
+  }, [rawOrders, rawProducts, dateRange, storeId, lowStockCount]);
 
   if (!currentUser) {
     return (
@@ -159,7 +173,7 @@ const Analytics = () => {
   if (!analyticsData) {
     return (
       <DashboardLayout>
-              <NoStoresState />
+        <NoStoresState />
       </DashboardLayout>
     );
   }
@@ -174,6 +188,9 @@ const Analytics = () => {
             <p className="text-muted-foreground">Detailed insights into your store performance</p>
           </div>
         </div>
+
+        {/* Date Range Filter */}
+        <DateRangeFilter dateRange={dateRange} onDateRangeChange={setDateRange} />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -235,18 +252,20 @@ const Analytics = () => {
               <CardTitle>Monthly Revenue & Orders Trend</CardTitle>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px] w-full">
-                <LineChart data={analyticsData.monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} />
-                  <Line yAxisId="right" type="monotone" dataKey="orders" stroke="var(--color-orders)" strokeWidth={2} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                </LineChart>
-              </ChartContainer>
+              <div className="h-[250px] sm:h-[300px] w-full">
+                <ChartContainer config={chartConfig} className="!aspect-auto h-full w-full">
+                  <LineChart data={analyticsData.monthlyData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" fontSize={10} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis yAxisId="left" width={40} fontSize={10} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis yAxisId="right" orientation="right" width={40} fontSize={10} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} />
+                    <Line yAxisId="right" type="monotone" dataKey="orders" stroke="var(--color-orders)" strokeWidth={2} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </LineChart>
+                </ChartContainer>
+              </div>
             </CardContent>
           </Card>
 
@@ -255,19 +274,21 @@ const Analytics = () => {
             <CardHeader>
               <CardTitle>Top Selling Products</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 sm:px-6">
               {analyticsData.topProductsData.length > 0 ? (
-                <ChartContainer config={chartConfig} className="h-[300px]">
-                  <BarChart data={analyticsData.topProductsData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="sales" fill="var(--color-products)" />
-                  </BarChart>
-                </ChartContainer>
+                <div className="h-[220px] sm:h-[300px] w-full">
+                  <ChartContainer config={chartConfig} className="!aspect-auto h-full w-full">
+                    <BarChart data={analyticsData.topProductsData} margin={{ top: 5, right: 5, left: -15, bottom: 40 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" angle={-35} textAnchor="end" height={60} fontSize={10} interval={0} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                      <YAxis width={30} fontSize={10} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="sales" fill="var(--color-products)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ChartContainer>
+                </div>
               ) : (
-                <p>No products sold yet</p>
+                <p className="text-muted-foreground">No products sold yet</p>
               )}
             </CardContent>
           </Card>
@@ -277,27 +298,31 @@ const Analytics = () => {
             <CardHeader>
               <CardTitle>Order Status Distribution</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2 sm:px-6">
               {analyticsData.statusData.length > 0 ? (
-                <ChartContainer config={chartConfig} className="h-[300px]">
-                  <PieChart>
-                    <Pie
-                      data={analyticsData.statusData}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      dataKey="value"
-                      label={({ name, value }) => `${name}: ${value}`}
-                    >
-                      {analyticsData.statusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip />
-                  </PieChart>
-                </ChartContainer>
+                <div className="h-[220px] sm:h-[300px] w-full">
+                  <ChartContainer config={chartConfig} className="!aspect-auto h-full w-full">
+                    <PieChart>
+                      <Pie
+                        data={analyticsData.statusData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={55}
+                        innerRadius={25}
+                        dataKey="value"
+                        label={({ name, value }) => `${name}: ${value}`}
+                        fontSize={9}
+                      >
+                        {analyticsData.statusData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip />
+                    </PieChart>
+                  </ChartContainer>
+                </div>
               ) : (
-                <p>You haven't got any orders</p>
+                <p className="text-muted-foreground">You haven't got any orders</p>
               )}
             </CardContent>
           </Card>
