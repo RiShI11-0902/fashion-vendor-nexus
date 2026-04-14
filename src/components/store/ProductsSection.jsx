@@ -2,18 +2,34 @@ import { useState, useMemo } from "react";
 import ProductCard from "../products/ProductCard";
 import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
-import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X, TrendingUp, Award } from "lucide-react";
 
 const ProductCardSkeleton = () => (
-  <div className="break-inside-avoid mb-4">
-    <div className="rounded-xl overflow-hidden bg-card">
-      <Skeleton className="w-full h-48" />
-      <div className="p-3 space-y-2">
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-3 w-1/2" />
-        <Skeleton className="h-4 w-1/3" />
-      </div>
+  <div className="rounded-xl overflow-hidden bg-card">
+    <Skeleton className="w-full aspect-square" />
+    <div className="p-3 space-y-2">
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-3 w-1/2" />
+      <Skeleton className="h-4 w-1/3" />
     </div>
+  </div>
+);
+
+const SectionHeader = ({ icon: Icon, title, color, count }) => (
+  <div className="flex items-center gap-2 mb-4">
+    <div className={`p-1.5 rounded-lg ${color}`}>
+      <Icon className="w-4 h-4 text-white" />
+    </div>
+    <h3 className="text-lg font-bold text-foreground">{title}</h3>
+    <span className="text-xs text-muted-foreground">({count})</span>
+  </div>
+);
+
+const ProductGrid = ({ products, storeSlug }) => (
+  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    {products.map((product) => (
+      <ProductCard key={product.id} product={product} storeSlug={storeSlug} />
+    ))}
   </div>
 );
 
@@ -41,9 +57,35 @@ const ProductsSection = ({
     );
   }, [filteredProducts, searchQuery]);
 
+  const { trending, bestSellers, normal } = useMemo(() => {
+    const trending = [];
+    const bestSellers = [];
+    const normal = [];
+    const trendingIds = new Set();
+    const bestSellerIds = new Set();
+
+    for (const p of displayedProducts) {
+      if (p.tags?.includes("trending") && trending.length < 5) {
+        trending.push(p);
+        trendingIds.add(p.id);
+      }
+      if (p.tags?.includes("best-seller") && bestSellers.length < 5) {
+        bestSellers.push(p);
+        bestSellerIds.add(p.id);
+      }
+    }
+
+    for (const p of displayedProducts) {
+      if (!trendingIds.has(p.id) && !bestSellerIds.has(p.id)) {
+        normal.push(p);
+      }
+    }
+
+    return { trending, bestSellers, normal };
+  }, [displayedProducts]);
+
   return (
     <div className="flex flex-col gap-6">
-
       {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -103,27 +145,65 @@ const ProductsSection = ({
         </div>
       </div>
 
-      {/* Products Masonry Grid */}
-      <div className="columns-2 sm:columns-2 lg:columns-4 gap-4">
-        {loading ? (
-          Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
-        ) : displayedProducts.length > 0 ? (
-          displayedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} storeSlug={storeSlug} />
-          ))
-        ) : (
-          <div className="col-span-full py-20 flex flex-col items-center gap-3 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-3xl">
-              📦
+      {loading ? (
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : displayedProducts.length > 0 ? (
+        <div className="space-y-10">
+          {/* Trending Section */}
+          {trending.length > 0 && (
+            <div>
+              <SectionHeader
+                icon={TrendingUp}
+                title="Trending Now"
+                color="bg-orange-500"
+                count={trending.length}
+              />
+              <ProductGrid products={trending} storeSlug={storeSlug} />
             </div>
-            <p className="text-muted-foreground">
-              {selectedCategory === "All"
-                ? "This store doesn't have any products yet."
-                : `No products found in "${selectedCategory}".`}
-            </p>
+          )}
+
+          {/* Best Sellers Section */}
+          {bestSellers.length > 0 && (
+            <div>
+              <SectionHeader
+                icon={Award}
+                title="Best Sellers"
+                color="bg-yellow-500"
+                count={bestSellers.length}
+              />
+              <ProductGrid products={bestSellers} storeSlug={storeSlug} />
+            </div>
+          )}
+
+          {/* Normal Products */}
+          {normal.length > 0 && (
+            <div>
+              {(trending.length > 0 || bestSellers.length > 0) && (
+                <div className="flex items-center gap-2 mb-4">
+                  <h3 className="text-lg font-bold text-foreground">All Products</h3>
+                  <span className="text-xs text-muted-foreground">({normal.length})</span>
+                </div>
+              )}
+              <ProductGrid products={normal} storeSlug={storeSlug} />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="py-20 flex flex-col items-center gap-3 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-3xl">
+            📦
           </div>
-        )}
-      </div>
+          <p className="text-muted-foreground">
+            {selectedCategory === "All"
+              ? "This store doesn't have any products yet."
+              : `No products found in "${selectedCategory}".`}
+          </p>
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (
