@@ -5,6 +5,8 @@ import { useStoreManager } from "../../stores/useStoreManager";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -70,6 +72,7 @@ const ProductForm = ({ initialData = null }) => {
       inventory: initialData?.inventory?.toString() || "1",
       discount: initialData?.discount?.toString() || "0",
       sizes: initialData?.sizes || [],
+      tags: initialData?.tags || [],
     },
   });
 
@@ -86,6 +89,7 @@ const ProductForm = ({ initialData = null }) => {
       inventory: Number(data.inventory),
       discount: Number(data.discount) || 0,
       sizes: data.sizes || [],
+      tags: data.tags || [],
     };
 
     const requiredFields = ["name", "price", "inventory", "description", "image", "category"];
@@ -133,6 +137,46 @@ const ProductForm = ({ initialData = null }) => {
           <StoreSelector form={form} stores={userStores} />
           <BasicProductDetails form={form} />
           <AdditionalDetails form={form} catgories={userStores[0].categories} />
+
+          {/* Product Tags */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Product Tags</Label>
+            <p className="text-xs text-muted-foreground">Mark this product to feature it on your storefront (max 5 per tag across your store)</p>
+            <div className="flex flex-wrap gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={form.watch("tags")?.includes("trending")}
+                  onCheckedChange={(checked) => {
+                    const current = form.getValues("tags") || [];
+                    form.setValue("tags", checked
+                      ? [...current, "trending"]
+                      : current.filter(t => t !== "trending")
+                    );
+                  }}
+                />
+                <span className="text-sm flex items-center gap-1.5">
+                  <span className="inline-block w-2 h-2 rounded-full bg-orange-500" />
+                  Trending
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  checked={form.watch("tags")?.includes("best-seller")}
+                  onCheckedChange={(checked) => {
+                    const current = form.getValues("tags") || [];
+                    form.setValue("tags", checked
+                      ? [...current, "best-seller"]
+                      : current.filter(t => t !== "best-seller")
+                    );
+                  }}
+                />
+                <span className="text-sm flex items-center gap-1.5">
+                  <span className="inline-block w-2 h-2 rounded-full bg-yellow-500" />
+                  Best Seller
+                </span>
+              </label>
+            </div>
+          </div>
 
           <div className="flex justify-end space-x-4 pt-4">
             <Button
