@@ -27,11 +27,11 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
       >
         <div className="bg-card rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 h-full flex flex-col">
           {/* Image */}
-          <div className="overflow-hidden relative aspect-square">
+          <div className="overflow-hidden relative">
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+              className="w-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
             />
             <div className="absolute top-2 left-2 flex flex-col gap-1">
               {hasDiscount && (
