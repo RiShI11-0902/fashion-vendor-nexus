@@ -35,8 +35,9 @@ export type Product = {
   category: string;
   inventory: number;
   createdAt: string;
-  sizes: string[]
-  discount:number
+  sizes: string[];
+  discount: number;
+  tags?: ('trending' | 'best-seller')[];
 };
 
 export type Discount = {
