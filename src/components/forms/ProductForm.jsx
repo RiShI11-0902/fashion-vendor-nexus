@@ -33,6 +33,7 @@ const productSchema = z.object({
       message: "Discount must be a valid number",
     }),
   sizes: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 const ProductForm = ({ initialData = null }) => {
