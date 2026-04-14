@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../ui/badge";
 import { useStoreManager } from "../../stores/useStoreManager";
-import { IndianRupee, QrCode } from "lucide-react";
+import { IndianRupee, QrCode, TrendingUp, Award } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { Button } from "../../components/ui/button";
 import QRCodeModal from "./QRCodeModal";
@@ -16,30 +16,44 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
   const [showQR, setShowQR] = useState(false);
 
   const hasDiscount = discount && discountedPrice < product.price;
+  const isTrending = product.tags?.includes("trending");
+  const isBestSeller = product.tags?.includes("best-seller");
 
   return (
     <>
       <Link
         to={`/store/${storeSlug}/product/${product.id}`}
-        className={`block group break-inside-avoid mb-4 ${className}`}
+        className={`block group ${className}`}
       >
-        <div className="bg-card rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10">
+        <div className="bg-card rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 h-full flex flex-col">
           {/* Image */}
-          <div className="overflow-hidden relative">
+          <div className="overflow-hidden relative aspect-square">
             <img
               src={product.image}
               alt={product.name}
-              className="w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
             />
-            {hasDiscount && (
-              <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
-                SALE
-              </span>
-            )}
+            <div className="absolute top-2 left-2 flex flex-col gap-1">
+              {hasDiscount && (
+                <span className="bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  SALE
+                </span>
+              )}
+              {isTrending && (
+                <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                  <TrendingUp className="w-2.5 h-2.5" /> TRENDING
+                </span>
+              )}
+              {isBestSeller && (
+                <span className="bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                  <Award className="w-2.5 h-2.5" /> BEST SELLER
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Text */}
-          <div className="p-3">
+          <div className="p-3 flex flex-col flex-1">
             <h3 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug">
               {product.name}
             </h3>
@@ -51,7 +65,7 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
             )}
 
             {/* Price row */}
-            <div className="flex items-center justify-between mt-3 gap-1">
+            <div className="flex items-center justify-between mt-auto pt-3 gap-1">
               <div className="flex items-baseline gap-1.5 flex-wrap">
                 <span className="font-bold text-foreground text-sm flex items-center gap-0.5">
                   <IndianRupee className="w-3 h-3" />
@@ -72,7 +86,6 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
                   </Badge>
                 )}
 
-                {/* QR Code button */}
                 <button
                   className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground hover:text-primary hover:bg-accent transition-colors"
                   onClick={(e) => {
