@@ -10,9 +10,11 @@ import QRCodeModal from "./QRCodeModal";
 const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
   const { getDiscountedPrice } = useStoreManager();
   const { price: discountedPrice, discount } = getDiscountedPrice(product.id, product.price);
+
   const { currentUser } = useAuthStore();
   const { getUserStores } = useStoreManager();
   const store = getUserStores(currentUser?.id);
+
   const [showQR, setShowQR] = useState(false);
 
   const hasDiscount = discount && discountedPrice < product.price;
@@ -26,24 +28,29 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
         className={`block group ${className}`}
       >
         <div className="bg-card rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 h-full flex flex-col">
+
           {/* Image */}
-          <div className="overflow-hidden relative aspect-square">
+          <div className="overflow-hidden relative h-48">
             <img
               src={product.image}
               alt={product.name}
               className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
             />
+
+            {/* Tags */}
             <div className="absolute top-2 left-2 flex flex-col gap-1">
               {hasDiscount && (
                 <span className="bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
                   SALE
                 </span>
               )}
+
               {isTrending && (
                 <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5">
                   <TrendingUp className="w-2.5 h-2.5" /> TRENDING
                 </span>
               )}
+
               {isBestSeller && (
                 <span className="bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5">
                   <Award className="w-2.5 h-2.5" /> BEST SELLER
@@ -64,13 +71,18 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
               </p>
             )}
 
-            {/* Price row */}
+            {/* Price Row */}
             <div className="flex items-center justify-between mt-auto pt-3 gap-1">
+
+              {/* Price */}
               <div className="flex items-baseline gap-1.5 flex-wrap">
                 <span className="font-bold text-foreground text-sm flex items-center gap-0.5">
                   <IndianRupee className="w-3 h-3" />
-                  {hasDiscount ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
+                  {hasDiscount
+                    ? discountedPrice.toFixed(2)
+                    : product.price.toFixed(2)}
                 </span>
+
                 {hasDiscount && (
                   <span className="text-muted-foreground text-xs line-through flex items-center gap-0.5">
                     <IndianRupee className="w-2.5 h-2.5" />
@@ -79,13 +91,19 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
                 )}
               </div>
 
+              {/* Actions */}
               <div className="flex items-center gap-1">
+
                 {product.category && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-normal hidden sm:flex">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0 font-normal hidden sm:flex"
+                  >
                     {product.category}
                   </Badge>
                 )}
 
+                {/* QR Button */}
                 <button
                   className="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground hover:text-primary hover:bg-accent transition-colors"
                   onClick={(e) => {
@@ -98,22 +116,30 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
                   <QrCode className="w-3.5 h-3.5" />
                 </button>
 
+                {/* Edit Button */}
                 {currentUser && store?.id === product?.storeId && (
                   <Link
                     to={`/dashboard/products/edit/${product.id}`}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Button size="sm" variant="ghost" className="h-6 px-2 text-xs">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-2 text-xs"
+                    >
                       Edit
                     </Button>
                   </Link>
                 )}
+
               </div>
             </div>
           </div>
+
         </div>
       </Link>
 
+      {/* QR Modal */}
       <QRCodeModal
         open={showQR}
         onClose={() => setShowQR(false)}
