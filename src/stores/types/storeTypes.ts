@@ -37,7 +37,7 @@ export type Product = {
   createdAt: string;
   sizes: string[];
   discount: number;
-  tags?: ('trending' | 'best-seller')[];
+  
 };
 
 export type Discount = {
