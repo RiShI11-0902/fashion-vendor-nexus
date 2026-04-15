@@ -136,7 +136,6 @@ const ProductForm = ({ initialData = null }) => {
           <BasicProductDetails form={form} />
           <AdditionalDetails form={form} catgories={userStores[0].categories} />
 
-          </div>
 
           <div className="flex justify-end space-x-4 pt-4">
             <Button
