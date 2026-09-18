@@ -28,7 +28,7 @@ const CTASection = ({ currentUser }) => {
             started receiving WhatsApp orders and scaled with our dashboard.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               asChild
               size="lg"
@@ -38,7 +38,7 @@ const CTASection = ({ currentUser }) => {
                 Create your catalog free <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Button>
-          </div>
+          </div> */}
 
           <p className="text-gray-600 text-sm mt-6">No credit card required · Set up in minutes</p>
         </div>
