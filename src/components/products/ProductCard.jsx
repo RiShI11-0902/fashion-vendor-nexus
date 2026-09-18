@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "../ui/badge";
 import { useStoreManager } from "../../stores/useStoreManager";
-import { IndianRupee, QrCode, TrendingUp, Award } from "lucide-react";
+import { IndianRupee, QrCode } from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { Button } from "../../components/ui/button";
 import QRCodeModal from "./QRCodeModal";
@@ -18,8 +18,6 @@ const ProductCard = ({ product, storeSlug, storeLogo, className = "" }) => {
   const [showQR, setShowQR] = useState(false);
 
   const hasDiscount = discount && discountedPrice < product.price;
-  const isTrending = product.tags?.includes("trending");
-  const isBestSeller = product.tags?.includes("best-seller");
 
   return (
     <>
