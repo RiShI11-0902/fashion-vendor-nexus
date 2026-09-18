@@ -89,7 +89,7 @@ const Pricing = () => {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Start free, upgrade when you need more. No hidden fees, no surprises.
               <br />
-              <p className="text-red-500 font-semibold">(Currently AI Model Generations is not available unavailable due to some technical issues we are trying our best to fix it.)</p>
+              <p className="text-red-500 font-semibold">(Currently we are not onboarding new store owners and AI Model Generations is too not available unavailable due to some technical issues we are trying our best to fix it.)</p>
             </p>
           </div>
 
@@ -134,7 +134,7 @@ const Pricing = () => {
                     className="w-full"
                     variant={plan.highlighted ? "default" : "outline"}
                     size="lg"
-                    disabled={loadingPlans[plan.name]}
+                    disabled={true}
                     onClick={() => {
                       if (plan.name !== "Free") {
                         setLoadingPlans(prev => ({ ...prev, [plan.name]: true }));

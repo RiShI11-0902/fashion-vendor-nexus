@@ -70,23 +70,15 @@ const Signup = () => {
               </div>
             )}
 
-            <Button
+            {/* <Button
               onClick={handleGoogleLogin}
               variant="outline"
               className="w-full flex items-center justify-center gap-2 mb-5"
             >
               <img className="w-5" src={google} alt="Google Logo" />
               Continue with Google
-            </Button>
+            </Button> */}
 
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-muted" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
-              </div>
-            </div>
 
             <form
               onSubmit={handleSubmit}

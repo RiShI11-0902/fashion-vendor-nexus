@@ -63,10 +63,10 @@ const Login = () => {
                 {error}
               </div>
             )}
-            <Button onClick={handleGoogleLogin} className="mx-auto w-full  flex items-center justify-center">
+            {/* <Button onClick={handleGoogleLogin} className="mx-auto w-full  flex items-center justify-center">
               Login With Google
               <img className="w-5" src={google} alt="" srcset="" />
-            </Button>
+            </Button> */}
             <form onSubmit={handleSubmit} className="space-y-4 mt-3">
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium">

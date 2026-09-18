@@ -81,21 +81,22 @@ const Navbar = () => {
               </Button>
             </>
           ) : (
+            <Link to={"/login"}>
             <Button
               variant="outline"
               size="sm"
               className="border-white/10 text-gray-300 hover:text-white hover:bg-white/5 bg-transparent min-w-[140px]"
-              onClick={handleGoogleLogin}
-              disabled={loading.isLogin && loading.state}
             >
               {loading.isLogin && loading.state ? (
                 <Loader className="animate-spin w-4 h-4" />
               ) : (
                 <span className="flex items-center gap-2">
-                  Sign in with <img className="w-4" src={google} alt="Google" />
+                  Register
                 </span>
               )}
             </Button>
+            </Link>
+            
           )}
         </nav>
 
@@ -149,12 +150,14 @@ const Navbar = () => {
                 </Button>
               </>
             ) : (
-              <button
-                onClick={handleGoogleLogin}
+              <Link to={"/login"}>
+               <button
                 className="flex items-center gap-2 text-sm text-gray-400"
               >
-                Sign in with <img className="w-4" src={google} alt="Google" />
+                Register
               </button>
+              </Link>
+             
             )}
           </nav>
         </div>

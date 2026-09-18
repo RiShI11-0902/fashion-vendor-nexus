@@ -55,7 +55,7 @@ const HeroSection = ({ currentUser }) => {
             </div>
 
             {/* CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            {/* <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Button
                 asChild
                 size="lg"
@@ -65,7 +65,7 @@ const HeroSection = ({ currentUser }) => {
                   Start for free <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* Right — visual dashboard mockup */}
